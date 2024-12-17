@@ -38,6 +38,11 @@ dependencies:
   #Posgres Database
   postgres: ^3.4.4
 
+  # month year picker
+  month_year_picker: ^0.4.0+1
+
+  # syncfusion flutter charts
+  syncfusion_flutter_charts: 27.2.5
 
 dev_dependencies:
   flutter_test:

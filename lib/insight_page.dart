@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:workshop_2/budget_tab_page.dart';
 import 'home_page.dart';
 import 'notification_page.dart';
 import 'account_page.dart';
+import 'analysis_tab_page.dart';
 
 class Insight extends StatefulWidget{
   const Insight({super.key});
@@ -10,61 +12,89 @@ class Insight extends StatefulWidget{
   State<Insight> createState() => _InsightState();
 }
 
-
 class _InsightState extends State<Insight>{
   @override
   Widget build(BuildContext insightContext) {
-    return Scaffold(
-      bottomNavigationBar: BottomAppBar(
-        color: const Color(0xFF002B36), // In Figma color: 002B36
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            IconButton(
-              onPressed: () {
-                Navigator.push(insightContext, MaterialPageRoute(builder: (context) => const Home()),);
-              },
-              icon: Icon(
-                Icons.home_outlined,
-                color: Colors.white,
-                size: 30,
-              ),
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Insight'),
+        ),
+        body: Column(
+          children: [
+            TabBar(
+              tabs: [
+                Tab(text: 'Budget'),
+                Tab(text: 'Transaction'),
+                Tab(text: 'Analysis'),
+              ],
             ),
-
-            IconButton(
-              onPressed: () {},
-              icon: Image.asset(
-                'lib/Icons/three lines.png',
-                height: 30,
-                width: 30,
-                color: Color(0xFF65ADAD),
-              ),
-            ),
-
-            IconButton(
-              onPressed: () {
-                Navigator.push(insightContext, MaterialPageRoute(builder: (insightContext) => const Noti()));
-              },
-              icon: Image.asset(
-                'lib/Icons/notification.png',
-                height: 30,
-                width: 30,
-                color: Colors.white,
-              ),
-            ),
-
-            IconButton(
-              onPressed: () {
-                Navigator.push(insightContext, MaterialPageRoute(builder: (insightContext) => const Account()));
-              },
-              icon: Image.asset(
-                'lib/Icons/safe.png',
-                height: 30,
-                width: 30,
-                color: Colors.white,
+            Expanded(
+              child: TabBarView(
+                children: [
+                  // Content for the "Budget" tab
+                  Budget(),
+                  // Content for the "Transaction" tab
+                  Center(child: Text('Transaction')),
+                  // Content for the "Analysis" tab
+                  Analysis(),
+                ],
               ),
             ),
           ],
+        ),
+        bottomNavigationBar: BottomAppBar(
+          color: const Color(0xFF002B36), // In Figma color: 002B36
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              IconButton(
+                onPressed: () {
+                  Navigator.push(insightContext, MaterialPageRoute(builder: (context) => const Home()),);
+                },
+                icon: Icon(
+                  Icons.home_outlined,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              ),
+
+              IconButton(
+                onPressed: () {},
+                icon: Image.asset(
+                  'lib/Icons/three lines.png',
+                  height: 30,
+                  width: 30,
+                  color: Color(0xFF65ADAD),
+                ),
+              ),
+
+              IconButton(
+                onPressed: () {
+                  Navigator.push(insightContext, MaterialPageRoute(builder: (insightContext) => const Noti()));
+                },
+                icon: Image.asset(
+                  'lib/Icons/notification.png',
+                  height: 30,
+                  width: 30,
+                  color: Colors.white,
+                ),
+              ),
+
+              IconButton(
+                onPressed: () {
+                  Navigator.push(insightContext, MaterialPageRoute(builder: (insightContext) => const Account()));
+                },
+                icon: Image.asset(
+                  'lib/Icons/safe.png',
+                  height: 30,
+                  width: 30,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

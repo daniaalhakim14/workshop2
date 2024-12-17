@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
-import 'sql_connection.dart';
+import 'package:workshop_2/budget_tab_page.dart';
 import 'home_page.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:month_year_picker/month_year_picker.dart';
 
 
 void main() async{
@@ -23,11 +24,20 @@ void main() async{
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   // root widget
   @override
   Widget build(BuildContext context){
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        MonthYearPickerLocalizations.delegate, // Add this for month-year picker
+      ],
+
       title: 'Homepage',
       theme: ThemeData(
         primarySwatch: Colors.teal, // determines the overall color palette for app
