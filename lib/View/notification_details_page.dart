@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'notification_page.dart';
 import 'account_page.dart';
+import 'package:workshop_2/admin_dashboard/models/model/notification.dart'as nt;
+
 
 class NotificatioNDetails extends StatefulWidget {
-  final String title;
-  final String datetime;
-  final String details;
+  final nt.Notification notification;
 
   const NotificatioNDetails({
     Key? key,
-    required this.title,
-    required this.datetime,
-    required this.details,
+    required this.notification,
   }) : super(key: key);
 
   @override
@@ -20,13 +18,12 @@ class NotificatioNDetails extends StatefulWidget {
 }
 
 class _NotificationDetailsState extends State<NotificatioNDetails> {
-
   @override
   Widget build(BuildContext notificationContext) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.title,
+          widget.notification.title ?? 'Notification Title',
           style: const TextStyle(
             fontFamily: 'Poppins',
             fontSize: 20,
@@ -36,13 +33,19 @@ class _NotificationDetailsState extends State<NotificatioNDetails> {
         ),
         backgroundColor: const Color(0xFF008080),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (widget.notification.image != null)
+              Image.network(
+                widget.notification.image!,
+                fit: BoxFit.cover,
+              ),
+            const SizedBox(height: 10),
             Text(
-              'Posted: ${widget.datetime}',
+              'Posted: ${widget.notification.date ?? 'Unknown Date'} ${widget.notification.time ?? ''}',
               style: const TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 14,
@@ -52,7 +55,7 @@ class _NotificationDetailsState extends State<NotificatioNDetails> {
             ),
             const SizedBox(height: 10),
             Text(
-              widget.details,
+              widget.notification.description ?? 'No Description',
               style: const TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 14,
@@ -64,34 +67,34 @@ class _NotificationDetailsState extends State<NotificatioNDetails> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        color: const Color(0xFF002B36), // In Figma color: 002B36
+        color: const Color(0xFF002B36),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             IconButton(
               onPressed: () {
-                Navigator.push(notificationContext, MaterialPageRoute(builder: (context) => const Home()),);
+                Navigator.push(notificationContext,
+                    MaterialPageRoute(builder: (context) => const Home()));
               },
-              icon: Icon(
+              icon: const Icon(
                 Icons.home_outlined,
                 color: Colors.white,
                 size: 30,
               ),
             ),
-
             IconButton(
               onPressed: () {},
               icon: Image.asset(
                 'lib/Icons/three lines.png',
                 height: 30,
                 width: 30,
-                color: Color(0xFF65ADAD),
+                color: const Color(0xFF65ADAD),
               ),
             ),
-
             IconButton(
               onPressed: () {
-                Navigator.push(notificationContext, MaterialPageRoute(builder: (context) => const Noti()));
+                Navigator.push(notificationContext,
+                    MaterialPageRoute(builder: (context) => const Noti()));
               },
               icon: Image.asset(
                 'lib/Icons/notification.png',
@@ -100,10 +103,10 @@ class _NotificationDetailsState extends State<NotificatioNDetails> {
                 color: Colors.white,
               ),
             ),
-
             IconButton(
               onPressed: () {
-                Navigator.push(notificationContext, MaterialPageRoute(builder: (context) => const Account()));
+                Navigator.push(notificationContext,
+                    MaterialPageRoute(builder: (context) => const Account()));
               },
               icon: Image.asset(
                 'lib/Icons/safe.png',
