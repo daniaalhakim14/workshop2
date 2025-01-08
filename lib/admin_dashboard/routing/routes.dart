@@ -2,8 +2,8 @@
 
 const rootRoute = "/";
 
-const postPageRouteName = "Post";
-const postPageRoute = "/post";
+const notificationPageRouteName = "Notification";
+const notificationPageRoute = "/notification";
 
 const profilePageRouteName = "Profile";
 const profilePageRoute = "/profile";
@@ -21,7 +21,7 @@ class MenuItem{
 }
 
 List<MenuItem> sideMenuItemRoutes = [
-  MenuItem(postPageRouteName,postPageRoute),
+  MenuItem(notificationPageRouteName,notificationPageRoute),
   MenuItem(profilePageRouteName, profilePageRoute),
   MenuItem(logoutPageRouteName,logoutPageRoute),
 ];

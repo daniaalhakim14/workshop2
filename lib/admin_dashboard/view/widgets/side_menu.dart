@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:workshop_2/admin_dashboard/menu_controller.dart'as custom;
-import 'package:workshop_2/admin_dashboard/navigation_controller.dart'as nav;
+import 'package:workshop_2/admin_dashboard/controllers/menu_controller.dart'as custom;
+import 'package:workshop_2/admin_dashboard/controllers/navigation_controller.dart'as nav;
 import 'package:workshop_2/admin_dashboard/routing/routes.dart';
-import 'package:workshop_2/admin_dashboard/widgets/custom_text.dart';
-import 'package:workshop_2/admin_dashboard/widgets/horizontal_menu_item.dart';
+import 'package:workshop_2/admin_dashboard/view/widgets/custom_text.dart';
+import 'package:workshop_2/admin_dashboard/view/widgets/horizontal_menu_item.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:workshop_2/admin_dashboard/view_model/profile_vm.dart';
 
 class SideMenu extends StatelessWidget{
   
@@ -16,6 +18,13 @@ class SideMenu extends StatelessWidget{
     double width = MediaQuery.of(context).size.width;
     custom.MenuController menuController = custom.MenuController.instance;
     nav.NavigationController navigationController = nav.NavigationController.instance;
+
+    final profileViewModel = Get.put(ProfileViewModel());
+    //final profileController = Get.put(ProfileController()); // Initialize ProfileController
+
+    final box = GetStorage();
+    final adminData = box.read('adminData'); // 获取存储的adminData
+    final adminName = adminData?['name'] ?? "Admin Name"; // 默认值为 "Admin Name"
 
     return Container(
       color: const Color(0xFF008080), //background color
@@ -44,12 +53,12 @@ class SideMenu extends StatelessWidget{
                         child: Image.asset("lib/Icons/admin.png"),
                       ),
                       const SizedBox(height: 8),
-                      const CustomText(
-                        text: "Admin Name",
-                        color: Colors.white,
-                        size: 20,
-                        weight: FontWeight.bold,
-                      ),
+                      Obx(() => CustomText( // 使用 Obx 监听 adminName
+                            text: profileViewModel.adminName.value,
+                            color: Colors.white,
+                            size: 20,
+                            weight: FontWeight.bold,
+                          )),
                     ],
                   ),
                 ),
@@ -80,7 +89,7 @@ class SideMenu extends StatelessWidget{
                                     onPressed: () {
                                       Navigator.of(context).pop(); 
                                       Get.offAllNamed(logoutPageRoute);
-                                      menuController.changeActiveItemTo(postPageRouteName); 
+                                      menuController.changeActiveItemTo(notificationPageRouteName); 
                                     },
                                     child: const Text("Logout"),
                                   ),

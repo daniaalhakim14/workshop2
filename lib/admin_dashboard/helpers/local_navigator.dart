@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:workshop_2/admin_dashboard/menu_controller.dart'as custom;
-import 'package:workshop_2/admin_dashboard/navigation_controller.dart'as nav;
+import 'package:workshop_2/admin_dashboard/controllers/menu_controller.dart'as custom;
+import 'package:workshop_2/admin_dashboard/controllers/navigation_controller.dart'as nav;
 import 'package:workshop_2/admin_dashboard/routing/routers.dart';
 import 'package:workshop_2/admin_dashboard/routing/routes.dart';
 
@@ -10,5 +10,5 @@ nav.NavigationController navigationController = nav.NavigationController.instanc
 Navigator localNavigator() => Navigator(
       key: navigationController.navigatorKey,
       onGenerateRoute: generateRoute,
-      initialRoute: postPageRoute,
+      initialRoute: notificationPageRoute,
 );

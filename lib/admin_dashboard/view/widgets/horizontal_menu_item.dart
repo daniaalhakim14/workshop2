@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:workshop_2/admin_dashboard/menu_controller.dart' as custom;
+import 'package:workshop_2/admin_dashboard/controllers/menu_controller.dart' as custom;
 import 'package:get/get.dart';
-import 'package:workshop_2/admin_dashboard/widgets/custom_text.dart';
+import 'package:workshop_2/admin_dashboard/view/widgets/custom_text.dart';
 
 // update background color for option
 

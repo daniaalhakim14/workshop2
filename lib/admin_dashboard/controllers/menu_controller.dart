@@ -7,7 +7,7 @@ import 'package:workshop_2/admin_dashboard/routing/routes.dart';
 
 class MenuController extends GetxController {
   static MenuController instance = Get.find();
-  var activeItem = postPageRouteName.obs;
+  var activeItem = notificationPageRouteName.obs;
   var hoverItem = "".obs;
 
   void changeActiveItemTo(String itemName) {
@@ -23,7 +23,7 @@ class MenuController extends GetxController {
 
   Widget returnIconFor(String itemName) {
     switch (itemName) {
-      case postPageRouteName:
+      case notificationPageRouteName:
         return _customIcon("lib/Icons/post.png", itemName);
       case profilePageRouteName:
         return _customIcon("lib/Icons/profile.png", itemName);
