@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:workshop_2/budget_tab_page.dart';
+import 'package:workshop_2/View/budget_tab_page.dart';
 import 'insight_page.dart';
 import 'notification_page.dart';
 import 'account_page.dart';

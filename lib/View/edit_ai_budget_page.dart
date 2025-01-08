@@ -1,18 +1,43 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:month_year_picker/month_year_picker.dart';
-import 'package:workshop_2/budget_category_page.dart';
+import 'package:workshop_2/View/budget_category_page.dart';
 import 'package:intl/intl.dart';
-import 'package:workshop_2/budget_tab_page.dart';
+import 'package:workshop_2/View/budget_tab_page.dart';
 
-class EditBudget extends StatefulWidget{
-  const EditBudget({super.key});
+class EditAIBudget extends StatefulWidget{
+  const EditAIBudget({super.key});
 
   @override
-  State<EditBudget> createState() => _EditBudgetState();
+  State<EditAIBudget> createState() => _EditAIBudgetState();
 }
 
-class _EditBudgetState extends State<EditBudget> {
+class _EditAIBudgetState extends State<EditAIBudget> {
+  void _showDeleteConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Are you sure you want to delete Budget?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Perform delete operation
+              Navigator.of(context).pop();
+              Navigator.pop(context);
+            },
+            child: Text('Yes'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('No'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +74,7 @@ class _EditBudgetState extends State<EditBudget> {
                         onTap: () {
                           Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => BudgetCategory())
+                              MaterialPageRoute(builder: (context) => BudgetChoosingCategory())
                           );
                         }
                     ),
@@ -72,6 +97,20 @@ class _EditBudgetState extends State<EditBudget> {
                           text: "Done Edit",
                           onTap: () {
                             Navigator.pop(context);
+                          },
+                          backgroundColor: Colors.grey.shade300,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: SizedBox(
+                        child:CustomButton(
+                          text: "Delete",
+                          onTap: () {
+                            _showDeleteConfirmation(context);
                           },
                           backgroundColor: Colors.grey.shade300,
                         ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:workshop_2/budget_tab_page.dart';
+import 'package:workshop_2/View/analysis_tab_page.dart';
+import 'package:workshop_2/View/budget_tab_page.dart';
 import 'home_page.dart';
 import 'notification_page.dart';
 import 'account_page.dart';
-import 'analysis_tab_page.dart';
 
 class Insight extends StatefulWidget{
   const Insight({super.key});
@@ -19,7 +19,12 @@ class _InsightState extends State<Insight>{
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Insight'),
+          title: const Text(
+              'Insight',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Color(0xFF65ADAD),
+
         ),
         body: Column(
           children: [

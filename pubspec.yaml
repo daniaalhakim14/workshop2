@@ -43,6 +43,12 @@ dependencies:
 
   # syncfusion flutter charts
   syncfusion_flutter_charts: 27.2.5
+  http: ^1.2.2
+
+  provider: ^6.0.0
+  google_generative_ai: ^0.4.6
+  dotenv: ^4.2.0
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +60,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  test: ^1.25.7
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

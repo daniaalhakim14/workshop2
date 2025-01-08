@@ -1,26 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
-import 'package:workshop_2/budget_tab_page.dart';
-import 'home_page.dart';
+import 'package:provider/provider.dart';
+import 'package:workshop_2/ViewModel/AIBudgetTextFieldViewModel.dart';
+import 'package:workshop_2/ViewModel/AIBudgetViewModel.dart';
+import 'package:workshop_2/ViewModel/AnalysisViewModel.dart';
+import 'package:workshop_2/ViewModel/CategoryViewModel.dart';
+import 'package:workshop_2/ViewModel/DateViewModel.dart';
+import 'View/home_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:month_year_picker/month_year_picker.dart';
 
+import 'ViewModel/BudgetViewModel.dart';
+import 'ViewModel/BudgetTextFieldViewModel.dart';
+
 
 void main() async{
-  try {  // make connection with database
-    final conn = await Connection.open(Endpoint(
-      host: 'duitappworkshop2.postgres.database.azure.com',
-      database: 'postgres',
-      username: 'duit_admin',
-      password: '@Bcd1234',
-    ));
-    print('Database connection successful!');
-    runApp(MyApp());
-  }catch (e) {
-    print('Database connection failed: $e');
-    // Optionally, handle the error (e.g., show an error screen or retry)
-  }
+  int userid = 1;
 
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => CategoryViewModel()),
+      ChangeNotifierProvider(create: (context) => BudgetTextFieldViewModel()),
+      ChangeNotifierProvider(create: (context) => BudgetViewModel()),
+      ChangeNotifierProvider(create: (context) => DateViewModel()),
+      ChangeNotifierProvider(create: (context) => AIBudgetTextFieldViewModel()),
+      ChangeNotifierProvider(create: (context) => AIBudgetViewModel()),
+      ChangeNotifierProvider(create: (context) => AnalysisViewModel())
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
