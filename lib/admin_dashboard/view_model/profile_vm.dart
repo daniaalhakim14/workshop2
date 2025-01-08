@@ -10,7 +10,7 @@ class ProfileViewModel extends GetxController {
   final GetStorage box = GetStorage();
   final AdminRepository adminRepository = AdminRepository();
 
-  RxString adminName = ''.obs; // Observable admin name
+  RxString adminName = ''.obs;
 
   late Map<String, dynamic> adminData;
   RxBool isEditing = false.obs;
@@ -41,6 +41,7 @@ class ProfileViewModel extends GetxController {
     adminName.value = adminData['name'] ?? "Admin Name"; //
   }
 
+  // update admin (edit) -> request admin id and updated data, response success message
   Future<void> updateProfile() async {
     if (adminData['adminid'] == null) {
       await MessageUtils.showMessage(
@@ -75,15 +76,6 @@ class ProfileViewModel extends GetxController {
         throw Exception('Unexpected response');
       }
     } catch (e) {
-      /*
-      await MessageUtils.showMessage(
-        context: Get.context!,
-        title: 'Error',
-        description: e is DioError
-            ? 'Network error occurred while updating profile.'
-            : 'An error occurred while updating profile.',
-      );*/
-
       print('Error during profile update: $e');
         await MessageUtils.showMessage(
             context: Get.context!,
@@ -94,6 +86,7 @@ class ProfileViewModel extends GetxController {
     }
   }
 
+   // update password (edit) -> request admin id and password, response success message
   Future<void> updatePassword() async {
     String currentPw = currentPassword.text.trim();
     String newPw = newPassword.text.trim();
@@ -126,15 +119,6 @@ class ProfileViewModel extends GetxController {
         );
       }
     } catch (e) {
-      /*
-      await MessageUtils.showMessage(
-        context: Get.context!,
-        title: 'Error',
-        description: e is DioError
-            ? 'Network error occurred while updating password.'
-            : 'An error occurred while updating password.',
-      );*/
-
         print('Error during profile update: $e'); // 打印调试信息
         await MessageUtils.showMessage(
           context: Get.context!,
