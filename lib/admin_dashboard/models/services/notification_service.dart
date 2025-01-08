@@ -6,13 +6,14 @@ import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'package:workshop_2/admin_dashboard/models/apis/app_exception.dart';
 import 'package:http_parser/http_parser.dart'; 
-import 'dart:html' as html;
+//import 'dart:html' as html;
 
 class NotificationService {
 
    final Dio _dio = Dio();
-   final String notificationBaseUrl = "http://localhost:3000/notification";
-
+   final String notificationBaseUrl = "http://192.168.132.198:3000/notification";
+   /* final String notificationBaseUrl = "http://localhost:3000/notification";*/
+  
   
   Future getResponse(String endpoint) async {
     Map<String, dynamic>? responseJson;
@@ -69,6 +70,7 @@ class NotificationService {
     return responseJson;
   }
 
+  /*
  Future<String?> uploadImage(html.File imageFile) async {
   try {
 
@@ -99,7 +101,7 @@ class NotificationService {
     print('Error uploading image: $e');
     return null;
   }
-}
+}*/
 
   @visibleForTesting
   Map<String, dynamic> returnResponse(http.Response response) {

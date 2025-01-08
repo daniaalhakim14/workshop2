@@ -1,4 +1,4 @@
-import 'dart:html' as html;
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -8,6 +8,8 @@ import 'package:workshop_2/admin_dashboard/models/repository/notification_reposi
 
 class NotificationViewModel extends GetxController {
   final NotificationRepository notificationRepository = NotificationRepository();
+  
+  final RxBool isDescending = true.obs;
 
   final RxList<nt.Notification> _notifications = <nt.Notification>[].obs;
   List<nt.Notification> get notifications => _notifications;
@@ -15,25 +17,74 @@ class NotificationViewModel extends GetxController {
   final RxString _selectedDate = 'Select Date'.obs;
   String get selectedDate => _selectedDate.value;
 
+  final RxBool isLoading = false.obs;
+
   void updateSelectedDate(String date) {
     _selectedDate.value = date;
   }
 
+  void toggleSortOrder() {
+    isDescending.value = !isDescending.value; 
+    _notifications.sort((a, b) {
+      DateTime dateTimeA = DateTime.parse('${a.date ?? '1970-01-01'} ${a.time ?? '00:00:00'}');
+      DateTime dateTimeB = DateTime.parse('${b.date ?? '1970-01-01'} ${b.time ?? '00:00:00'}');
+      return isDescending.value
+          ? dateTimeB.compareTo(dateTimeA) 
+          : dateTimeA.compareTo(dateTimeB); 
+    });
+    _notifications.refresh(); 
+  }
+
+  Future<void> initializeNotifications(String userID) async {
+    try {
+      isLoading.value = true;
+
+      List<nt.Notification>? generalNotifications = await notificationRepository.fetchNotifications();
+      List<nt.Notification>? userNotifications = await notificationRepository.fetchNotificationsByUserID(userID);
+
+      final combinedNotifications = [
+        ...?_notifications, 
+        ...?generalNotifications,
+        ...?userNotifications,
+      ];
+
+      final uniqueNotifications = combinedNotifications.toSet().toList();
+      _notifications.assignAll(uniqueNotifications);
+
+      toggleSortOrder();
+    } catch (e) {
+      print('Error initializing notifications: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+  /* ----------------- Welfare Program -------------------- */
+
+
   // get all notification -> response notification list
   Future<void> fetchNotifications() async {
+    isLoading.value = true;
     try {
       print('Fetching notifications...');
       List<nt.Notification>? result = await notificationRepository.fetchNotifications();
       if (result != null) {
         print('Notifications fetched: ${result.length}');
         _notifications.assignAll(result);
+        toggleSortOrder(); // 根据当前排序状态重新排序
       } else {
         print('No notifications fetched');
       }
     } catch (e) {
       print('Error fetching notifications: $e');
+    } finally {
+      isLoading.value = false;
     }
   }
+
+
+
 
   // get notification {date} -> request date, response notification list
   Future<void> fetchNotificationsByDate(String? date) async {
@@ -109,4 +160,52 @@ class NotificationViewModel extends GetxController {
       return false;
     }
   }
+
+
+  /* ----------------- Transaction -------------------- */
+  
+
+  // get transaction notification {userid} -> request userid, response notification list
+  Future<void> fetchNotificationsByUserID(String userID) async {
+    try {
+      
+      List<nt.Notification>? result;
+      result = await notificationRepository.fetchNotificationsByUserID(userID);
+
+      if (result != null) {
+        _notifications.assignAll(result);
+      } else {
+        _notifications.clear(); 
+      }
+    } catch (e) {
+      print('Error fetching notifications by date: $e');
+    }
+  }
+
+  // auto send transaction alert notification (When expense reach 50%/70%/90%/100% of budget)
+  // -> request userid, response message 
+
+  Future<void> autoSendTransactionAlert(String userID) async {
+
+    try {
+      isLoading.value = true;
+      print('Sending transaction alert notification for UserID: $userID');
+
+      bool success = await notificationRepository.sendTransactionAlertNotification(userID);
+
+      if (success) {
+        print('Transaction alert notification sent successfully');
+      } else {
+        print('Failed to send transaction alert notification');
+      }
+
+
+      await fetchNotificationsByUserID(userID);
+    } catch (e) {
+      print('Error sending transaction alert notification: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
 }

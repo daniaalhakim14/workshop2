@@ -1,5 +1,5 @@
 //import 'dart:io';
-import 'dart:html' as html;
+//import 'dart:html' as html;
 
 import 'package:workshop_2/admin_dashboard/models/model/notification.dart';
 import 'package:workshop_2/admin_dashboard/models/services/notification_service.dart';
@@ -10,6 +10,10 @@ import 'package:get_storage/get_storage.dart';
 class NotificationRepository {
 
   final NotificationService _notificationService = NotificationService();
+
+
+  /* ----------------- Welfare Program -------------------- */
+
 
   // get all notification -> response notification list
   Future<List<Notification>?> fetchNotifications() async {
@@ -105,5 +109,51 @@ class NotificationRepository {
 
     return false;
   }
+
+
+  /* ----------------- Transaction -------------------- */
+
+  // get transaction notification {userid} -> request userid, response notification list
+  Future<List<Notification>?> fetchNotificationsByUserID(String userID) async {
+    try {
+      final endpoint = '/transaction/$userID'; 
+      Map<String, dynamic>? serverResponse = await _notificationService.getResponse(endpoint);
+
+      if (serverResponse != null && serverResponse['data'] != null) {
+        final List<dynamic> data = serverResponse['data'];
+        return data.map((json) => Notification.fromJson(json)).toList();
+      }
+    } catch (e) {
+      print('Error fetching notifications by date: $e');
+    }
+    return null; 
+  }
+
+  // auto send transaction alert notification (When expense reach 50%/70%/90%/100% of budget)
+  // -> request userid, response message 
+
+  Future<bool> sendTransactionAlertNotification(String userID) async {
+    try {
+
+      Map<String, dynamic> requestBody = {
+        'userid': userID,
+      };
+
+      Map<String, dynamic>? serverResponse = await _notificationService.postResponse('/check-budget', requestBody);
+
+      if (serverResponse != null && serverResponse['errorCode'] == 0) {
+        print('Transaction alert notification sent successfully for userID: $userID');
+        return true;
+      } else {
+        print('Failed to send transaction alert notification: ${serverResponse?['message']}');
+        return false;
+      }
+    } catch (e) {
+      print('Error sending transaction alert notification: $e');
+      return false;
+    }
+  }
+
+
   
 }

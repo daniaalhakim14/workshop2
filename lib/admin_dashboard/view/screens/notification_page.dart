@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'dart:html' as html;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:workshop_2/admin_dashboard/controllers/menu_controller.dart'as custom;
 import 'package:workshop_2/admin_dashboard/controllers/navigation_controller.dart'as nav;
@@ -143,8 +142,8 @@ class _NotificationPageState extends State<NotificationPage> {
                           ? Image.network(
                               notification.image!,
                               fit: BoxFit.cover,
-                              height: 200,
-                              width: 200,
+                              height: 150,
+                              width: 150,
                             )
                           : const Icon(Icons.image_not_supported, size: 100),
                       ),
