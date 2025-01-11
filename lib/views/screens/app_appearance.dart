@@ -61,7 +61,7 @@ class _AppAppearanceState extends State<AppAppearance> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Appearance Settings',
+                  '',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
