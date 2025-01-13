@@ -524,34 +524,43 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                             ),
 
                                           // Transaction Details
-                                          ListTile(
-                                            leading: CircleAvatar(
-                                              backgroundColor: transaction.iconColor,
-                                              child: Icon(
-                                                transaction.iconData,
-                                                color: Colors.white,
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: Colors.grey, // Border color
+                                                width: 1.0,         // Border width
                                               ),
+                                              borderRadius: BorderRadius.circular(0.0), // Optional: Rounded corners
                                             ),
-                                            title: Text(
-                                              transaction.name.toString(),
-                                              style: const TextStyle(fontWeight: FontWeight.bold),
-                                            ),
-                                            subtitle: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  transaction.description.toString(),
-                                                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                            child: ListTile(
+                                              leading: CircleAvatar(
+                                                backgroundColor: transaction.iconColor,
+                                                child: Icon(
+                                                  transaction.iconData,
+                                                  color: Colors.white,
                                                 ),
-                                              ],
-                                            ),
-                                            trailing: Padding(
-                                              padding: const EdgeInsets.only(left: 8.0),
-                                              child: Text(
-                                                'RM ${transaction.amount}', // Format the amount
+                                              ),
+                                              title: Text(
+                                                transaction.name.toString(),
+                                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                              ),
+                                              subtitle: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    transaction.description.toString(),
+                                                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                                  ),
+                                                ],
+                                              ),
+                                              trailing: Padding(
+                                                padding: const EdgeInsets.only(left: 8.0),
+                                                child: Text(
+                                                  'RM ${transaction.amount}', // Format the amount
+                                                ),
                                               ),
                                             ),
-                                          ),
+                                          )
                                         ],
                                       ),
                                     );
@@ -639,40 +648,48 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                           ),
                                         );
                                       },
-                                      child:  Column(
-                                        children: [
-                                          // Category Header
-                                          ListTile(
-                                            leading: CircleAvatar(
-                                              backgroundColor: categoryTransactions.first.iconColor,
-                                              child: Icon(
-                                                categoryTransactions.first.iconData,
-                                                color: Colors.white,
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: Colors.grey, // Border color
+                                                  width: 1.0,         // Border width
+                                                ),
+                                                borderRadius: BorderRadius.circular(0.0), // Optional: Rounded corners
                                               ),
-                                            ),
-                                            title: Text(
-                                              categoryName,
-                                              style: const TextStyle(fontWeight: FontWeight.bold),
-                                            ),
-                                            subtitle: Text(
-                                              '${categoryTransactions.length} Transaction${categoryTransactions.length > 1 ? 's' : ''}', // Display transaction count
-                                              style: const TextStyle(color: Colors.grey, fontSize: 12),
-                                            ),
-                                            trailing: Padding(
-                                              padding: const EdgeInsets.only(left: 8.0),
-                                              child: Text(
-                                                '-RM ${totalAmount.toStringAsFixed(2)}', // Display total amount
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                  color: Colors.red,
+                                              child: ListTile(
+                                                leading: CircleAvatar(
+                                                  backgroundColor: categoryTransactions.first.iconColor,
+                                                  child: Icon(
+                                                    categoryTransactions.first.iconData,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                title: Text(
+                                                  categoryName,
+                                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                                ),
+                                                subtitle: Text(
+                                                  '${categoryTransactions.length} Transaction${categoryTransactions.length > 1 ? 's' : ''}', // Display transaction count
+                                                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                                ),
+                                                trailing: Padding(
+                                                  padding: const EdgeInsets.only(left: 8.0),
+                                                  child: Text(
+                                                    '-RM ${totalAmount.toStringAsFixed(2)}', // Display total amount
+                                                    style: const TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 16,
+                                                      color: Colors.red,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          const Divider(), // Optional divider between categories
-                                        ],
-                                      )
+                                            const SizedBox(height: 0.0), // Add spacing between items
+                                          ],
+                                        )
                                     );
                                   },
                                 ),
@@ -922,41 +939,53 @@ class CategoryDetailScreen extends StatelessWidget {
                 (sum, transaction) => sum + (transaction.amount ?? 0),
           );
 
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundColor: subcategoryTransactions.first.iconColor,
-              child: Icon(
-                subcategoryTransactions.first.iconData,
-                color: Colors.white,
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 4.0),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.grey, // Border color
+                  width: 1.0,         // Border width
+                ),
+                borderRadius: BorderRadius.circular(8.0), // Rounded corners
               ),
-            ),
-            title: Text(
-              subcategoryName,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(
-              '${subcategoryTransactions.length} Transaction${subcategoryTransactions.length > 1 ? 's' : ''}',
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-            trailing: Text(
-              '-RM ${totalAmount.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.red,
-              ),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SubCategoryDetailScreen(
-                    subcategoryName: subcategoryName,
-                    transactions: subcategoryTransactions,
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: subcategoryTransactions.first.iconColor,
+                  child: Icon(
+                    subcategoryTransactions.first.iconData,
+                    color: Colors.white,
                   ),
                 ),
-              );
-            },
+                title: Text(
+                  subcategoryName,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  '${subcategoryTransactions.length} Transaction${subcategoryTransactions.length > 1 ? 's' : ''}',
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+                trailing: Text(
+                  '-RM ${totalAmount.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.red,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SubCategoryDetailScreen(
+                        subcategoryName: subcategoryName,
+                        transactions: subcategoryTransactions,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
           );
         },
       ),
@@ -1005,48 +1034,68 @@ class SubCategoryDetailScreen extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  date,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
                 ),
+                height: 30.0,
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.all( 4.0),
+                  child: Text(
+                    date,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+
               ),
               ...dateTransactions.map((transaction) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: transaction.iconColor,
-                    child: Icon(
-                      transaction.iconData,
-                      color: Colors.white,
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey, // Border color
+                        width: 1.0,         // Border width
+                      ),
+                      borderRadius: BorderRadius.circular(8.0), // Rounded corners
                     ),
-                  ),
-                  title: Text(
-                    transaction.description ?? 'No Description',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    subcategoryName,
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                  trailing: Text(
-                    '-RM ${transaction.amount?.toStringAsFixed(2) ?? '0.00'}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.red,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TransactionDetailScreen(
-                          listDetail: transaction,
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: transaction.iconColor,
+                        child: Icon(
+                          transaction.iconData,
+                          color: Colors.white,
                         ),
                       ),
-                    );
-                  },
+                      title: Text(
+                        transaction.description ?? 'No Description',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        subcategoryName,
+                        style: const TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
+                      trailing: Text(
+                        '-RM ${transaction.amount?.toStringAsFixed(2) ?? '0.00'}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.red,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TransactionDetailScreen(
+                              listDetail: transaction,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 );
               }).toList(),
             ],
@@ -1056,6 +1105,7 @@ class SubCategoryDetailScreen extends StatelessWidget {
     );
   }
 }
+
 
 
 
