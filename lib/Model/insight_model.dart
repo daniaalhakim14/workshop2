@@ -67,6 +67,7 @@ class TransactionList{
   final double? amount;
   final DateTime? date;
   final String? name;
+  final String? categoryname;
   final String? description;
   final String? paymenttype;
   final int? userid;
@@ -81,6 +82,7 @@ class TransactionList{
     this.amount,
     this.date,
     this.name,  // name for subcategory and income category
+    this.categoryname, //category name for expense
     this.description,
     this.paymenttype,
     this.userid,
@@ -98,7 +100,8 @@ class TransactionList{
     date: json["date"] != null
         ? DateTime.parse(json["date"]) // Parse ISO 8601 date strings
         : null,
-    name: json["category_name"],
+    name: json["subcategory_name"],
+    categoryname: json["category_name"],
     description: json["description"],
     paymenttype: json["paymenttype"],
     userid: json["userid"],

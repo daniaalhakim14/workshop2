@@ -436,7 +436,8 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                           // to add space
                           const SizedBox(height: 20),
                           // To display transaction list
-                          Consumer<InsightViewModel>(
+                          _selectedButtonIndex == 0
+                              ? Consumer<InsightViewModel>(
                             builder: (context, viewModel, child) {
                               final viewModel = Provider.of<InsightViewModel>(context, listen: false);
                               List<TransactionList> transactionList = viewModel.transactionList;
@@ -480,21 +481,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                   ],
                                 );
                               }
-                              /*
 
-                              return Column(
-                                children: [
-                                  Flexible(
-                                    child: ListView.builder(
-                                      itemCount: transactionList.length,
-                                      itemBuilder: (context, index){
-                                            return TransactionCard(list: transactionList[index]);
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              );
-                              */
                               return SizedBox(
                                 height: MediaQuery.of(context).size.height * 0.4,
                                 child: ListView.builder(
@@ -579,7 +566,123 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                               );
 
                             },
-                          ),
+                          )
+                              : Consumer<InsightViewModel>(
+                            builder: (context, viewModel, child) {
+                              final viewModel = Provider.of<InsightViewModel>(context, listen: false);
+                              List<TransactionList> categoryList = viewModel.transactionList;
+
+                              if (viewModel.fetchingData) {
+                                return Container(
+                                  width: 250,
+                                  height: 250,
+                                  child: const Center(child: CircularProgressIndicator()),
+                                );
+                              }
+
+                              // Filter transactions by the selected month
+                              final filteredCategories = categoryList.where((categories) {
+                                String isoFormatDate = categories.date.toString();
+                                DateTime dateTime = DateTime.parse(isoFormatDate);
+                                String formattedDate = _formatMonth(dateTime); // Format transaction.date
+                                return formattedDate == selectedMonth;
+                              }).toList();
+
+                              if (filteredCategories.isEmpty) {
+                                return Column(
+                                  children: [
+                                    Image.asset(
+                                      'lib/Icons/statistics (2).png',
+                                      width: 250,
+                                      height: 250,
+                                      fit: BoxFit.contain,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    Center(
+                                      child: Text(
+                                        'No transactions for $selectedMonth',
+                                        style: const TextStyle(
+                                          fontSize: 13.5,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+                              // Group by category and aggregate transactions
+                              final Map<String, List<TransactionList>> groupedCategories = {};
+                              for (var transaction in filteredCategories) {
+                                groupedCategories.putIfAbsent(transaction.categoryname ?? 'Other', () => []);
+                                groupedCategories[transaction.categoryname ?? 'Other']!.add(transaction);
+                              }
+
+                              return SizedBox(
+                                height: MediaQuery.of(context).size.height * 0.4,
+                                child: ListView.builder(
+                                  itemCount: groupedCategories.keys.length,
+                                  itemBuilder: (context, index) {
+                                    final categoryName = groupedCategories.keys.toList()[index];
+                                    final categoryTransactions = groupedCategories[categoryName]!;
+                                    final totalAmount = categoryTransactions.fold<double>(
+                                      0,
+                                          (sum, transaction) => sum + (transaction.amount ?? 0),
+                                    );
+
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => CategoryDetailScreen(
+                                              categoryName: categoryName, // Pass the category name
+                                              categoryTransactions: groupedCategories[categoryName]!, // Pass the transactions for this category
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child:  Column(
+                                        children: [
+                                          // Category Header
+                                          ListTile(
+                                            leading: CircleAvatar(
+                                              backgroundColor: categoryTransactions.first.iconColor,
+                                              child: Icon(
+                                                categoryTransactions.first.iconData,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            title: Text(
+                                              categoryName,
+                                              style: const TextStyle(fontWeight: FontWeight.bold),
+                                            ),
+                                            subtitle: Text(
+                                              '${categoryTransactions.length} Transaction${categoryTransactions.length > 1 ? 's' : ''}', // Display transaction count
+                                              style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                            ),
+                                            trailing: Padding(
+                                              padding: const EdgeInsets.only(left: 8.0),
+                                              child: Text(
+                                                '-RM ${totalAmount.toStringAsFixed(2)}', // Display total amount
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  color: Colors.red,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const Divider(), // Optional divider between categories
+                                        ],
+                                      )
+                                    );
+                                  },
+                                ),
+                              );
+
+                            },
+                          )
                         ],
                       ),
                     ),
@@ -784,6 +887,180 @@ class TransactionDetailScreen extends StatelessWidget {
     );
   }
 }
+
+class CategoryDetailScreen extends StatelessWidget {
+  final String categoryName;
+  final List<TransactionList> categoryTransactions;
+
+  const CategoryDetailScreen({
+    super.key,
+    required this.categoryName,
+    required this.categoryTransactions,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Group transactions by subcategory
+    final Map<String, List<TransactionList>> groupedSubcategories = {};
+    for (var transaction in categoryTransactions) {
+      groupedSubcategories.putIfAbsent(transaction.name ?? 'Other', () => []);
+      groupedSubcategories[transaction.name ?? 'Other']!.add(transaction);
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          categoryName,
+          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+      ),
+      body: ListView.builder(
+        itemCount: groupedSubcategories.keys.length,
+        itemBuilder: (context, index) {
+          final subcategoryName = groupedSubcategories.keys.toList()[index];
+          final subcategoryTransactions = groupedSubcategories[subcategoryName]!;
+          final totalAmount = subcategoryTransactions.fold<double>(
+            0,
+                (sum, transaction) => sum + (transaction.amount ?? 0),
+          );
+
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundColor: subcategoryTransactions.first.iconColor,
+              child: Icon(
+                subcategoryTransactions.first.iconData,
+                color: Colors.white,
+              ),
+            ),
+            title: Text(
+              subcategoryName,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(
+              '${subcategoryTransactions.length} Transaction${subcategoryTransactions.length > 1 ? 's' : ''}',
+              style: const TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+            trailing: Text(
+              '-RM ${totalAmount.toStringAsFixed(2)}',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.red,
+              ),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SubCategoryDetailScreen(
+                    subcategoryName: subcategoryName,
+                    transactions: subcategoryTransactions,
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class SubCategoryDetailScreen extends StatelessWidget {
+  final String subcategoryName;
+  final List<TransactionList> transactions;
+
+  const SubCategoryDetailScreen({
+    super.key,
+    required this.subcategoryName,
+    required this.transactions,
+  });
+
+  String formatDate(DateTime? dateTime) {
+    if (dateTime == null) return 'No date';
+    return DateFormat('d MMM yyyy').format(dateTime);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Group transactions by date
+    final Map<String, List<TransactionList>> groupedByDate = {};
+    for (var transaction in transactions) {
+      final formattedDate = formatDate(transaction.date);
+      groupedByDate.putIfAbsent(formattedDate, () => []);
+      groupedByDate[formattedDate]!.add(transaction);
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          subcategoryName,
+          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+      ),
+      body: ListView.builder(
+        itemCount: groupedByDate.keys.length,
+        itemBuilder: (context, index) {
+          final date = groupedByDate.keys.toList()[index];
+          final dateTransactions = groupedByDate[date]!;
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  date,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              ...dateTransactions.map((transaction) {
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: transaction.iconColor,
+                    child: Icon(
+                      transaction.iconData,
+                      color: Colors.white,
+                    ),
+                  ),
+                  title: Text(
+                    transaction.description ?? 'No Description',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    subcategoryName,
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                  trailing: Text(
+                    '-RM ${transaction.amount?.toStringAsFixed(2) ?? '0.00'}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.red,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TransactionDetailScreen(
+                          listDetail: transaction,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }).toList(),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+
+
 
 
 
