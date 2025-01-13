@@ -31,7 +31,6 @@ class TransactionsExpense {
     this.iconcolor,
     this.categoryname
   });
-
   // Factory constructor to create an instance from JSON
   factory TransactionsExpense.fromJson(Map<String, dynamic> json) => TransactionsExpense(
     expenseid: json['expenseid'],

@@ -1,4 +1,5 @@
 
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -480,14 +481,21 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                 );
                               }
                               /*
-                              return ListView.builder(
-                                itemCount: filteredTransactions.length,
-                                itemBuilder: (context, index){
-                                      return TransactionCard(transaction: filteredTransactions[index]);
-                                },
+
+                              return Column(
+                                children: [
+                                  Flexible(
+                                    child: ListView.builder(
+                                      itemCount: transactionList.length,
+                                      itemBuilder: (context, index){
+                                            return TransactionCard(list: transactionList[index]);
+                                      },
+                                    ),
+                                  ),
+                                ],
                               );
                               */
-                              return  SizedBox(
+                              return SizedBox(
                                 height: MediaQuery.of(context).size.height * 0.4,
                                 child: ListView.builder(
                                   itemCount: filteredTransactions.length,
@@ -498,66 +506,78 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                     DateTime dateTime = DateTime.parse(isoFormatDate);
                                     String formattedDate = _formatFullDate(dateTime); // Format transaction.date
 
-                                    return Column(
-                                      children: [
-                                        // List Header
-                                        if (index == 0 || filteredTransactions[index - 1].date != transaction.date)
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey[200],
-                                              border: const Border(
-                                                top: BorderSide(
-                                                  color: Colors.grey, // Adjust color to your preference
-                                                  width: 1.0,         // Thickness of the border
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => TransactionDetailScreen(
+                                              listDetail: transaction, // Pass the single transaction object
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Column(
+                                        children: [
+                                          // List Header
+                                          if (index == 0 || filteredTransactions[index - 1].date != transaction.date)
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey[200],
+                                                border: const Border(
+                                                  top: BorderSide(
+                                                    color: Colors.grey, // Adjust color to your preference
+                                                    width: 1.0,         // Thickness of the border
+                                                  ),
+                                                ),
+                                              ),
+                                              height: 30.0,
+                                              width: double.infinity,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+                                                child: Text(
+                                                  formattedDate, // Display the transaction date
+                                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                                 ),
                                               ),
                                             ),
-                                            height: 30.0,
-                                            width: double.infinity,
 
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+                                          // Transaction Details
+                                          ListTile(
+                                            leading: CircleAvatar(
+                                              backgroundColor: transaction.iconColor,
+                                              child: Icon(
+                                                transaction.iconData,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            title: Text(
+                                              transaction.name.toString(),
+                                              style: const TextStyle(fontWeight: FontWeight.bold),
+                                            ),
+                                            subtitle: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  transaction.description.toString(),
+                                                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                                ),
+                                              ],
+                                            ),
+                                            trailing: Padding(
+                                              padding: const EdgeInsets.only(left: 8.0),
                                               child: Text(
-                                                formattedDate, // Display the transaction date
-                                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                                'RM ${transaction.amount}', // Format the amount
                                               ),
                                             ),
                                           ),
-
-                                        // Transaction Details
-                                        ListTile(
-                                          leading: CircleAvatar(
-                                            backgroundColor: transaction.iconColor,
-                                            child: Icon(
-                                              transaction.iconData,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          title: Text(
-                                            transaction.name.toString(),
-                                            style: const TextStyle(fontWeight: FontWeight.bold),
-                                          ),
-                                          subtitle: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                transaction.description.toString(),
-                                                style: const TextStyle(color: Colors.grey, fontSize: 12),
-                                              ),
-                                            ],
-                                          ),
-                                          trailing: Padding(
-                                            padding: const EdgeInsets.only(left: 8.0),
-                                            child: Text(
-                                              'RM ${transaction.amount}', // Format the amount
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     );
                                   },
                                 ),
                               );
+
                             },
                           ),
                         ],
@@ -600,152 +620,164 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
   }
 }
 
-class DynamicButton extends StatelessWidget {
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-  final double width;
-  final double height;
-  final EdgeInsets margin;
-  final EdgeInsets padding;
-  final BorderRadius borderRadius;
-
-  const DynamicButton({
-    required this.label,
-    required this.color,
-    required this.onTap,
-    this.width = 110.0,
-    this.height = 35.0,
-    this.margin = const EdgeInsets.all(10.0),
-    this.padding = const EdgeInsets.all(3.0),
-    this.borderRadius = const BorderRadius.all(Radius.circular(20.0)),
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: padding,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: borderRadius,
-          ),
-          margin: margin,
-          width: width,
-          height: height,
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class TransactionCard extends StatelessWidget {
-  final TransactionList transaction; // Replace with your transaction model
-
-  const TransactionCard({Key? key, required this.transaction}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TransactionDetailScreen(transaction: transaction),
-          ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.lightBlue.shade50,
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        child: Row(
-          children: [
-            CircleAvatar(
-              backgroundColor: transaction.iconColor,
-              child: Icon(
-                transaction.iconData,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(width: 16.0),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    transaction.name.toString(),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
-                    ),
-                  ),
-                  const SizedBox(height: 4.0),
-                  Text(
-                    transaction.description.toString(),
-                    style: const TextStyle(
-                      fontSize: 14.0,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Text(
-              'RM ${transaction.amount}',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class TransactionDetailScreen extends StatelessWidget {
-  final TransactionList transaction;
+  const TransactionDetailScreen({super.key, required this. listDetail});
+  final TransactionList listDetail;
 
-  const TransactionDetailScreen({Key? key, required this.transaction}) : super(key: key);
+  String formatDateTime(DateTime? dateTime) {
+    if (dateTime == null) {
+      return 'No date available'; // Fallback message for null date
+    }
+    return DateFormat('h:mma, dd MMM yyyy').format(dateTime).toLowerCase();
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(transaction.name.toString()),
+        title: Text(listDetail.name.toString(),
+        style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Details for ${transaction.name}',
+            Padding(
+              padding: const EdgeInsets.only(top:8.0, bottom: 8.0),
+              child: Center(
+                child: Container(
+                  width: 47,
+                  height: 47,
+                  decoration: BoxDecoration(
+                    color: listDetail.iconColor,
+                    shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.grey.shade400,
+                        width: 3,
+                      )
+                  ),
+                  child: Center(
+                    child: Icon(
+                      listDetail.iconData,
+                      size: 30,
+                      color: Colors.white,
+                    ),
+                  )
+                ),
+              ),
+            ),
+            Text('${listDetail.name}',
               style: const TextStyle(
-                fontSize: 20.0,
+                fontSize: 30.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16.0),
-            Text('Description: ${transaction.description}'),
-            Text('Amount: RM ${transaction.amount}'),
-            Text('Date: ${transaction.date}'),
+            const SizedBox(height: 5.0),
+            Text('${formatDateTime(listDetail.date)}',
+              style: const TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 2.0),
+                  child: Text(
+                    listDetail.transactiontype == 'Expense' ? '-RM ' : '+RM ',
+                    style: TextStyle(
+                      color: listDetail.transactiontype == 'Expense' ? Colors.red : Colors.green,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  listDetail.amount?.toStringAsFixed(2) ?? '0.00',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                    color: listDetail.transactiontype == 'Expense' ? Colors.red : Colors.green,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 30.0),
+            Text('Description: ${listDetail.description}',
+              style: const TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.normal,),
+            ),
+            Text('Payment Type: ${listDetail.paymenttype}',
+              style: const TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.normal,),
+            ),
+            const SizedBox(height: 100.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Edit Button
+                Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white, // Background color of the button
+                        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0), // Adjust button size
+                      ),
+                      child: const Icon(
+                        Icons.edit_note_outlined,
+                        size: 27, // Icon size
+                        color: Colors.blue, // Icon color
+                      ),
+                    ),
+                    const SizedBox(height: 8.0), // Space between button and text
+                    const Text(
+                      "Edit",
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue, // Matches the button theme
+                      ),
+                    ),
+                  ],
+                ),
+                // Delete Button
+                Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white, // Background color of the button
+                        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0), // Adjust button size
+                      ),
+                      child: const Icon(
+                        Icons.delete_outline,
+                        size: 27, // Icon size
+                        color: Colors.red, // Icon color
+                      ),
+                    ),
+                    const SizedBox(height: 8.0), // Space between button and text
+                    const Text(
+                      "Delete",
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red, // Matches the button theme
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            )
+
+
+
+
           ],
         ),
       ),
@@ -813,7 +845,55 @@ Row _bottomBarConfiguration(BuildContext context) {
   );
 }
 
+class DynamicButton extends StatelessWidget {
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+  final double width;
+  final double height;
+  final EdgeInsets margin;
+  final EdgeInsets padding;
+  final BorderRadius borderRadius;
 
+  const DynamicButton({
+    required this.label,
+    required this.color,
+    required this.onTap,
+    this.width = 110.0,
+    this.height = 35.0,
+    this.margin = const EdgeInsets.all(10.0),
+    this.padding = const EdgeInsets.all(3.0),
+    this.borderRadius = const BorderRadius.all(Radius.circular(20.0)),
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: padding,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: borderRadius,
+          ),
+          margin: margin,
+          width: width,
+          height: height,
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 
 void addIconExample() async {

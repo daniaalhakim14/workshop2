@@ -13,7 +13,7 @@ class InsightRepository{
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body); // This is a list of maps
-      //print('Decoded Transaction Expense: $data'); // Debugging log
+      print('Decoded Transaction Expense: $data'); // Debugging log
       return List<TransactionsExpense>.from(
           data.map((x) => TransactionsExpense.fromJson(x)) // Map each item
       );
