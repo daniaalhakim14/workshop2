@@ -511,12 +511,6 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                             Container(
                                               decoration: BoxDecoration(
                                                 color: Colors.grey[200],
-                                                border: const Border(
-                                                  top: BorderSide(
-                                                    color: Colors.grey, // Adjust color to your preference
-                                                    width: 1.0,         // Thickness of the border
-                                                  ),
-                                                ),
                                               ),
                                               height: 30.0,
                                               width: double.infinity,
@@ -614,8 +608,11 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                               // Group by category and aggregate transactions
                               final Map<String, List<TransactionList>> groupedCategories = {};
                               for (var transaction in filteredCategories) {
-                                groupedCategories.putIfAbsent(transaction.categoryname ?? 'Other', () => []);
-                                groupedCategories[transaction.categoryname ?? 'Other']!.add(transaction);
+                                // Only include transactions that are 'Expense'
+                                if (transaction.transactiontype == 'Expense') {
+                                  groupedCategories.putIfAbsent(transaction.categoryname ?? 'Other', () => []);
+                                  groupedCategories[transaction.categoryname ?? 'Other']!.add(transaction);
+                                }
                               }
 
                               return SizedBox(
@@ -706,6 +703,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
               print("Refreshing transaction list...");
               final viewModel = Provider.of<InsightViewModel>(context, listen: false);
               viewModel.fetchTransactionsExpense(); // Fetch the latest transactions
+              viewModel.fetchTransactionList();
             }
           },
           icon: const Icon(Icons.add),
