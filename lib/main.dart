@@ -1,41 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:postgres/postgres.dart';
-import 'sql_connection.dart';
-import 'home_page.dart';
+import 'package:provider/provider.dart'; // Import the provider package
+import 'View/home_page.dart';
+import '../ViewModel/insight_view_model.dart'; // Import your InsightViewModel
 
-
-
-void main() async{
-  try {  // make connection with database
-    final conn = await Connection.open(Endpoint(
-      host: 'duitappworkshop2.postgres.database.azure.com',
-      database: 'postgres',
-      username: 'duit_admin',
-      password: '@Bcd1234',
-    ));
-    print('Database connection successful!');
-    runApp(MyApp());
-  }catch (e) {
-    print('Database connection failed: $e');
-    // Optionally, handle the error (e.g., show an error screen or retry)
-  }
-
+void main() async {
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   // root widget
   @override
-  Widget build(BuildContext context){
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Homepage',
-      theme: ThemeData(
-        primarySwatch: Colors.teal, // determines the overall color palette for app
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.tealAccent,
-        )
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => InsightViewModel()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Homepage',
+        theme: ThemeData(
+          primarySwatch: Colors.teal, // determines the overall color palette for app
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xFF65ADAD),
+          ),
+        ),
+        home: Home(),
       ),
-      home: Home(),
     );
   }
 }
