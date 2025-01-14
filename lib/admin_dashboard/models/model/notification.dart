@@ -11,6 +11,7 @@ class Notification {
   String? date; 
   String? time; 
   int? adminID;
+  List<int>? financialAidCategoryIDs;
 
   Notification({
     this.notificationID,
@@ -21,6 +22,7 @@ class Notification {
     this.date,
     this.time,
     this.adminID,
+    this.financialAidCategoryIDs,
   });
 
   factory Notification.fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,9 @@ class Notification {
       date: json['date'],
       time: json['time'],
       adminID: json['adminid'],
+      financialAidCategoryIDs: (json['financialaidcategoryids'] as List<dynamic>?)
+        ?.map((e) => e as int)
+        .toList(),
     );
   }
 
@@ -49,6 +54,7 @@ class Notification {
       'date': date,
       'time': time,
       'adminid': adminID,
+      'financialaidcategoryids': financialAidCategoryIDs,
     };
   }
 

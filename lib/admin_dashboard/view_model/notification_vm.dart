@@ -17,11 +17,28 @@ class NotificationViewModel extends GetxController {
   final RxString _selectedDate = 'Select Date'.obs;
   String get selectedDate => _selectedDate.value;
 
+  final RxList<Map<String, dynamic>> _financialAidCategories = <Map<String, dynamic>>[].obs;
+  List<Map<String, dynamic>> get financialAidCategories => _financialAidCategories;
+
+  final RxList<Map<String, dynamic>> _notificationCategories = <Map<String, dynamic>>[].obs;
+  List<Map<String, dynamic>> get notificationCategories => _notificationCategories;
+
+  
+  
   final RxBool isLoading = false.obs;
+
+  bool _isMounted = true;
+
+  @override
+  void onClose() {
+    _isMounted = false; 
+    super.onClose();
+  }
 
   void updateSelectedDate(String date) {
     _selectedDate.value = date;
   }
+  
 
   void toggleSortOrder() {
     isDescending.value = !isDescending.value; 
@@ -35,29 +52,77 @@ class NotificationViewModel extends GetxController {
     _notifications.refresh(); 
   }
 
+  /*
   Future<void> initializeNotifications(String userID) async {
     try {
       isLoading.value = true;
 
+      //check the expense percentage in budget, if reach 50%/70%/90%/100% will auto send notification to user
+      await autoSendTransactionAlert(userID);
+      
       List<nt.Notification>? generalNotifications = await notificationRepository.fetchNotifications();
       List<nt.Notification>? userNotifications = await notificationRepository.fetchNotificationsByUserID(userID);
 
-      final combinedNotifications = [
-        ...?_notifications, 
-        ...?generalNotifications,
-        ...?userNotifications,
-      ];
+      if (generalNotifications != null && userNotifications != null) {
+        final combinedNotifications = [...generalNotifications, ...userNotifications];
+        final uniqueNotifications = combinedNotifications.toSet().toList()
+          ..sort((a, b) {
+            DateTime dateTimeA = DateTime.parse('${a.date ?? '1970-01-01'} ${a.time ?? '00:00:00'}');
+            DateTime dateTimeB = DateTime.parse('${b.date ?? '1970-01-01'} ${b.time ?? '00:00:00'}');
+            return dateTimeB.compareTo(dateTimeA);
+          });
 
-      final uniqueNotifications = combinedNotifications.toSet().toList();
-      _notifications.assignAll(uniqueNotifications);
+        _notifications.assignAll(uniqueNotifications);
+      } else {
+        _notifications.clear();
+      }
 
-      toggleSortOrder();
+    } catch (e) {
+      print('Error initializing notifications: $e');
+    } finally {
+      if (_isMounted) {
+        isLoading.value = false;
+      }
+
+    }
+  }*/
+
+  Future<void> initializeNotifications(String userID) async {
+    try {
+      isLoading.value = true;
+
+      final results = await Future.wait([
+        autoSendTransactionAlert(userID), 
+        notificationRepository.fetchNotifications(), 
+        notificationRepository.fetchNotificationsByUserID(userID), // 用户相关通知
+      ]);
+
+      final List<nt.Notification>? generalNotifications = results[1] as List<nt.Notification>?;
+      final List<nt.Notification>? userNotifications = results[2] as List<nt.Notification>?;
+
+      if (generalNotifications != null && userNotifications != null) {
+        final combinedNotifications = [
+          ...generalNotifications,
+          ...userNotifications,
+        ].toSet().toList(); 
+
+        combinedNotifications.sort((a, b) {
+          final dateTimeA = DateTime.parse('${a.date ?? '1970-01-01'} ${a.time ?? '00:00:00'}');
+          final dateTimeB = DateTime.parse('${b.date ?? '1970-01-01'} ${b.time ?? '00:00:00'}');
+          return dateTimeB.compareTo(dateTimeA); 
+        });
+
+        _notifications.assignAll(combinedNotifications);
+      } else {
+        _notifications.clear();
+      }
     } catch (e) {
       print('Error initializing notifications: $e');
     } finally {
       isLoading.value = false;
     }
   }
+
 
 
   /* ----------------- Welfare Program -------------------- */
@@ -72,8 +137,9 @@ class NotificationViewModel extends GetxController {
       if (result != null) {
         print('Notifications fetched: ${result.length}');
         _notifications.assignAll(result);
-        toggleSortOrder(); // 根据当前排序状态重新排序
+        toggleSortOrder(); 
       } else {
+        _notifications.clear();
         print('No notifications fetched');
       }
     } catch (e) {
@@ -86,7 +152,7 @@ class NotificationViewModel extends GetxController {
 
 
 
-  // get notification {date} -> request date, response notification list
+  // get notification {date} 
   Future<void> fetchNotificationsByDate(String? date) async {
     try {
       List<nt.Notification>? result;
@@ -106,13 +172,96 @@ class NotificationViewModel extends GetxController {
     }
   }
 
+  // get all financial aid categories 
+  Future<void> fetchFinancialAidCategories() async {
+    try {
+      final result = await notificationRepository.fetchCategories();
+      if (result != null) {
+        _financialAidCategories.assignAll(result);
+      } else {
+        _financialAidCategories.clear();
+      }
+    } catch (e) {
+      print('Error fetching financial aid categories: $e');
+    }
+  }
+
+/*
+Future<List<Map<String, dynamic>>> fetchCategoriesForNotification(int notificationID) async {
+  try {
+    final result = await notificationRepository.fetchCategoriesByNotificationID(notificationID);
+    if (result != null) {
+      _notificationCategories.assignAll(result); // Update the internal state
+      return result; // Return the fetched categories
+    } else {
+      _notificationCategories.clear();
+      return [];
+    }
+  } catch (e) {
+    print('Error fetching categories for notification: $e');
+    return [];
+  }
+}*/
+
+Future<List<Map<String, dynamic>>> fetchCategoriesForNotification(int notificationID) async {
+  final box = GetStorage();
+  final String cacheKey = 'categories_$notificationID';
+
+  final cachedData = box.read<List<dynamic>>(cacheKey);
+  if (cachedData != null) {
+    final categories = cachedData.map((e) => e as Map<String, dynamic>).toList();
+    _notificationCategories.assignAll(categories);
+    return categories;
+  }
+
+  try {
+    final result = await notificationRepository.fetchCategoriesByNotificationID(notificationID);
+    if (result != null) {
+      _notificationCategories.assignAll(result);
+      box.write(cacheKey, result);
+      return result;
+    } else {
+      _notificationCategories.clear();
+      return [];
+    }
+  } catch (e) {
+    print('Error fetching categories for notification: $e');
+    return [];
+  }
+}
+
+void clearCategoryCache(int notificationID) {
+  final box = GetStorage();
+  final String cacheKey = 'categories_$notificationID';
+  box.remove(cacheKey);
+}
+
+
+
+  /*
+  Future<List<Notification>> fetchNotificationsForCategory(int categoryID) async {
+    try {
+      final result = await notificationRepository.fetchNotificationsByCategoryID(categoryID);
+      if (result != null) {
+        return result;
+      } else {
+        print('No notifications found for category $categoryID');
+      }
+    } catch (e) {
+      print('Error fetching notifications for category: $e');
+    }
+    return [];
+  }*/
+
+
+
   // Add notification -> request notification details, response success message
   Future<bool> addNotification(nt.Notification notification) async {
     try {
       bool success = await notificationRepository.addNotification(notification);
       if (success) {
         print('Notification added successfully');
-        await fetchNotifications(); // Refresh notifications after adding
+        await fetchNotifications(); 
       } else {
         print('Failed to add notification');
       }
@@ -123,6 +272,55 @@ class NotificationViewModel extends GetxController {
     }
   }
 
+  Future<void> addNotificationWithMessage({
+    required String title,
+    required String description,
+    required String type,
+    required String? imageUrl,
+    required int? adminID,
+    required List<int> financialAidCategoryIDs,
+  }) async {
+
+    if (title.isEmpty || description.isEmpty || type.isEmpty || adminID == null) {
+      await MessageUtils.showMessage(
+        context: Get.context!,
+        title: "Error",
+        description: "Please fill in all fields.",
+      );
+      return;
+    }
+
+    final notification = nt.Notification(
+      notificationID: null,
+      title: title,
+      type: type,
+      description: description,
+      image: imageUrl,
+      adminID: adminID,
+      date: DateTime.now().toString().split(' ')[0],
+      time: DateTime.now().toLocal().toString().split(' ')[1],
+      financialAidCategoryIDs: financialAidCategoryIDs, 
+    );
+
+    final isSuccess = await addNotification(notification);
+
+    if (isSuccess) {
+      Navigator.of(Get.context!).pop();
+      MessageUtils.showMessage(
+        context: Get.context!,
+        title: "Success",
+        description: "Notification added successfully.",
+      );
+    } else {
+      MessageUtils.showMessage(
+        context: Get.context!,
+        title: "Error",
+        description: "Failed to add notification.",
+      );
+    }
+  }
+
+
   // update notification -> request notification details, response success message
   Future<bool> updateNotification(String notificationID, nt.Notification updatedData) async {
     try {
@@ -132,6 +330,7 @@ class NotificationViewModel extends GetxController {
         if (index != -1) {
           _notifications[index] = updatedNotification;
           _notifications.refresh(); 
+          await fetchNotifications();
           print('Notification updated successfully');
           return true;
         }
@@ -144,13 +343,80 @@ class NotificationViewModel extends GetxController {
     }
   }
 
+  Future<bool> updateNotificationDetailsWithMessage(
+    nt.Notification notification,
+    String title,
+    String description,
+    String? imageUrl,
+  ) async {
+    if (title.trim().isEmpty || description.trim().isEmpty) {
+      await MessageUtils.showMessage(
+        context: Get.context!,
+        title: "Error",
+        description: "Title and description cannot be empty.",
+      );
+      return false; 
+    }
+
+    try {
+      notification.title = title.trim();
+      notification.description = description.trim();
+      notification.image = imageUrl;
+
+      final bool isUpdated = await updateNotification(notification.notificationID.toString(), notification);
+
+      if (isUpdated) {
+        Navigator.of(Get.context!).pop();
+        Navigator.of(Get.context!).pop();
+        MessageUtils.showMessage(
+          context: Get.context!,
+          title: "Success",
+          description: "Notification updated successfully.",
+        );
+        return true;
+      } else {
+        await MessageUtils.showMessage(
+          context: Get.context!,
+          title: "Error",
+          description: "Failed to update notification.",
+        );
+        return false;
+      }
+    } catch (e) {
+      print('Error updating notification details: $e');
+      await MessageUtils.showMessage(
+        context: Get.context!,
+        title: "Error",
+        description: e.toString(),
+      );
+    }
+    return false;
+  }
+
+  // update financial aid category -> request notificationid and financialaids, response success message
+  Future<void> updateNotificationCategories(int notificationID, List<int> categoryIDs) async {
+    try {
+      bool success = await notificationRepository.updateNotificationCategories(notificationID, categoryIDs);
+      if (success) {
+        await fetchNotifications();
+        print('Notification categories updated successfully');
+      } else {
+        print('Failed to update notification categories');
+      }
+    } catch (e) {
+      print('Error updating notification categories: $e');
+    }
+  }
+
+
+
   // delete notification -> request notification id, response success message
   Future<bool> deleteNotification(String id) async {
     try {
       bool success = await notificationRepository.deleteNotification(id);
       if (success) {
         print('Notification deleted successfully');
-        await fetchNotifications(); // Refresh notifications after deletion
+        await fetchNotifications(); 
       } else {
         print('Failed to delete notification');
       }

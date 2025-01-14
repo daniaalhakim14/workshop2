@@ -39,7 +39,7 @@ class SideMenu extends StatelessWidget{
                     //crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Visibility(child: Text(
-                        'AI FINANCE ADVISOR',
+                        'MY DUIT',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 20,

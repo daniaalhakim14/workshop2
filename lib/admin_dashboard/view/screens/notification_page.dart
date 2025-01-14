@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:workshop_2/admin_dashboard/controllers/menu_controller.dart'as custom;
 import 'package:workshop_2/admin_dashboard/controllers/navigation_controller.dart'as nav;
+import 'package:workshop_2/admin_dashboard/utils/icon_utils.dart';
 import 'package:workshop_2/admin_dashboard/view/widgets/custom_text.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -34,6 +35,7 @@ class _NotificationPageState extends State<NotificationPage> {
     super.initState();
     // fetch data
     viewModel.fetchNotifications();
+    viewModel.fetchFinancialAidCategories();
   }
 
 
@@ -84,10 +86,10 @@ class _NotificationPageState extends State<NotificationPage> {
                   icon: Icon(Icons.clear, color: Colors.white),
                   onPressed: () async {
                     setState(() {
-                      _selectedDate = null; // Clear the selected date
+                      _selectedDate = null; 
                     });
-                    viewModel.updateSelectedDate(''); // Clear the date in ViewModel
-                    await viewModel.fetchNotificationsByDate(null); // Fetch all notifications
+                    viewModel.updateSelectedDate(''); 
+                    await viewModel.fetchNotificationsByDate(null); 
                   },
                 ),
               ],
@@ -116,6 +118,11 @@ class _NotificationPageState extends State<NotificationPage> {
       ),
       body: Obx(() {
         if (viewModel.notifications.isEmpty) {
+          if (viewModel.isLoading.value) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
           return Center(child: Text('No Notifications'));
         }
         return GridView.builder(
@@ -141,7 +148,7 @@ class _NotificationPageState extends State<NotificationPage> {
                         child: notification.image != null
                           ? Image.network(
                               notification.image!,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                               height: 150,
                               width: 150,
                             )
@@ -149,14 +156,55 @@ class _NotificationPageState extends State<NotificationPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          notification.title ?? 'Default Title',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                        child: Column(
+                          children: [
+                            Text(
+                              notification.title ?? 'Default Title',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            FutureBuilder<List<Map<String, dynamic>>> (
+                              future: viewModel.fetchCategoriesForNotification(
+                                  notification.notificationID!),
+                              builder: (context, snapshot) {
+                                
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return SizedBox(
+                                    height: 10,
+                                    width: 10,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 1,
+                                      valueColor: AlwaysStoppedAnimation<Color>(const Color.fromARGB(255, 220, 220, 220)),
+                                      ),
+                                  );
+                                }
+                                if (snapshot.hasError || !snapshot.hasData) {
+                                  return Text(
+                                    'No category',
+                                    style: TextStyle(fontSize: 12),
+                                  );
+                                }
+                                final categories = snapshot.data!;
+                                return Wrap(
+                                  alignment: WrapAlignment.center,
+                                  spacing: 8,
+                                  children: categories.map((category) {
+                                    return Column(
+                                      children: [
+                                        getIconForCategory(category['name']),
+                                      ],
+                                    );
+                                  }).toList(),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
+                      
                     ],
                   ),
                 ),
@@ -189,7 +237,9 @@ Future<void> _selectDate(BuildContext context) async {
     }
   }
 
-void _showNotificationDetails(BuildContext context, nt.Notification notification) {
+void _showNotificationDetails(BuildContext context, nt.Notification notification) async {
+  await viewModel.fetchCategoriesForNotification(notification.notificationID!);
+
   showDialog(
     context: context,
     builder: (context) => Dialog(
@@ -198,14 +248,14 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
         child: Row(
           children: [
             Expanded(
-              child:  notification.image != null
-                ? Image.network(
-                    notification.image!,
-                    fit: BoxFit.contain,
-                    height: 800,
-                    width: 800,
-                  )
-                : const Icon(Icons.image_not_supported, size: 100),
+              child: notification.image != null
+                  ? Image.network(
+                      notification.image!,
+                      fit: BoxFit.contain,
+                      height: 800,
+                      width: 800,
+                    )
+                  : const Icon(Icons.image_not_supported, size: 100),
             ),
             SizedBox(width: 20),
             Expanded(
@@ -226,9 +276,10 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                       Spacer(),
                       IconButton(
                         icon: Icon(Icons.close),
-                          onPressed: () => Navigator.of(context).pop(),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
-                  ],),
+                    ],
+                  ),
                   SizedBox(height: 20),
                   Text(
                     notification.title ?? 'Default Title',
@@ -237,29 +288,60 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
-                  )),
+                    ),
+                  ),
                   SizedBox(height: 30),
                   Expanded(
-                    child: SizedBox(
-                      height: 400,
-                      child: ListView(
-                        children: [
-                          Text(
-                            notification.description ?? 'No description',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w300,
-                              fontSize: 18,
-                              color: Colors.black,
-                            ),
-                            textAlign: TextAlign.justify,
+                    child: ListView(
+                      children: [
+                        Text(
+                          'Type: ${notification.type}',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
                           ),
-                        ],
-                      ),
+                        ),
+                        SizedBox(height: 10),
+                        SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(children: [
+                          ...viewModel.notificationCategories.map((category) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0), 
+                            child: Row(
+                              children: [
+                                getIconForCategory(category['name']),
+                                SizedBox(width: 4), 
+                                Text(
+                                  category['name'],
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+
+                        }),
+                        ],)),
+                        SizedBox(height: 20),
+                        Divider(),
+                        Text(
+                          notification.description ?? 'No description',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w300,
+                            fontSize: 18,
+                            color: Colors.black,
+                          ),
+                          textAlign: TextAlign.justify,
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(height: 16),
-                  //Spacer(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -271,41 +353,39 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                           backgroundColor: Color(0xFF008080),
                         ),
                         child: Text(
-                          'EDIT', 
+                          'EDIT',
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white
-                          )
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       SizedBox(width: 30),
-
                       TextButton(
                         onPressed: () {
-                          _confirmDelete(context,notification.notificationID.toString());
+                          _confirmDelete(context, notification.notificationID.toString());
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: Color(0xFF008080),
                         ),
                         child: Text(
-                          'DELETE', 
+                          'DELETE',
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white
-                          )
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: 16),
                 ],
-            ),),
-
-
+              ),
+            ),
           ],
         ),
       ),
@@ -313,10 +393,24 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
   );
 }
 
-  void _showEditPostDialog(BuildContext context, nt.Notification notification) {
+
+  void _showEditPostDialog(BuildContext context, nt.Notification notification) async {
     imageUrl = notification.image;
     final TextEditingController titleController = TextEditingController(text: notification.title);
     final TextEditingController descriptionController = TextEditingController(text: notification.description);
+    
+    await viewModel.fetchCategoriesForNotification(notification.notificationID!);
+
+    //List<int> selectedCategories = notification.financialAidCategoryIDs ?? [];
+    final selectedCategories = <int>[].obs;
+    String selectedType = notification.type ?? 'welfare';  // Default to 'welfare' if null
+
+    selectedCategories.assignAll(
+      viewModel.notificationCategories
+          .map((category) => category['financialaidcategoryid'] as int)
+          .toList(),
+    );
+
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -359,7 +453,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                           final uploadedImageUrl = await cloudinaryService.uploadImage();
                           if (uploadedImageUrl != null) {
                             setState(() {
-                              imageUrl = uploadedImageUrl; // 更新图片 URL
+                              imageUrl = uploadedImageUrl; 
                             });
                             MessageUtils.showMessage(
                               context: context,
@@ -419,9 +513,79 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                         ],
                       ),
                       SizedBox(height: 20),
+                      DropdownButtonFormField<String>(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                        ),
+                        value: selectedType,
+                        hint: Text("Select Financial Aid Type"),
+                        items: [
+                          DropdownMenuItem(value: 'welfare', child: Text('Welfare')),
+                          DropdownMenuItem(value: 'subsidy', child: Text('Subsidy')),
+                          DropdownMenuItem(value: 'tax relief', child: Text('Tax Relief')),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            selectedType = value!;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      Obx(() {
+                        return DropdownButtonFormField<int>(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                            ),
+                          ),
+                          value: selectedCategories.isNotEmpty ? selectedCategories.first : null,
+                          hint: Text("Select Categories"),
+                          items: viewModel.financialAidCategories
+                              .map((category) => DropdownMenuItem<int>(
+                                    value: category['financialaidcategoryid'],
+                                    child: Text(category['name']),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                                  if (value != null) {
+                                    if (selectedCategories.length >= 4) {
+                                      MessageUtils.showMessage(
+                                        context: context,
+                                        title: "Limit Reached",
+                                        description: "You can only select up to 4 categories.",
+                                      );
+                                    } else if (!selectedCategories.contains(value)) {
+                                      selectedCategories.add(value);
+                                    }
+                                  }
+                                });
+                          },
+                        );
+                      }),
+                      Wrap(
+                        children: selectedCategories
+                          .map((categoryId) => Chip(
+                            label: Text(
+                              viewModel.financialAidCategories
+                                  .firstWhere((c) => c['financialaidcategoryid'] == categoryId)['name'],
+                            ),
+                            onDeleted: () {
+                              setState(() {
+                                selectedCategories.remove(categoryId);
+                              });
+                            },
+                          )).toList(),
+                      ),
+                      SizedBox(height: 30),
                       TextField(
                         controller: descriptionController,
-                        maxLines: 17,
+                        maxLines: 10,
                         decoration: InputDecoration(
                           labelText: 'Description',
                           labelStyle: TextStyle(
@@ -432,55 +596,44 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                         textAlign: TextAlign.justify,
                       ),
                       SizedBox(height: 30),
-                      SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TextButton(
-                            onPressed: () async {
+                            onPressed: titleController.text.isEmpty || descriptionController.text.isEmpty || selectedCategories.isEmpty
+                                ? null
+                                : () async {
 
-                              final title = titleController.text.trim();
-                              final description = descriptionController.text.trim();
-                              final box = GetStorage();
-                              int? adminID = box.read('adminData')['adminid'];
+                                    final updatedNotification = nt.Notification(
+                                      notificationID: notification.notificationID,
+                                      title: titleController.text,
+                                      description: descriptionController.text,
+                                      image: imageUrl,
+                                      type: selectedType,
+                                      financialAidCategoryIDs: selectedCategories,
+                                      adminID: notification.adminID,
+                                      date: notification.date,
+                                      time: notification.time,
+                                    );
 
-                              if (title.isNotEmpty && description.isNotEmpty) 
-                              {
-                                notification.title = title;
-                                notification.description = description;
-                                notification.image = imageUrl;
+                                    final isNotificationUpdated = await viewModel.updateNotificationDetailsWithMessage(
+                                      updatedNotification,
+                                      titleController.text,
+                                      descriptionController.text,
+                                      imageUrl,
+                                    );
 
-                                final isUpdated = await viewModel.updateNotification(notification.notificationID.toString(),notification);
-                                if (isUpdated) {
-                                  setState(() {
-                                    notification.title = title; 
-                                    notification.description = description; 
-                                    notification.image = imageUrl; 
-                                  });
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).pop();
-                                  MessageUtils.showMessage(
-                                    context: context,
-                                    title: "Success",
-                                    description: "Notification updated successfully.",
-                                  );
-                                } else {
-                                  MessageUtils.showMessage(
-                                    context: context,
-                                    title: "Error",
-                                    description: "Failed to update notification.",
-                                  );
-                                }
-                              }else {
-                                  MessageUtils.showMessage(
-                                    context: context,
-                                    title: "Error",
-                                    description: "Title and Description cannot be empty.",
-                                  );
-                                }
-                            },
+                                    if (isNotificationUpdated) {
+                                      await viewModel.updateNotificationCategories(
+                                        notification.notificationID!,
+                                        selectedCategories,
+                                      );
+                                    }
+                                  },
                             style: TextButton.styleFrom(
-                              backgroundColor: Color(0xFF008080),
+                              backgroundColor: titleController.text.isEmpty || descriptionController.text.isEmpty || selectedCategories.isEmpty || selectedType == null
+                                  ? Colors.grey
+                                  : Color(0xFF008080),
                             ),
                             child: Text(
                               'SAVE',
@@ -528,10 +681,20 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
   }
 
 void _showAddPostDialog(BuildContext context) {
+
+  setState(() {
+    imageUrl = null;
+  });
+
+  String? selectedType;
+
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController typeController = TextEditingController();
+  //final TextEditingController typeController = TextEditingController();
   Uint8List? imageBytes;
+
+  final selectedCategories = <int>[].obs;
+  viewModel.fetchFinancialAidCategories();
 
   final box = GetStorage();
   int? adminID = box.read('adminData')['adminid'];
@@ -634,9 +797,111 @@ void _showAddPostDialog(BuildContext context) {
                         ),
                       ),
                       SizedBox(height: 20),
+                      DropdownButtonFormField<String>(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide(color: Colors.grey, width: 1.0), 
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide(color: Color(0xFF008080), width: 2.0), 
+                          ),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                        ),
+                        hint: Text("Select Financial Aid Type",style: TextStyle(color: Colors.grey,),),
+                        value: selectedType,
+                        items: [
+                          DropdownMenuItem(
+                            value: 'welfare',
+                            child: Text('Welfare'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'subsidy',
+                            child: Text('Subsidy'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'tax relief',
+                            child: Text('Tax Relief'),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            selectedType = value;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      Obx(() {
+                        return DropdownButtonFormField<int>(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(color: Color(0xFF008080), width: 2.0),
+                            ),
+                          ),
+                          value: null,
+                          hint: Text("Select Categories",style: TextStyle(color: Colors.grey,),),
+                          items: viewModel.financialAidCategories
+                              .map((category) => DropdownMenuItem<int>(
+                                    value: category['financialaidcategoryid'],
+                                    child: Text(
+                                      category['name'],
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            if (value != null && selectedCategories.length < 4) {
+                              setState(() {
+                                if (!selectedCategories.contains(value)) {
+                                  selectedCategories.add(value);
+                                }
+                              });
+                            } else if (selectedCategories.length >= 4) {
+                              MessageUtils.showMessage(
+                                context: context,
+                                title: "Limit Reached",
+                                description: "You can only select up to 4 categories.",
+                              );
+                            }
+                          },
+                        );
+
+                      }),
+                      Wrap(
+                        children: selectedCategories
+                            .map((categoryId) => Chip(
+                                  label: Text(
+                                    viewModel.financialAidCategories
+                                        .firstWhere((c) =>
+                                            c['financialaidcategoryid'] ==
+                                            categoryId)['name'],
+                                  ),
+                                  onDeleted: () {
+                                    setState(() {
+                                      selectedCategories.remove(categoryId);
+                                    });
+                                  },
+                                ))
+                            .toList(),
+                      ),
+                      SizedBox(height: 20),
                       TextField(
                         controller: descriptionController,
-                        maxLines: 17,
+                        maxLines: 14,
                         decoration: InputDecoration(
                           labelText: 'Description',
                           labelStyle: TextStyle(
@@ -651,55 +916,25 @@ void _showAddPostDialog(BuildContext context) {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TextButton(
-                            onPressed: () async {
+                            onPressed: titleController.text.isEmpty || descriptionController.text.isEmpty || selectedCategories.isEmpty || selectedType == null
+                              ? null
+                              : () async {
                               final title = titleController.text;
                               final description = descriptionController.text;
-                              final type = 'welfare';
 
-                              if (title.isNotEmpty &&
-                                  description.isNotEmpty &&
-                                  type.isNotEmpty &&
-                                  adminID != null) {
-                                final notification = nt.Notification(
-                                  notificationID: null,
-                                  title: title,
-                                  type: type,
-                                  description: description,
-                                  image: imageUrl,
-                                  adminID: adminID,
-                                  date: DateTime.now().toString().split(' ')[0],
-                                  time: DateTime.now()
-                                      .toLocal()
-                                      .toString()
-                                      .split(' ')[1],
-                                );
-
-                                final isSuccess = await viewModel.addNotification(notification);
-
-                                if (isSuccess) {
-                                  Navigator.of(context).pop();
-                                  MessageUtils.showMessage(
-                                    context: context,
-                                    title: "Success",
-                                    description: "Notification added successfully.",
-                                  );
-                                } else {
-                                  MessageUtils.showMessage(
-                                    context: context,
-                                    title: "Error",
-                                    description: "Failed to add notification.",
-                                  );
-                                }
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          'Please fill in all fields or log in as admin')),
-                                );
-                              }
+                              await viewModel.addNotificationWithMessage(
+                                title: title,
+                                description: description,
+                                type: selectedType!,
+                                imageUrl: imageUrl,
+                                adminID: adminID,
+                                financialAidCategoryIDs: selectedCategories,
+                              );
                             },
                             style: TextButton.styleFrom(
-                              backgroundColor: Color(0xFF008080),
+                              backgroundColor: titleController.text.isEmpty || descriptionController.text.isEmpty || selectedCategories.isEmpty || selectedType == null
+                              ? Colors.grey
+                              : Color(0xFF008080),
                             ),
                             child: Text(
                               'SAVE',

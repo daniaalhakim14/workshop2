@@ -15,7 +15,7 @@ class NotificationRepository {
   /* ----------------- Welfare Program -------------------- */
 
 
-  // get all notification -> response notification list
+  // get all notification 
   Future<List<Notification>?> fetchNotifications() async {
     Map<String, dynamic>? serverResponse = await _notificationService.getResponse('');
     if (serverResponse != null && serverResponse['data'] != null) {
@@ -26,7 +26,7 @@ class NotificationRepository {
   }
 
   
-  // Add notification -> request notification details, response success message
+  // Add notification 
   Future<bool> addNotification(Notification notification) async {
 
     try {
@@ -48,7 +48,7 @@ class NotificationRepository {
     }
   }
 
-  // get notification {date} -> request date, response notification list
+  // get notification {date} 
   Future<List<Notification>?> fetchNotificationsByDate(String date) async {
     try {
       final endpoint = '/date?date=$date'; 
@@ -63,6 +63,54 @@ class NotificationRepository {
     }
     return null; 
   }
+
+  // get all financial aid categories 
+  Future<List<Map<String, dynamic>>?> fetchCategories() async {
+    try {
+      final response = await _notificationService.getResponse('categories'); 
+      if (response != null && response['data'] != null) {
+        return List<Map<String, dynamic>>.from(response['data']);
+      }
+    } catch (e) {
+      print('Error fetching categories: $e');
+    }
+    return null;
+  }
+
+
+  // get financial aid categories {notificationid} 
+  Future<List<Map<String, dynamic>>?> fetchCategoriesByNotificationID(int notificationID) async {
+    try {
+      final endpoint = '/$notificationID/categories';
+      final serverResponse = await _notificationService.getResponse(endpoint);
+
+      if (serverResponse != null && serverResponse['data'] != null) {
+        return List<Map<String, dynamic>>.from(serverResponse['data']);
+      }
+    } catch (e) {
+      print('Error fetching categories for notification $notificationID: $e');
+    }
+    return null;
+  }
+
+  // get notifications {financialaidcategoryid}
+  Future<List<Notification>?> fetchNotificationsByCategoryID(int categoryID) async {
+    try {
+      final endpoint = '/category/$categoryID';
+      final serverResponse = await _notificationService.getResponse(endpoint);
+
+      if (serverResponse != null && serverResponse['data'] != null) {
+        return serverResponse['data']
+            .map<Notification>((json) => Notification.fromJson(json))
+            .toList();
+      }
+    } catch (e) {
+      print('Error fetching notifications for category $categoryID: $e');
+    }
+    return null;
+  }
+
+
 
   // update notification -> request notification details, response success message
   Future<Notification?> updateNotification(String notificationID, Notification updatedData) async {
@@ -92,6 +140,23 @@ class NotificationRepository {
       return null; 
     }
   }
+
+  // update financial aid category -> request notificationid and financialaids, response success message
+  Future<bool> updateNotificationCategories(int notificationID, List<int> categoryIDs) async {
+    try {
+      Map<String, dynamic> requestBody = {
+        'financialaidcategoryids': categoryIDs,
+      };
+      Map<String, dynamic>? serverResponse =
+          await _notificationService.putResponse('$notificationID/categories', requestBody);
+
+      return serverResponse != null && serverResponse['errorCode'] == 0;
+    } catch (e) {
+      print('Error updating notification categories: $e');
+      return false;
+    }
+  }
+
 
   // delete notification -> request notification id, response success message
     Future<bool> deleteNotification(String notificationID) async {

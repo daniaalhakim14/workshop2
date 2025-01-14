@@ -13,7 +13,6 @@ class ProfileViewModel extends GetxController {
   RxString adminName = ''.obs;
 
   late Map<String, dynamic> adminData;
-  RxBool isEditing = false.obs;
 
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
@@ -36,9 +35,9 @@ class ProfileViewModel extends GetxController {
     name.text = adminData['name'] ?? '';
     email.text = adminData['email'] ?? '';
     phone.text = adminData['phonenumber'] ?? '';
-    password.text = adminData['password'] ?? '';
+    password.text = '**********'; 
 
-    adminName.value = adminData['name'] ?? "Admin Name"; //
+    adminName.value = adminData['name'] ?? "Admin Name"; 
   }
 
   // update admin (edit) -> request admin id and updated data, response success message
@@ -92,6 +91,15 @@ class ProfileViewModel extends GetxController {
     String newPw = newPassword.text.trim();
     String confirmPw = confirmPassword.text.trim();
 
+    if (newPw.length < 8) {
+      await MessageUtils.showMessage(
+        context: Get.context!,
+        title: 'Error',
+        description: 'New password must be at least 8 characters long.',
+      );
+      return;
+    }
+
     if (newPw != confirmPw) {
       await MessageUtils.showMessage(
         context: Get.context!,
@@ -105,12 +113,14 @@ class ProfileViewModel extends GetxController {
 
     try {
       bool success = await adminRepository.updatePassword(adminId, currentPw, newPw);
-      if (success) {
+      if (success) {        
+        Navigator.of(Get.context!).pop();
         await MessageUtils.showMessage(
           context: Get.context!,
           title: 'Success',
           description: 'Password updated successfully',
         );
+
       } else {
         await MessageUtils.showMessage(
           context: Get.context!,
@@ -119,7 +129,7 @@ class ProfileViewModel extends GetxController {
         );
       }
     } catch (e) {
-        print('Error during profile update: $e'); // 打印调试信息
+        print('Error during profile update: $e'); 
         await MessageUtils.showMessage(
           context: Get.context!,
           title: 'Error',
