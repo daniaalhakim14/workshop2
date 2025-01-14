@@ -429,6 +429,51 @@ class UpdateExpense {
   }
 }
 
+class UpdateIncome {
+  final int incomeId;           // The ID of the expense you are updating
+  final double? incomeAmount;
+  final DateTime? incomeDate;
+  final String? incomeDescription;
+  final String? paymentType;
+  final int? userId;
+  final int? incomeCategoryId;
+
+  UpdateIncome({
+    required this.incomeId,     // Mark as required since you need it for updates
+    this.incomeAmount,
+    this.incomeDate,
+    this.incomeDescription,
+    this.paymentType,
+    this.userId,
+    this.incomeCategoryId,
+  });
+
+  // Construct an UpdateExpense from JSON
+  factory UpdateIncome.fromJson(Map<String, dynamic> json) {
+    return UpdateIncome(
+      incomeId: json["id"],
+      incomeAmount: json["amount"],
+      incomeDate: json["date"] != null ? DateTime.parse(json["date"]) : null,
+      incomeDescription: json["description"],
+      paymentType: json["paymenttype"],
+      incomeCategoryId: json["incomecategoryid"],
+    );
+  }
+
+  // Convert UpdateExpense object to a Map for JSON or DB updates
+  Map<String, dynamic> toMap() {
+    return {
+      "id": incomeId,
+      "amount": incomeAmount,
+      "date": incomeDate?.toIso8601String(),
+      "description": incomeDescription,
+      "paymenttype": paymentType,
+      "userid": userId,
+      "incomecategoryid": incomeCategoryId,
+    };
+  }
+}
+
 class DeleteExpense {
   final int expenseId; // The ID of the expense to be deleted
 
@@ -447,6 +492,28 @@ class DeleteExpense {
   Map<String, dynamic> toMap() {
     return {
       "id": expenseId,
+    };
+  }
+}
+
+class DeleteIncome {
+  final int incomeId; // The ID of the expense to be deleted
+
+  DeleteIncome({
+    required this.incomeId,
+  });
+
+  // Construct a DeleteExpense instance from JSON
+  factory DeleteIncome.fromJson(Map<String, dynamic> json) {
+    return DeleteIncome(
+      incomeId: json["id"],
+    );
+  }
+
+  // Convert DeleteExpense object to a Map for API requests
+  Map<String, dynamic> toMap() {
+    return {
+      "id": incomeId,
     };
   }
 }

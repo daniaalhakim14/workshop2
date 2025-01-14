@@ -143,6 +143,20 @@ class InsightRepository{
     }
   }
 
+  Future<void> updateIncome(UpdateIncome income) async {
+    final response = await _service.updateIncome(
+      income.incomeId,  // Pass the expense ID
+      income.toMap(),    // Convert the expense to a Map
+    );
+
+    print("Update Income - Response status: ${response.statusCode}");
+    print("Update Income - Response body: ${response.body}");
+
+    if (response.statusCode != 200) { // Or the status code your API returns for success
+      throw Exception('Failed to update income: ${response.body}');
+    }
+  }
+
   Future<void> deleteExpense(DeleteExpense deleteExpense) async {
     final response = await _service.deleteExpense(deleteExpense.expenseId);
 
@@ -151,6 +165,16 @@ class InsightRepository{
     }
 
     print('Expense deleted successfully');
+  }
+
+  Future<void> deleteIncome(DeleteIncome deleteIncome) async {
+    final response = await _service.deleteIncome(deleteIncome.incomeId);
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete income: ${response.body}');
+    }
+
+    print('Income deleted successfully');
   }
 
 
