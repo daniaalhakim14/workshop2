@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:tab_bar_widget/View/edit_transaction.dart';
 import 'package:tab_bar_widget/ViewModel/insight_view_model.dart';
 import '../Model/insight_model.dart';
 import 'account_page.dart';
@@ -434,7 +435,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                             ],
                           ),
                           // to add space
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 18),
                           // To display transaction list
                           _selectedButtonIndex == 0
                               ? Consumer<InsightViewModel>(
@@ -483,7 +484,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                               }
 
                               return SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.4,
+                                height: MediaQuery.of(context).size.height * 0.43,
                                 child: ListView.builder(
                                   itemCount: filteredTransactions.length,
                                   itemBuilder: (context, index) {
@@ -515,7 +516,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                               height: 30.0,
                                               width: double.infinity,
                                               child: Padding(
-                                                padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+                                                padding: const EdgeInsets.all(4.0),
                                                 child: Text(
                                                   formattedDate, // Display the transaction date
                                                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -625,7 +626,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                               }
 
                               return SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.4,
+                                height: MediaQuery.of(context).size.height * 0.43,
                                 child: ListView.builder(
                                   itemCount: groupedCategories.keys.length,
                                   itemBuilder: (context, index) {
@@ -650,38 +651,41 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                       },
                                         child: Column(
                                           children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color: Colors.grey, // Border color
-                                                  width: 1.0,         // Border width
-                                                ),
-                                                borderRadius: BorderRadius.circular(0.0), // Optional: Rounded corners
-                                              ),
-                                              child: ListTile(
-                                                leading: CircleAvatar(
-                                                  backgroundColor: categoryTransactions.first.iconColor,
-                                                  child: Icon(
-                                                    categoryTransactions.first.iconData,
-                                                    color: Colors.white,
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(vertical: 1.0, horizontal: 4.0),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                    color: Colors.grey, // Border color
+                                                    width: 1.0,         // Border width
                                                   ),
+                                                  borderRadius: BorderRadius.circular(4.0), // Optional: Rounded corners
                                                 ),
-                                                title: Text(
-                                                  categoryName,
-                                                  style: const TextStyle(fontWeight: FontWeight.bold),
-                                                ),
-                                                subtitle: Text(
-                                                  '${categoryTransactions.length} Transaction${categoryTransactions.length > 1 ? 's' : ''}', // Display transaction count
-                                                  style: const TextStyle(color: Colors.grey, fontSize: 12),
-                                                ),
-                                                trailing: Padding(
-                                                  padding: const EdgeInsets.only(left: 8.0),
-                                                  child: Text(
-                                                    '-RM ${totalAmount.toStringAsFixed(2)}', // Display total amount
-                                                    style: const TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 16,
-                                                      color: Colors.red,
+                                                child: ListTile(
+                                                  leading: CircleAvatar(
+                                                    backgroundColor: categoryTransactions.first.iconColor,
+                                                    child: Icon(
+                                                      categoryTransactions.first.iconData,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  title: Text(
+                                                    categoryName,
+                                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                                  ),
+                                                  subtitle: Text(
+                                                    '${categoryTransactions.length} Transaction${categoryTransactions.length > 1 ? 's' : ''}', // Display transaction count
+                                                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                                  ),
+                                                  trailing: Padding(
+                                                    padding: const EdgeInsets.only(left: 8.0),
+                                                    child: Text(
+                                                      '-RM ${totalAmount.toStringAsFixed(2)}', // Display total amount
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 16,
+                                                        color: Colors.red,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -738,171 +742,6 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
   }
 }
 
-
-class TransactionDetailScreen extends StatelessWidget {
-  const TransactionDetailScreen({super.key, required this. listDetail});
-  final TransactionList listDetail;
-
-  String formatDateTime(DateTime? dateTime) {
-    if (dateTime == null) {
-      return 'No date available'; // Fallback message for null date
-    }
-    return DateFormat('h:mma, dd MMM yyyy').format(dateTime).toLowerCase();
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(listDetail.name.toString(),
-        style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top:8.0, bottom: 8.0),
-              child: Center(
-                child: Container(
-                  width: 47,
-                  height: 47,
-                  decoration: BoxDecoration(
-                    color: listDetail.iconColor,
-                    shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey.shade400,
-                        width: 3,
-                      )
-                  ),
-                  child: Center(
-                    child: Icon(
-                      listDetail.iconData,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                  )
-                ),
-              ),
-            ),
-            Text('${listDetail.name}',
-              style: const TextStyle(
-                fontSize: 30.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 5.0),
-            Text('${formatDateTime(listDetail.date)}',
-              style: const TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 2.0),
-                  child: Text(
-                    listDetail.transactiontype == 'Expense' ? '-RM ' : '+RM ',
-                    style: TextStyle(
-                      color: listDetail.transactiontype == 'Expense' ? Colors.red : Colors.green,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Text(
-                  listDetail.amount?.toStringAsFixed(2) ?? '0.00',
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                    color: listDetail.transactiontype == 'Expense' ? Colors.red : Colors.green,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 30.0),
-            Text('Description: ${listDetail.description}',
-              style: const TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.normal,),
-            ),
-            Text('Payment Type: ${listDetail.paymenttype}',
-              style: const TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.normal,),
-            ),
-            const SizedBox(height: 100.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // Edit Button
-                Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white, // Background color of the button
-                        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0), // Adjust button size
-                      ),
-                      child: const Icon(
-                        Icons.edit_note_outlined,
-                        size: 27, // Icon size
-                        color: Colors.blue, // Icon color
-                      ),
-                    ),
-                    const SizedBox(height: 8.0), // Space between button and text
-                    const Text(
-                      "Edit",
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue, // Matches the button theme
-                      ),
-                    ),
-                  ],
-                ),
-                // Delete Button
-                Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white, // Background color of the button
-                        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0), // Adjust button size
-                      ),
-                      child: const Icon(
-                        Icons.delete_outline,
-                        size: 27, // Icon size
-                        color: Colors.red, // Icon color
-                      ),
-                    ),
-                    const SizedBox(height: 8.0), // Space between button and text
-                    const Text(
-                      "Delete",
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red, // Matches the button theme
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            )
-
-
-
-
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class CategoryDetailScreen extends StatelessWidget {
   final String categoryName;
   final List<TransactionList> categoryTransactions;
@@ -940,7 +779,7 @@ class CategoryDetailScreen extends StatelessWidget {
           );
 
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 4.0),
+            padding: const EdgeInsets.symmetric(vertical: 1.0, horizontal: 4.0),
             child: Container(
               decoration: BoxDecoration(
                 border: Border.all(
@@ -1101,6 +940,170 @@ class SubCategoryDetailScreen extends StatelessWidget {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+class TransactionDetailScreen extends StatelessWidget {
+  const TransactionDetailScreen({super.key, required this.listDetail});
+  final TransactionList listDetail;
+
+
+  String formatDateTime(DateTime? dateTime) {
+    if (dateTime == null) {
+      return 'No date available'; // Fallback message for null date
+    }
+    return DateFormat('h:mma, dd MMM yyyy').format(dateTime).toLowerCase();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(listDetail.name.toString(),
+          style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top:8.0, bottom: 8.0),
+              child: Center(
+                child: Container(
+                    width: 47,
+                    height: 47,
+                    decoration: BoxDecoration(
+                        color: listDetail.iconColor,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.grey.shade400,
+                          width: 3,
+                        )
+                    ),
+                    child: Center(
+                      child: Icon(
+                        listDetail.iconData,
+                        size: 30,
+                        color: Colors.white,
+                      ),
+                    )
+                ),
+              ),
+            ),
+            Text('${listDetail.name}',
+              style: const TextStyle(
+                fontSize: 30.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 5.0),
+            Text('${formatDateTime(listDetail.date)}',
+              style: const TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 2.0),
+                  child: Text(
+                    listDetail.transactiontype == 'Expense' ? '-RM ' : '+RM ',
+                    style: TextStyle(
+                      color: listDetail.transactiontype == 'Expense' ? Colors.red : Colors.green,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  listDetail.amount?.toStringAsFixed(2) ?? '0.00',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                    color: listDetail.transactiontype == 'Expense' ? Colors.red : Colors.green,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 30.0),
+            Text('Description: ${listDetail.description}',
+              style: const TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.normal,),
+            ),
+            Text('Payment Type: ${listDetail.paymenttype}',
+              style: const TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.normal,),
+            ),
+            const SizedBox(height: 100.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Edit Button
+                Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => edit_transaction(
+                          transactionDetail: listDetail,
+                        )));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white, // Background color of the button
+                        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0), // Adjust button size
+                      ),
+                      child: const Icon(
+                        Icons.edit_note_outlined,
+                        size: 27, // Icon size
+                        color: Colors.blue, // Icon color
+                      ),
+                    ),
+                    const SizedBox(height: 8.0), // Space between button and text
+                    const Text(
+                      "Edit",
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue, // Matches the button theme
+                      ),
+                    ),
+                  ],
+                ),
+                // Delete Button
+                Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white, // Background color of the button
+                        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0), // Adjust button size
+                      ),
+                      child: const Icon(
+                        Icons.delete_outline,
+                        size: 27, // Icon size
+                        color: Colors.red, // Icon color
+                      ),
+                    ),
+                    const SizedBox(height: 8.0), // Space between button and text
+                    const Text(
+                      "Delete",
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red, // Matches the button theme
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

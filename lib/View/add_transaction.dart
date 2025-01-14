@@ -26,8 +26,6 @@ class _add_transactionState extends State<add_transaction> {
   int _selectedButtonIndex = 0; // dynamic latest and category button, 0 for Expense, for for Income
   Map<String, dynamic>? _selectedSubcategory_Category;
   late var _newTransactionType = 'Expense';
-  late var _newDate = DateTime.now();
-  late var _newPaymentType = 'Cash';
 
 
 
@@ -111,7 +109,6 @@ class _add_transactionState extends State<add_transaction> {
                                   setState(() {
                                     // Update `selectedDate` to the picked date
                                     selectedDate = dateTime;
-                                    _newDate = dateTime; // to add to database
 
                                     // Check if the date is yesterday
                                     DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
@@ -357,7 +354,6 @@ class _add_transactionState extends State<add_transaction> {
                                                 // this is called when the user selects an item.
                                                 setState(() {
                                                   dropdownValue = value!;
-                                                  _newPaymentType = dropdownValue;
                                                 });
                                               },
                                               items: paymentType.map<DropdownMenuItem<String>>((String value) {
@@ -402,18 +398,18 @@ class _add_transactionState extends State<add_transaction> {
 
                 if(_newTransactionType == "Expense"){
                   print(_newTransactionType);
-                  print(_newDate);
+                  print(selectedDate);
                   print(_textControllerAmount.text);
                   print(_selectedSubcategory_Category!['subcategoryId']);
                   print(_textControllerAddNote.text);
-                  print(_newPaymentType);
+                  print(dropdownValue);
 
                   final viewModel = InsightViewModel();
                   AddExpense expense = AddExpense(
                     expenseAmount: double.parse(_textControllerAmount.text),
-                    expenseDate: _newDate,
+                    expenseDate: selectedDate,
                     expenseDescription: _textControllerAddNote.text,
-                    paymenttype: _newPaymentType,
+                    paymenttype: dropdownValue,
                     userid: 1,  // need to change later
                     subcategoryid: _selectedSubcategory_Category!['subcategoryId']
                   );
@@ -427,19 +423,19 @@ class _add_transactionState extends State<add_transaction> {
                 }else
                   {
                     print(_newTransactionType);
-                    print(_newDate);
+                    print(selectedDate);
                     print(_textControllerAmount.text);
                     print(_selectedSubcategory_Category!['incomeCategoryId']);
                     print(_textControllerAddNote.text);
-                    print(_newPaymentType);
+                    print(dropdownValue);
 
 
                     final viewModel = InsightViewModel();
                     AddIncome income = AddIncome(
                         incomeAmount: double.parse(_textControllerAmount.text),
-                        incomeDate: _newDate,
+                        incomeDate: selectedDate,
                         incomeDescription: _textControllerAddNote.text,
-                        paymenttype: _newPaymentType,
+                        paymenttype: dropdownValue,
                         userid: 1,  // need to change later
                         incomecategoryid: _selectedSubcategory_Category!['incomeCategoryId']
                     );
@@ -451,22 +447,6 @@ class _add_transactionState extends State<add_transaction> {
                       print("Failed to add Income: $e");
                     }
                   }
-
-                /*print('Selected Subcategory Color: ${_selectedSubcategory?['color']}');
-
-                final addTransactionData = {
-                  'transaction type':  _selectedButtonIndex == 0 ? 'Expense' : 'Income',
-                  'date' :selectedDate,   //
-                  'icon': _selectedSubcategory?['icon'],
-                  'icon_color':  _selectedSubcategory?['color'],
-                  'category_name':_selectedSubcategory!['category'],
-                  'subcategory_name':_selectedSubcategory!['name'],
-                  'notes': _textControllerAddNote.text,
-                  'amount':_textControllerAmount.text,
-                  'payment_type': dropdownValue,
-                };
-                print(addTransactionData);
-                Navigator.pop(context,addTransactionData);*/
               },
               child: Padding(
                 padding: const EdgeInsets.all(1.0),
