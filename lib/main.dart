@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:postgres/postgres.dart';
 import 'sql_connection.dart';
-import 'home_page.dart';
+import 'View/home_page.dart';
 
 
 
 void main() async{
+  await GetStorage.init(); // add getStorage
   try {  // make connection with database
     final conn = await Connection.open(Endpoint(
       host: 'duitappworkshop2.postgres.database.azure.com',
