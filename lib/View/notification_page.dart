@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:workshop_2/admin_dashboard/models/model/notification.dart'as nt;
+import 'package:workshop_2/admin_dashboard/utils/icon_utils.dart';
 import 'package:workshop_2/admin_dashboard/view_model/notification_vm.dart';
 import 'home_page.dart';
 import 'insight_page.dart';
@@ -9,6 +10,7 @@ import 'account_page.dart';
 import 'package:workshop_2/View/notification_details_page.dart';
 
 class Noti extends StatefulWidget {
+  
   const Noti({super.key});
 
   @override
@@ -30,8 +32,9 @@ class _NotificationState extends State<Noti> {
   @override
   void initState() {
     super.initState();
-
-    viewModel.initializeNotifications(userID);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.initializeNotifications(userID);
+    });
   }
 
   @override
@@ -98,113 +101,136 @@ class _NotificationState extends State<Noti> {
                   ),
                 );
               }
-              return ListView.builder(
-                itemCount: viewModel.notifications.length,
-                itemBuilder: (context, index) {
-                  nt.Notification notification = viewModel.notifications[index];
-                  Color borderColor;
+              return RefreshIndicator(
+                onRefresh: () async {
+                  refreshNotifications();
+                },
+                child: ListView.builder(
+                  itemCount: viewModel.notifications.length,
+                  itemBuilder: (context, index) {
+                    nt.Notification notification =
+                        viewModel.notifications[index];
+                    Color borderColor;
 
-                  if (notification.type == 'welfare') {
-                    borderColor = Colors.yellow;
-                  } else if (notification.type == 'transaction') {
-                    borderColor = Colors.green;
-                  } else {
-                    borderColor = Colors.grey;
-                  }
+                    if (notification.type != 'transaction') {
+                      borderColor = Colors.green;
+                    } else if (notification.type == 'transaction') {
+                      borderColor = const Color.fromARGB(255, 216, 110, 110);
+                    } else {
+                      borderColor = Colors.grey;
+                    }
 
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE0E0E0),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: borderColor),
-                      ),
-                      child: ListTile(
-                        title: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            notification.title ?? 'Default Title',
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF002B36),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 240, 240, 240),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: borderColor),
                         ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NotificatioNDetails(notification: notification),
+                              ),
+                            );
+                          },
+                          title: Row(
                           children: [
-                            Row(
-                              children: [
-                                const Text(
-                                  'Posted: ',
-                                  style: TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF15BF42),
-                                  ),
-                                ),
-                                Text(
-                                  '${notification.date ?? 'Unknown Date'} ${notification.time ?? ''}',
-                                  style: const TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              truncateText(notification.description ?? 'No Description', 30),
-                              style: const TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 12,
-                                fontWeight: FontWeight.w300,
-                                color: Color.fromARGB(255, 56, 54, 54),
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => NotificatioNDetails(notification: notification),
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-                                backgroundColor: const Color(0xFF65ADAD),
-                              ),
-                              child: const Text(
-                                'View Details',
+                            Expanded(
+                              child: Text(
+                                notification.title ?? 'Default Title',
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
-                                  fontSize: 12,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: Color(0xFF002B36),
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
+                            ),
+                            FutureBuilder<List<Map<String, dynamic>>>(
+                              future: viewModel.fetchCategoriesForNotification(notification.notificationID!),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return SizedBox(
+                                    height: 10,
+                                    width: 10,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 1,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        const Color.fromARGB(255, 220, 220, 220),
+                                      ),
+                                    ),
+                                  );
+                                }
+                                if (snapshot.hasError || !snapshot.hasData) {
+                                  return const SizedBox();
+                                }
+                                final categories = snapshot.data!;
+                                return Wrap(
+                                  spacing: 4,
+                                  children: categories.map((category) {
+                                    return getIconForCategory(category['name']);
+                                  }).toList(),
+                                );
+                              },
                             ),
                           ],
                         ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Text(
+                                    'Posted: ',
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${notification.date ?? 'Unknown Date'} ${notification.time ?? ''}',
+                                    style: const TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                truncateText(notification.description ?? 'No Description', 200),
+                                style: const TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w300,
+                                  color: Color.fromARGB(255, 56, 54, 54),
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+
+                  },
+                ),
               );
             }),
-          )
-
+          ),
         ],
       ),
+
 
       bottomNavigationBar: BottomAppBar(
         color: const Color(0xFF002B36), 
@@ -260,4 +286,11 @@ class _NotificationState extends State<Noti> {
       ),
     );
   }
+
+  Future<void> refreshNotifications() async {
+    viewModel.isLoading.value = true;
+    await viewModel.initializeNotifications(userID);
+    viewModel.isLoading.value = false;
+  }
+
 }
