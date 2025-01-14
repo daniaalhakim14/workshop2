@@ -145,4 +145,29 @@ class InsightViewModel extends ChangeNotifier{
     }
   }
 
+  Future<void> updateExpense(UpdateExpense expense) async {
+    try {
+      final repository = InsightRepository();
+      await repository.updateExpense(expense);
+    } catch (e) {
+      print('Failed to update expense: $e');
+    }
+  }
+
+  Future<void> deleteExpense(int expenseId) async {
+    try {
+      final repository = InsightRepository();
+      await repository.deleteExpense(DeleteExpense(expenseId: expenseId));
+      print('Transaction deleted successfully!');
+
+      // Refresh the transaction list after deletion
+      await fetchTransactionList();
+      await fetchTransactionsExpense();
+    } catch (e) {
+      print('Failed to delete transaction: $e');
+    }
+  }
+
+
+
 }

@@ -383,3 +383,72 @@ class AddIcon {
     );
   }
 }
+
+class UpdateExpense {
+  final int expenseId;           // The ID of the expense you are updating
+  final double? expenseAmount;
+  final DateTime? expenseDate;
+  final String? expenseDescription;
+  final String? paymentType;
+  final int? userId;
+  final int? subCategoryId;
+
+  UpdateExpense({
+    required this.expenseId,     // Mark as required since you need it for updates
+    this.expenseAmount,
+    this.expenseDate,
+    this.expenseDescription,
+    this.paymentType,
+    this.userId,
+    this.subCategoryId,
+  });
+
+  // Construct an UpdateExpense from JSON
+  factory UpdateExpense.fromJson(Map<String, dynamic> json) {
+    return UpdateExpense(
+      expenseId: json["id"],
+      expenseAmount: json["amount"],
+      expenseDate: json["date"] != null ? DateTime.parse(json["date"]) : null,
+      expenseDescription: json["description"],
+      paymentType: json["paymenttype"],
+      subCategoryId: json["subcategoryid"],
+    );
+  }
+
+  // Convert UpdateExpense object to a Map for JSON or DB updates
+  Map<String, dynamic> toMap() {
+    return {
+      "id": expenseId,
+      "amount": expenseAmount,
+      "date": expenseDate?.toIso8601String(),
+      "description": expenseDescription,
+      "paymenttype": paymentType,
+      "userid": userId,
+      "subcategoryid": subCategoryId,
+    };
+  }
+}
+
+class DeleteExpense {
+  final int expenseId; // The ID of the expense to be deleted
+
+  DeleteExpense({
+    required this.expenseId,
+  });
+
+  // Construct a DeleteExpense instance from JSON
+  factory DeleteExpense.fromJson(Map<String, dynamic> json) {
+    return DeleteExpense(
+      expenseId: json["id"],
+    );
+  }
+
+  // Convert DeleteExpense object to a Map for API requests
+  Map<String, dynamic> toMap() {
+    return {
+      "id": expenseId,
+    };
+  }
+}
+
+

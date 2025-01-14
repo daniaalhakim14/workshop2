@@ -114,4 +114,39 @@ class CallingApi{
     return response;
   }
 
+  Future<http.Response> updateExpense(int expenseId, Map<String, dynamic> expenseData) async {
+  String endpoint = '/expense/$expenseId'; // Ensure this matches your API endpoint
+  String url = '$baseUrl$endpoint';
+
+  print("Sending update data: $expenseData"); // Log the data being sent
+
+  final response = await http.put(
+    Uri.parse(url),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode(expenseData),
+  );
+
+  print("Response status: ${response.statusCode}");
+  print("Response body: ${response.body}"); // Log the response body
+
+  return response;
+  }
+
+  Future<http.Response> deleteExpense(int expenseId) async {
+    String endpoint = '/expense/$expenseId';
+    String url = '$baseUrl$endpoint';
+
+    print("Deleting expense with ID: $expenseId");
+
+    final response = await http.delete(Uri.parse(url), headers: {'Content-Type': 'application/json'});
+
+    print("Response status: ${response.statusCode}");
+    print("Response body: ${response.body}");
+
+    return response;
+  }
+
+
+
+
 }
