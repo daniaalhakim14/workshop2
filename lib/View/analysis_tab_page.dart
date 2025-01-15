@@ -208,11 +208,11 @@ class BudgetVsRealChart extends StatelessWidget {
         child: SfCartesianChart(
           primaryXAxis: CategoryAxis(),
           legend: Legend(
-              isVisible: true,
-              // Border color and border width of legend
-              borderColor: Colors.black,
-              borderWidth: 2,
-              alignment: ChartAlignment.near,
+            isVisible: true,
+            // Border color and border width of legend
+            borderColor: Colors.black,
+            borderWidth: 2,
+            alignment: ChartAlignment.near,
           ),
           series: <CartesianSeries>[
             ColumnSeries<AnalysisData, String>(
@@ -256,7 +256,7 @@ class TabButton extends StatelessWidget {
   final String text;
   final bool isActive;
 
-  const TabButton({super.key, 
+  const TabButton({super.key,
     required this.text,
     required this.isActive,
   });
@@ -355,7 +355,7 @@ class BudgetVsRealPieChart extends StatelessWidget {
       child: Row(
         children: [
           SfCircularChart(
-            title: ChartTitle(text: 'Budget\nTotal: $totalBudget'),
+            title: ChartTitle(text: 'Budget\nTotal: RM ${totalBudget.toStringAsFixed(2)}'),
             legend: Legend(
                 isVisible: true,
                 // Border color and border width of legend
@@ -368,14 +368,14 @@ class BudgetVsRealPieChart extends StatelessWidget {
                 xValueMapper: (AnalysisData data, _) => data.category_name,
                 yValueMapper: (AnalysisData data, _) => data.budget_amount,
                 dataLabelSettings: DataLabelSettings(
-                    isVisible: true,
-                    labelPosition: ChartDataLabelPosition.inside,
+                  isVisible: true,
+                  labelPosition: ChartDataLabelPosition.inside,
                 ),
               ),
             ],
           ),
           SfCircularChart(
-            title: ChartTitle(text: 'Actual Expenses\nTotal: $totalExpense'),
+            title: ChartTitle(text: 'Actual Expenses\nTotal: RM ${totalExpense.toStringAsFixed(2)}'),
             legend: Legend(
                 isVisible: true,
                 // Border color and border width of legend
@@ -388,8 +388,8 @@ class BudgetVsRealPieChart extends StatelessWidget {
                 xValueMapper: (AnalysisData data, _) => data.category_name,
                 yValueMapper: (AnalysisData data, _) => data.expense_amount,
                 dataLabelSettings: DataLabelSettings(
-                    isVisible: true,
-                    labelPosition: ChartDataLabelPosition.inside,
+                  isVisible: true,
+                  labelPosition: ChartDataLabelPosition.inside,
                 ),
               ),
             ],

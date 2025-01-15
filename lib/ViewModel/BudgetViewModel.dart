@@ -312,4 +312,67 @@ class BudgetViewModel extends ChangeNotifier {
       );
     }).toList();
   }
+
+  Future<void> updateBudget(int budgetid, String budgetname, double budgetamount, String startdate) async {
+
+    // Reset error state and notify listeners
+    _error = null;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'budgetid': budgetid,
+          'budgetname': budgetname,
+          'budgetamount': budgetamount,
+          'startdate': startdate,
+        }),
+      );
+
+      if (response.statusCode != 201) {
+        _error = "Failed to update budget '${budgetid}'.";
+      }
+
+    } catch (e) {
+      _error = e.toString(); // Capture error for UI
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteBudget(int budgetid) async {
+
+    // Reset error state and notify listeners
+    _error = null;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await http.delete(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'budgetid': budgetid
+        }),
+      );
+
+      if (response.statusCode != 201) {
+        _error = "Failed to delete budget '${budgetid}'.";
+      }
+
+    } catch (e) {
+      _error = e.toString(); // Capture error for UI
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }

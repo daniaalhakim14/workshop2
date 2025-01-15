@@ -30,14 +30,37 @@ class _BudgetDetailState extends State<BudgetDetail> {
 
   @override
   Widget build(BuildContext context) {
-     void _showDeleteConfirmation(BuildContext context, BudgetViewModel budgetViewModel) {
+    Color color;
+
+    if (_currentBudget.progressPercentage <= 25) {
+      // Interpolate between blue and yellow
+      color = Color.lerp(Colors.blue, Colors.yellow, _currentBudget.progressPercentage / 25)!;
+    } else if (_currentBudget.progressPercentage <= 50) {
+      // Interpolate between yellow and orange
+      color = Color.lerp(Colors.yellow, Colors.orange, (_currentBudget.progressPercentage - 25) / 25)!;
+    } else if (_currentBudget.progressPercentage <= 75) {
+      // Interpolate between orange and red
+      color = Color.lerp(Colors.orange, Colors.red, (_currentBudget.progressPercentage - 50) / 25)!;
+    } else {
+      // Interpolate between red and red (fully red)
+      color = Colors.red;
+    }
+
+    void _showDeleteConfirmation(BuildContext context, BudgetViewModel budgetViewModel) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Text('Are you sure you want to delete Budget?'),
           actions: [
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                await budgetViewModel.deleteBudget(widget.budget.budgetId);
+                // Perform delete operation
+                if (budgetViewModel.error == null) {
+                  await budgetViewModel.fetchBudgets(1);
+                  Navigator.of(context).pop();
+                  Navigator.pop(context, "Delete budget successfully");
+                }
               },
               child: Text('Yes'),
             ),
@@ -64,11 +87,20 @@ class _BudgetDetailState extends State<BudgetDetail> {
             onTap: () async {
               // Navigate to the edit page and wait for the result
 
-              // Navigator.pop(context);
-              // await Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => EditBudget(budget: _currentBudget)),
-              // );
+              Navigator.pop(context);
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EditBudget(budget: _currentBudget)),
+              );
+              //
+              // // Check if the widget is still mounted before calling setState
+              // if (updatedBudget != null && mounted) {
+              //   WidgetsBinding.instance.addPostFrameCallback((_) {
+              //     setState(() {
+              //       _currentBudget = updatedBudget; // Update the budget with the new value
+              //     });
+              //   });
+              // }
             },
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -110,7 +142,7 @@ class _BudgetDetailState extends State<BudgetDetail> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'RM ${_currentBudget.totalAmount}',
+              'RM ${_currentBudget.totalAmount.toStringAsFixed(2)}',
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
@@ -118,7 +150,21 @@ class _BudgetDetailState extends State<BudgetDetail> {
             ),
             SizedBox(height: 16.0),
             Text(
-              'Be careful! You shouldn\'t spend more than RM${_currentBudget.amountLeft} each day for the rest of the period.',
+              'Amount Spent: RM${(_currentBudget.totalAmount - _currentBudget.amountLeft).toStringAsFixed(2)}',
+              style: TextStyle(
+                fontSize: 18.0,
+              ),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              'Amount Remained: RM${ _currentBudget.amountLeft.toStringAsFixed(2)}',
+              style: TextStyle(
+                fontSize: 18.0,
+              ),
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              'You have RM${_currentBudget.amountLeft.toStringAsFixed(2)} remaining for the rest of the period.',
               style: TextStyle(
                 fontSize: 16.0,
               ),
@@ -127,7 +173,7 @@ class _BudgetDetailState extends State<BudgetDetail> {
             Stack(
               children: [
                 Container(
-                  height: 20.0,
+                  height: 25.0,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5.0),
                     color: Colors.grey,
@@ -136,33 +182,41 @@ class _BudgetDetailState extends State<BudgetDetail> {
                 FractionallySizedBox(
                   widthFactor: _currentBudget.progressPercentage / 100,
                   child: Container(
-                    height: 20.0,
+                    height: 25.0,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: Colors.blue,
+                      color: color,
                     ),
                   ),
                 ),
-                Center(
-                  child: Text(
-                    '${_currentBudget.progressPercentage}%',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12.0,
-                    ),
-                  ),
-                ),
+                // Center(
+                //   child: Text(
+                //     '${_currentBudget.progressPercentage}%',
+                //     style: TextStyle(
+                //       color: Colors.white,
+                //       fontSize: 18.0,
+                //     ),
+                //   ),
+                // ),
               ],
             ),
             SizedBox(height: 8.0),
             Text(
+              '${_currentBudget.progressPercentage.toStringAsFixed(1)}%',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18.0,
+              ),
+            ),
+            SizedBox(height: 8.0),
+            Text(
               'Budget for ${_currentBudget.categorynames}',
-              style: TextStyle(fontSize: 12.0),
+              style: TextStyle(fontSize: 18.0),
             ),
             SizedBox(height: 8.0),
             Text(
               _currentBudget.date,
-              style: TextStyle(fontSize: 12.0),
+              style: TextStyle(fontSize: 18.0),
             ),
             SizedBox(height: 16.0),
             // Align(

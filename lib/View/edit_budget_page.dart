@@ -48,66 +48,108 @@ class _EditBudgetState extends State<EditBudget> {
             ),
             child: SingleChildScrollView(
               child: Consumer<BudgetViewModel>(
-                builder: (context, budgetViewModel, child) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: BudgetInputField(
-                          name: "Budget Name",
-                          hint: "Budget Name",
-                          controller: budgetNameController,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: BudgetInputField(
-                          name: "Budget Amount",
-                          hint: "Enter Amount",
-                          controller: budgetAmountController,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text('Budget for ${widget.budget.categorynames}'),
-                      ),
-                      // Padding(
-                      //   padding: const EdgeInsets.all(16.0),
-                      //   child: RecurrenceContainer(
-                      //     onTap: () => print("Budget For clicked"),
-                      //   ),
-                      // ),
-                      Consumer<DateViewModel>(
-                        builder: (datecontext, dateViewModel, child) {
+                  builder: (context, budgetViewModel, child) {
+                    if (budgetViewModel.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                          return Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: StartDateContainer(
-                              onTap: () {
-                                dateViewModel.selectDate(datecontext);
-                              },
-                              formattedDate: dateViewModel.formattedSelectedDate,
-                            ),
-                          );
-                        },
-                      ),
-                      Center(
-                        child: Padding(
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: SizedBox(
-                            child:CustomButton(
-                              text: "Done Edit",
-                              onTap: () {
-                              },
-                              backgroundColor: Colors.grey.shade300,
+                          child: BudgetInputField(
+                            name: "Budget Name",
+                            hint: "Budget Name",
+                            controller: budgetNameController,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: BudgetInputField(
+                            name: "Budget Amount",
+                            hint: "Enter Amount",
+                            controller: budgetAmountController,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text('Budget for ${widget.budget.categorynames}'),
+                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.all(16.0),
+                        //   child: RecurrenceContainer(
+                        //     onTap: () => print("Budget For clicked"),
+                        //   ),
+                        // ),
+                        Consumer<DateViewModel>(
+                          builder: (datecontext, dateViewModel, child) {
+
+                            return Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: StartDateContainer(
+                                onTap: () {
+                                  dateViewModel.selectDate(datecontext);
+                                },
+                                formattedDate: dateViewModel.formattedSelectedDate,
+                              ),
+                            );
+                          },
+                        ),
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: SizedBox(
+                              child:CustomButton(
+                                text: "Done Edit",
+                                onTap: () async {
+                                  // Show loading indicator
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) => const Center(child: CircularProgressIndicator()),
+                                  );
+
+                                  final dateViewModel = context.read<DateViewModel>();
+
+                                  try {
+                                    await budgetViewModel.updateBudget(
+                                      widget.budget.budgetId,
+                                      budgetNameController.text,
+                                      double.parse(budgetAmountController.text),
+                                      dateViewModel.yearMonthDay, // Use the selected date
+                                    );
+
+                                    if (budgetViewModel.error == null) {
+                                      Navigator.pop(context); // Close the loading dialog
+                                      showAutoDismissAlert(context, "Alert", "Budget Updated Successfully");
+
+                                      // Fetch budgets after update
+                                      await budgetViewModel.fetchBudgets(1);
+
+                                      await Future.delayed(Duration(seconds: 3));
+
+                                      // Pop the screen only after the budget update is finished
+                                      if (mounted) {
+                                        Navigator.pop(context);
+                                      }
+                                    } else {
+                                      Navigator.pop(context); // Close the loading dialog
+                                      showAutoDismissAlert(context, "Error", budgetViewModel.error!);
+                                    }
+                                  } catch (e) {
+                                    Navigator.pop(context); // Close the loading dialog
+                                    showAutoDismissAlert(context, "Error", "An unexpected error occurred: $e");
+                                  }
+                                },
+                                backgroundColor: Colors.grey.shade300,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                }
+                      ],
+                    );
+                  }
               ),
             ),
           ),
@@ -234,6 +276,61 @@ class BudgetForContainer extends StatelessWidget {
     );
   }
 }
+
+// // =================== RecurrenceContainer ===================
+// class RecurrenceContainer extends StatelessWidget {
+//   final VoidCallback onTap;
+//
+//   const RecurrenceContainer({
+//     super.key,
+//     required this.onTap});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return InkWell(
+//       onTap: onTap,
+//       borderRadius: BorderRadius.circular(12.0),
+//       child: Container(
+//         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.circular(12.0),
+//         ),
+//         child: Row(
+//           crossAxisAlignment: CrossAxisAlignment.center,
+//           children: [
+//             const Icon(Icons.calendar_today_outlined, size: 28, color: Colors.black),
+//             const SizedBox(width: 12),
+//             const Expanded(
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text(
+//                     "Recurrence",
+//                     style: TextStyle(
+//                       fontWeight: FontWeight.bold,
+//                       fontSize: 16,
+//                       color: Colors.black,
+//                     ),
+//                   ),
+//                   SizedBox(height: 4),
+//                   Text(
+//                     "Recurrence type",
+//                     style: TextStyle(
+//                       fontSize: 14,
+//                       color: Colors.grey,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             const Icon(Icons.expand_more, color: Colors.black),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 // =================== StartDateContainer ===================
 class StartDateContainer extends StatelessWidget {

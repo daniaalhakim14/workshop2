@@ -97,6 +97,7 @@ class _BudgetState extends State<Budget> {
                           child: BudgetCardList(
                             budgetData: viewModel.budgetdisplay,
                             userid: userid,
+                            parentContext: context,
                           ),
                         ),
                       ),
@@ -209,8 +210,8 @@ class CustomButton extends StatelessWidget {
 
 class BudgetCard extends StatelessWidget {
   final String budgetName;
-  final String amountLeft;
-  final String totalAmount;
+  final double amountLeft;
+  final double totalAmount;
   final double progressPercentage;
   final String categorynames;
   final String date;
@@ -229,6 +230,22 @@ class BudgetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color color;
+
+    if (progressPercentage <= 25) {
+      // Interpolate between blue and yellow
+      color = Color.lerp(Colors.blue, Colors.yellow, progressPercentage / 25)!;
+    } else if (progressPercentage <= 50) {
+      // Interpolate between yellow and orange
+      color = Color.lerp(Colors.yellow, Colors.orange, (progressPercentage - 25) / 25)!;
+    } else if (progressPercentage <= 75) {
+      // Interpolate between orange and red
+      color = Color.lerp(Colors.orange, Colors.red, (progressPercentage - 50) / 25)!;
+    } else {
+      // Interpolate between red and red (fully red)
+      color = Colors.red;
+    }
+
     return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -261,7 +278,7 @@ class BudgetCard extends StatelessWidget {
                   ),
                   children: [
                     TextSpan(
-                      text: 'RM $amountLeft',
+                      text: 'RM ${amountLeft.toStringAsFixed(2)}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
@@ -270,7 +287,7 @@ class BudgetCard extends StatelessWidget {
                       text: ' left out of ',
                     ),
                     TextSpan(
-                      text: 'RM $totalAmount',
+                      text: 'RM ${totalAmount.toStringAsFixed(2)}',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -282,7 +299,7 @@ class BudgetCard extends StatelessWidget {
               Stack(
                 children: [
                   Container(
-                    height: 20.0,
+                    height: 25.0,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
                       color: Colors.grey,
@@ -291,35 +308,43 @@ class BudgetCard extends StatelessWidget {
                   FractionallySizedBox(
                     widthFactor: progressPercentage / 100,
                     child: Container(
-                      height: 20.0,
+                      height: 25.0,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5.0),
-                        color: Colors.blue,
+                        color: color,
                       ),
                     ),
                   ),
-                  Center(
-                    child: Text(
-                      '${progressPercentage.toStringAsFixed(1)}%',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12.0,
-                      ),
-                    ),
-                  ),
+                  // Center(
+                  //   child: Text(
+                  //     '${progressPercentage.toStringAsFixed(1)}%',
+                  //     style: TextStyle(
+                  //       color: Colors.white,
+                  //       fontSize: 12.0,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
               SizedBox(height: 8.0),
               Text(
+                '${progressPercentage.toStringAsFixed(1)}%',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 24.0,
+                ),
+              ),
+              SizedBox(height: 8.0),
+              Text(
                 'Budget for $categorynames',
-                style: TextStyle(fontSize: 12.0),
+                style: TextStyle(fontSize: 18.0),
               ),
               SizedBox(height: 8.0),
 
               // Footer (Date Label)
               Text(
                 date,
-                style: TextStyle(fontSize: 12.0),
+                style: TextStyle(fontSize: 18.0),
               ),
             ],
           ),
@@ -332,11 +357,13 @@ class BudgetCard extends StatelessWidget {
 class BudgetCardList extends StatelessWidget {
   final List<BudgetDisplay> budgetData;
   final int userid;
+  final BuildContext parentContext;
 
   const BudgetCardList({
     super.key,
     required this.budgetData,
     required this.userid,
+    required this.parentContext,
   });
 
   @override
@@ -348,8 +375,8 @@ class BudgetCardList extends StatelessWidget {
         final budget = budgetData[index];
         return BudgetCard(
           budgetName: budget.budgetName,
-          amountLeft: budget.amountLeft.toString(),
-          totalAmount: budget.totalAmount.toString(),
+          amountLeft: budget.amountLeft,
+          totalAmount: budget.totalAmount,
           progressPercentage: budget.progressPercentage,
           categorynames: budget.categorynames,
           date: budget.date,
@@ -359,7 +386,13 @@ class BudgetCardList extends StatelessWidget {
               MaterialPageRoute(builder: (context) => BudgetDetail(
                 budget: budget,
               )),
-            );
+            ).then((result) async {
+              if (result == "Delete budget successfully") {
+                showAutoDismissAlert(parentContext, "Alert", result);
+                // Allow user to see the alert, then navigate back
+                await Future.delayed(Duration(seconds: 3));
+              }
+            });
           },
         );
       },
