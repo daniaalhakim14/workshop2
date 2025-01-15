@@ -4,12 +4,13 @@ import 'dart:typed_data';
 import 'package:http_parser/http_parser.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
-import 'package:workshop_2/admin_dashboard/models/services/base_service.dart';
 import 'package:workshop_2/admin_dashboard/models/apis/app_exception.dart';
 
-class AdminService extends BaseService {
+class AdminService{
 
-  @override
+  final String adminBaseUrl = "http://localhost:3000/admin";
+
+
   Future getResponse(String endpoint) async {
     Map<String, dynamic>? responseJson;
     try {
@@ -21,7 +22,7 @@ class AdminService extends BaseService {
     return responseJson;
   }
 
-  @override
+
   Future postResponse(String endpoint, Map<String, dynamic> body) async {
     Map<String, dynamic>? responseJson;
 
@@ -38,7 +39,6 @@ class AdminService extends BaseService {
     return responseJson;
   }
 
-  @override
   Future putResponse(String endpoint, Map<String, dynamic> body) async {
     Map<String, dynamic>? responseJson;
     try {
@@ -54,7 +54,6 @@ class AdminService extends BaseService {
     return responseJson;
   }
 
-  @override
   Future deleteResponse(String endpoint) async {
     Map<String, dynamic>? responseJson;
     try {

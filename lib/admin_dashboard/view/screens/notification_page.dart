@@ -629,6 +629,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                                         selectedCategories,
                                       );
                                     }
+                                    
                                   },
                             style: TextButton.styleFrom(
                               backgroundColor: titleController.text.isEmpty || descriptionController.text.isEmpty || selectedCategories.isEmpty || selectedType == null

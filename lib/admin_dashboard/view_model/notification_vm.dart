@@ -398,6 +398,7 @@ void clearCategoryCache(int notificationID) {
     try {
       bool success = await notificationRepository.updateNotificationCategories(notificationID, categoryIDs);
       if (success) {
+        clearCategoryCache(notificationID);
         await fetchNotifications();
         print('Notification categories updated successfully');
       } else {

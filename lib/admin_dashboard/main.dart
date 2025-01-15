@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:workshop_2/admin_dashboard/view/screens/notification_page.dart';
 import 'package:workshop_2/admin_dashboard/routing/routes.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:workshop_2/admin_dashboard/view/screens/profile_page.dart';
 
 void main() async{
   Get.put(menu_controller.MenuController());
@@ -36,6 +37,7 @@ class MyWebApp extends StatelessWidget {
               return LoginPage();
             }),
         GetPage(name: logoutPageRoute, page: () => LoginPage()),
+        GetPage(name: profilePageRoute, page: () => ProfilePage(),),
         GetPage(name: notificationPageRoute, page: () => const SiteLayout())
       ],
       debugShowCheckedModeBanner: false,

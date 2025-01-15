@@ -3,7 +3,6 @@
 
 import 'package:workshop_2/admin_dashboard/models/model/notification.dart';
 import 'package:workshop_2/admin_dashboard/models/services/notification_service.dart';
-import 'package:workshop_2/admin_dashboard/models/services/base_service.dart';
 import 'package:get_storage/get_storage.dart';
 
 

@@ -20,11 +20,10 @@ class SideMenu extends StatelessWidget{
     nav.NavigationController navigationController = nav.NavigationController.instance;
 
     final profileViewModel = Get.put(ProfileViewModel());
-    //final profileController = Get.put(ProfileController()); // Initialize ProfileController
 
     final box = GetStorage();
-    final adminData = box.read('adminData'); // 获取存储的adminData
-    final adminName = adminData?['name'] ?? "Admin Name"; // 默认值为 "Admin Name"
+    final adminData = box.read('adminData'); 
+    final adminName = adminData?['name'] ?? "Admin Name"; 
 
     return Container(
       color: const Color(0xFF008080), //background color

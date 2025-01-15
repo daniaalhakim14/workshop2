@@ -1,9 +1,8 @@
 import 'package:workshop_2/admin_dashboard/models/model/admin.dart';
 import 'package:workshop_2/admin_dashboard/models/services/admin_service.dart';
-import 'package:workshop_2/admin_dashboard/models/services/base_service.dart';
 import 'package:get_storage/get_storage.dart';
 class AdminRepository {
-  final BaseService _adminService = AdminService();
+  final AdminService _adminService = AdminService();
 
   // login -> request email & password, response admin data & token
   Future<Admin?> loginAdmin(Map<String, dynamic> adminData) async {
