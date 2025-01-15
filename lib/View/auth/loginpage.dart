@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   "Hello Again!",
                   style: TextStyle(
                     fontSize: 42, // Text size
@@ -32,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 20), // Spacing between the image and the text
-                Text(
+                const Text(
                   "Welcome Back! You've been missed",
                   style: TextStyle(
                     fontSize: 20, // Text size
@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: TextField(
                     decoration: InputDecoration(
                       labelText: "Enter Email",
-                      labelStyle: TextStyle(color: Colors.grey), // Label text color
+                      labelStyle: TextStyle(color: Colors.black,fontWeight: FontWeight.bold), // Label text color
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12), // Rounded borders
                       ),
@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                     obscureText: !_isPasswordVisible, // Toggle password visibility
                     decoration: InputDecoration(
                       labelText: "Password",
-                      labelStyle: TextStyle(color: Colors.grey), // Label text color
+                      labelStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold), // Label text color
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12), // Rounded borders
                       ),
@@ -97,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         // Add recovery password action here
                       },
-                      child: Text(
+                      child: const Text(
                         "Recovery Password",
                         style: TextStyle(
                           color: Colors.white, // Text color for recovery link
@@ -140,13 +140,13 @@ class _LoginPageState extends State<LoginPage> {
         
                 const SizedBox(height: 20),
         
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 35),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 35),
                   child: Row(
                     children: [
                       Expanded(child: Divider(color: Colors.white)), // Left divider
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        padding: EdgeInsets.symmetric(horizontal: 8),
                         child: Text(
                           "or continue with",
                           style: TextStyle(
@@ -173,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                         IconButton(
                           onPressed: () {},
                           icon: Image.asset(
-                              'assets/icons/google.png',
+                              'lib/Icons/google.png',
                               width: 30,  // Width of the image
                               height: 30,
                           ), // Replace with your image asset
@@ -181,14 +181,14 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(width: 10),
                         IconButton(
                           onPressed: () {},
-                          icon: Image.asset('assets/icons/apple.png',
+                          icon: Image.asset('lib/Icons/apple.png',
                             width: 30,  // Width of the image
                             height: 30,), // Replace with your image asset
                         ),
                         const SizedBox(width: 10),
                         IconButton(
                           onPressed: () {},
-                          icon: Image.asset('assets/icons/facebook.png',
+                          icon: Image.asset('lib/Icons/facebook.png',
                             width: 30,  // Width of the image
                             height: 30,), // Replace with your image asset
                         ),

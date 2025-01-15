@@ -22,30 +22,34 @@ class _FirstPageState extends State<FirstPage> {
           children: [
             // Add your image here
             Image.asset(
-              'assets/images/appfirstpage.png', // Replace with your image path
-              width: 300, // Adjust the size
-              height: 300, // Adjust the size
+              'lib/Icons/appfirstpage.png', // Replace with your image path
+              width: 230, // Adjust the size
+              height: 230, // Adjust the size
               fit: BoxFit.contain, // Adjust the fit
             ),
-            const SizedBox(height: 20), // Spacing between the image and the text
-            Text(
-              "App Name",
+            const SizedBox(height: 10), // Spacing between the image and the text
+            const Text(
+              "MyDuit",
               style: TextStyle(
-                fontSize: 42, // Text size
+                fontSize: 50, // Text size
                 fontWeight: FontWeight.bold, // Bold text
-                color: Color(0xFF002B36), // Text color using hex code
+                color: Colors.white, // Text color using hex code
               ),
             ),
-            const SizedBox(height: 30),
-            Text(
-              "One step closer to smarter money management, every day",
-              style: TextStyle(
-                fontSize: 13.5, // Text size
-                fontWeight: FontWeight.bold, // Bold text
-                color: Colors.white, // Text color
+            const SizedBox(height: 10),
+            const Center(
+              child: Text(
+                "One step closer to smarter \nmoney management,every day",
+                textAlign: TextAlign.center, // Ensures text is centered within the widget
+                style: TextStyle(
+                  fontSize: 13.5, // Text size
+                  fontWeight: FontWeight.normal, // Bold text
+                  color: Colors.white, // Text color
+                ),
               ),
             ),
-            const SizedBox(height: 50),
+
+            const SizedBox(height: 40),
             SizedBox(
               width: 300, // Fixed width for both buttons
               child: ElevatedButton(

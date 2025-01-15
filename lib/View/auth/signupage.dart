@@ -22,7 +22,7 @@ class _SignupPageState extends State<SignupPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   "Sign up",
                   style: TextStyle(
                     fontSize: 42, // Text size
@@ -46,7 +46,7 @@ class _SignupPageState extends State<SignupPage> {
                     color: Color(0xFFE0E0E0), // Text color using hex code
                   ),
                 ),
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(left: 20, bottom: 5, top: 5), // Adjusted bottom and added top padding
                   child: Align(
                     alignment: Alignment.centerLeft,
@@ -75,7 +75,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                 ),
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(left: 20,bottom: 5 ,top: 5), // Reduced top padding
                   child: Align(
                     alignment: Alignment.centerLeft,
@@ -104,7 +104,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                 ),
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(left: 20,bottom: 5 ,top: 5),
                   child: Align(
                     alignment: Alignment.centerLeft,
@@ -133,7 +133,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                 ),
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(left: 20,bottom: 5 ,top: 5),
                   child: Align(
                     alignment: Alignment.centerLeft,
@@ -174,7 +174,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                 ),
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(left: 30, top: 5),
                   child: Align(
                     alignment: Alignment.centerLeft,
@@ -188,7 +188,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                 ),
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(left: 20,bottom: 5 ,top: 5),
                   child: Align(
                     alignment: Alignment.centerLeft,
@@ -229,7 +229,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                 ),
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(left: 20,bottom: 5 ,top: 5),
                   child: Align(
                     alignment: Alignment.centerLeft,
@@ -272,7 +272,7 @@ class _SignupPageState extends State<SignupPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: Center(
+                    child: const Center(
                       child: Text(
                         "Sign Up",
                         style: TextStyle(
