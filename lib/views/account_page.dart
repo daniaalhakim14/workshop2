@@ -75,7 +75,8 @@ class _AccountState extends State<Account> {
               ),
             ),
             centerTitle: true,
-            backgroundColor: isDarkModeValue ? Colors.black : const Color(0xFF008080),
+            backgroundColor: isDarkModeValue ? Colors.black : const Color(
+                0xFF008080),
             elevation: 0,
             automaticallyImplyLeading: _showAdditionalOptions,
             leading: _showAdditionalOptions
@@ -91,7 +92,10 @@ class _AccountState extends State<Account> {
                 : null,
           ),
           body: Container(
-            height: MediaQuery.of(context).size.height,
+            height: MediaQuery
+                .of(context)
+                .size
+                .height,
             color: isDarkModeValue ? Colors.black : const Color(0xFF008080),
             child: SingleChildScrollView(
               child: Column(
@@ -103,10 +107,15 @@ class _AccountState extends State<Account> {
                       children: [
                         CircleAvatar(
                           key: ValueKey(accountViewModel.avatarBytes != null
-                              ? DateTime.now().millisecondsSinceEpoch
-                              : 'default_avatar'), // Unique key to force rebuild
+                              ? DateTime
+                              .now()
+                              .millisecondsSinceEpoch
+                              : 'default_avatar'),
+                          // Unique key to force rebuild
                           radius: 83.5,
-                          backgroundColor: isDarkModeValue ? Colors.grey[800] : Colors.white,
+                          backgroundColor: isDarkModeValue
+                              ? Colors.grey[800]
+                              : Colors.white,
                           backgroundImage: accountViewModel.avatarBytes != null
                               ? MemoryImage(accountViewModel.avatarBytes!)
                               : null,
@@ -115,7 +124,8 @@ class _AccountState extends State<Account> {
                             width: 167,
                             height: 167,
                             decoration: BoxDecoration(
-                              color: isDarkModeValue ? Colors.grey[800] : Colors.white,
+                              color: isDarkModeValue ? Colors.grey[800] : Colors
+                                  .white,
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: Colors.white,
@@ -136,15 +146,17 @@ class _AccountState extends State<Account> {
                           onTap: _showAvatarOptions,
                           child: CircleAvatar(
                             radius: 20,
-                            backgroundColor: isDarkModeValue ? Colors.grey[800] : Colors.white,
+                            backgroundColor: isDarkModeValue
+                                ? Colors.grey[800]
+                                : Colors.white,
                             child: Icon(
                               Icons.edit,
                               size: 18,
-                              color: isDarkModeValue ? Colors.white : Colors.black,
+                              color: isDarkModeValue ? Colors.white : Colors
+                                  .black,
                             ),
                           ),
                         ),
-
 
 
                       ],
@@ -186,7 +198,8 @@ class _AccountState extends State<Account> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AppAppearance(userId: widget.user.id),
+                            builder: (context) =>
+                                AppAppearance(userId: widget.user.id),
                           ),
                         );
                       },
@@ -253,16 +266,15 @@ class _AccountState extends State<Account> {
                         icon: Icons.notifications,
                         isDarkModeValue: isDarkModeValue,
                         onTap: () {
-                         Navigator.push(
-                             context,
-                           MaterialPageRoute(
-                             builder: (context) =>
-                            Noti(user: widget.user),
-                              ),
-                               );
-                          },
-                        ),
-
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  Noti(user: widget.user),
+                            ),
+                          );
+                        },
+                      ),
 
 
                       buildOptionContainer(
@@ -357,7 +369,6 @@ class _AccountState extends State<Account> {
     VoidCallback? onTap,
     bool alwaysRed = false,
   }) {
-
     final effectiveIconColor =
     alwaysRed ? Colors.red : (isDarkModeValue ? Colors.white : iconColor);
     final effectiveTextColor =
@@ -499,7 +510,9 @@ class _AccountState extends State<Account> {
         Provider.of<AccountViewModel>(context, listen: false);
 
         final updatedFile = File(
-            '${croppedFile.path}?v=${DateTime.now().millisecondsSinceEpoch}');
+            '${croppedFile.path}?v=${DateTime
+                .now()
+                .millisecondsSinceEpoch}');
 
         showDialog(
           context: context,
@@ -511,7 +524,8 @@ class _AccountState extends State<Account> {
           },
         );
 
-        await avatarViewModel.uploadAvatar(File(croppedFile.path), widget.user.id.toString());
+        await avatarViewModel.uploadAvatar(
+            File(croppedFile.path), widget.user.id.toString());
         await avatarViewModel.fetchAvatar(widget.user.id.toString());
 
 
@@ -528,7 +542,6 @@ class _AccountState extends State<Account> {
 
         );
         Navigator.pop(context);
-
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
