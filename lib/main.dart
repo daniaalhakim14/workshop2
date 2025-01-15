@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import the provider package
-import 'View/home_page.dart';
-import '../ViewModel/insight_view_model.dart'; // Import your InsightViewModel
+import '../ViewModel/insight_view_model.dart';
+import 'View/auth/first_page.dart'; // Import your InsightViewModel
 
 void main() async {
   runApp(MyApp());
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
             backgroundColor: Color(0xFF65ADAD),
           ),
         ),
-        home: Home(),
+        home: FirstPage(),
       ),
     );
   }

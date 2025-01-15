@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart';
-import 'notification_page.dart';
-import 'account_page.dart';
+import '../../ViewModel/UserModel.dart';
+import '../Main_pages/account_page.dart';
+import '../Main_pages/home_page.dart';
+import '../Main_pages/notification_page.dart';
 
-class NotificatioNDetails extends StatefulWidget {
+
+class NotificationDetails extends StatefulWidget {
   final String title;
   final String datetime;
   final String details;
+  final UserModel user; // Accept UserModel as a parameter
 
-  const NotificatioNDetails({
-    Key? key,
+  const NotificationDetails({
+    super.key,
     required this.title,
     required this.datetime,
     required this.details,
-  }) : super(key: key);
+    required this.user, // Include UserModel in the constructor
+  });
 
   @override
-  State<NotificatioNDetails> createState() => _NotificationDetailsState();
+  State<NotificationDetails> createState() => _NotificationDetailsState();
 }
 
-class _NotificationDetailsState extends State<NotificatioNDetails> {
-
+class _NotificationDetailsState extends State<NotificationDetails> {
   @override
   Widget build(BuildContext notificationContext) {
     return Scaffold(
@@ -70,40 +73,43 @@ class _NotificationDetailsState extends State<NotificatioNDetails> {
           children: <Widget>[
             IconButton(
               onPressed: () {
-                Navigator.push(notificationContext, MaterialPageRoute(builder: (context) => const Home()),);
+                Navigator.pushReplacement(
+                  notificationContext,
+                  MaterialPageRoute(
+                    builder: (context) => Home(user: widget.user), // Pass UserModel dynamically
+                  ),
+                );
               },
-              icon: Icon(
+              icon: const Icon(
                 Icons.home_outlined,
                 color: Colors.white,
                 size: 30,
               ),
             ),
-
-            IconButton(
-              onPressed: () {},
-              icon: Image.asset(
-                'lib/Icons/three lines.png',
-                height: 30,
-                width: 30,
-                color: Color(0xFF65ADAD),
-              ),
-            ),
-
             IconButton(
               onPressed: () {
-                Navigator.push(notificationContext, MaterialPageRoute(builder: (context) => const Noti()));
+                Navigator.pushReplacement(
+                  notificationContext,
+                  MaterialPageRoute(
+                    builder: (context) => Noti(user: widget.user), // Pass UserModel dynamically
+                  ),
+                );
               },
               icon: Image.asset(
                 'lib/Icons/notification.png',
                 height: 30,
                 width: 30,
-                color: Colors.white,
+                color: const Color(0xFF65ADAD), // Active tab highlight
               ),
             ),
-
             IconButton(
               onPressed: () {
-                Navigator.push(notificationContext, MaterialPageRoute(builder: (context) => const Account()));
+                Navigator.pushReplacement(
+                  notificationContext,
+                  MaterialPageRoute(
+                    builder: (context) => Account(user: widget.user), // Pass UserModel dynamically
+                  ),
+                );
               },
               icon: Image.asset(
                 'lib/Icons/safe.png',

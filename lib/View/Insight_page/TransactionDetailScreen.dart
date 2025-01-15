@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
-import '../Model/insight_model.dart';
-import '../ViewModel/insight_view_model.dart';
+import '../../Model/insight_model.dart';
+import '../../ViewModel/insight_view_model.dart';
 import 'edit_transaction.dart';
 
 class TransactionDetailScreen extends StatefulWidget {

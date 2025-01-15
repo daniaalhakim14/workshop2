@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../Model/insight_model.dart';
+import '../../Model/insight_model.dart';
 import 'SubCategoryDetailScreen.dart';
-import 'insight_page.dart';
+
 
 class CategoryDetailScreen extends StatefulWidget {
   final String categoryName;

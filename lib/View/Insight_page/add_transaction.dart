@@ -2,11 +2,12 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tab_bar_widget/Model/insight_model.dart';
-import 'package:tab_bar_widget/View/incomeCategory_page.dart';
 import 'package:tab_bar_widget/ViewModel/insight_view_model.dart';
-import 'insight_page.dart'; // get dynamic button
-import 'category_page.dart';
 import 'package:intl/intl.dart';
+
+import '../main_pages/insight_page.dart';
+import 'category_page.dart';
+import 'incomeCategory_page.dart';
 
 // Global Variable
 const List<String> paymentType = <String>['Cash','Debit Card','Credit Card','Online Transfer','E-Wallet'];

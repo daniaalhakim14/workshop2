@@ -5,22 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:tab_bar_widget/View/edit_transaction.dart';
 import 'package:tab_bar_widget/ViewModel/insight_view_model.dart';
-import '../Model/insight_model.dart';
-import 'CategoryDetailScreen.dart';
-import 'TransactionDetailScreen.dart';
+import '../../Model/insight_model.dart';
+import '../../ViewModel/UserModel.dart';
+import '../Insight_page/CategoryDetailScreen.dart';
+import '../Insight_page/TransactionDetailScreen.dart';
+import '../Insight_page/add_transaction.dart';
 import 'account_page.dart';
-import 'add_transaction.dart';
 import 'home_page.dart';
-import 'notification_page.dart';
 import 'dart:async';
+
+import 'notification_page.dart';
 
 
 // configure daily spent and spent so far
 
 class Insight extends StatefulWidget {
-  const Insight({super.key});
+  final UserModel user; // Accept UserModel as a parameter
+  const Insight({super.key,required this.user});
 
   @override
   State<Insight> createState() => _InsightState();
@@ -737,14 +739,14 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
 
         bottomNavigationBar: BottomAppBar(
           color: const Color(0xFF002B36),
-          child: _bottomBarConfiguration(context),
+          child: _bottomBarConfiguration(context,widget.user),
         ),
       ),
     );
   }
 }
 
-Row _bottomBarConfiguration(BuildContext context) {
+Row _bottomBarConfiguration(BuildContext context, UserModel user) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: <Widget>[
@@ -752,7 +754,7 @@ Row _bottomBarConfiguration(BuildContext context) {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Home()),
+            MaterialPageRoute(builder: (context) => Home(user: user)),
           );
         },
         icon: const Icon(
@@ -774,7 +776,7 @@ Row _bottomBarConfiguration(BuildContext context) {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Noti()),
+            MaterialPageRoute(builder: (context) => Noti(user: user)),
           );
         },
         icon: Image.asset(
@@ -788,7 +790,7 @@ Row _bottomBarConfiguration(BuildContext context) {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Account()),
+            MaterialPageRoute(builder: (context) => Account(user: user)),
           );
         },
         icon: Image.asset(

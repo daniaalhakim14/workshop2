@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'loginpage.dart'; // Import the LoginPage
-import 'signuppage.dart'; // Import the SignupPage
+import 'package:tab_bar_widget/View/auth/signupage.dart';
+
+import 'loginpage.dart';
+
 
 class FirstPage extends StatefulWidget {
   const FirstPage({super.key});

@@ -7,7 +7,7 @@ import 'package:tab_bar_widget/ViewModel/insight_view_model.dart';
 
 import 'category_page.dart';
 import 'incomeCategory_page.dart';
-import 'insight_page.dart';
+
 
 // Global Variable
 const List<String> paymentType = <String>['Cash','Debit Card','Credit Card','Online Transfer','E-Wallet'];
