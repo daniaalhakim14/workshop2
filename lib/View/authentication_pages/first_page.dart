@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tab_bar_widget/View/auth/signupage.dart';
-
+import 'package:tab_bar_widget/View/authentication_pages/signupage.dart';
 import 'loginpage.dart';
+
 
 
 class FirstPage extends StatefulWidget {

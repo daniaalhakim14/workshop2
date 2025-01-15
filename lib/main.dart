@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import the provider package
 import '../ViewModel/insight_view_model.dart';
-import 'View/auth/first_page.dart'; // Import your InsightViewModel
+import 'View/authentication_pages/first_page.dart';
+import 'ViewModel/account_viewmodel.dart';
+import 'ViewModel/app_appearance_viewmodel.dart'; // Import your InsightViewModel
 
 void main() async {
   runApp(MyApp());
@@ -16,6 +18,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => InsightViewModel()),
+        ChangeNotifierProvider(create: (_) => AccountViewModel()),
+        ChangeNotifierProvider(create: (_) => AppAppearanceViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -31,3 +35,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+

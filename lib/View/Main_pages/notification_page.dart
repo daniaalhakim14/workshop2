@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../ViewModel/UserModel.dart';
+import 'package:tab_bar_widget/View/Main_pages/homepage.dart';
+import '../../Model/insight_model.dart';
 import '../Notification_page/notification_details_page.dart';
 import 'account_page.dart';
-import 'home_page.dart';
 import 'insight_page.dart';
 
 
 class Noti extends StatefulWidget {
-  final UserModel user; // Accept `UserModel` as a parameter
+  final UserInfoModul userInfo; // Accept `UserModel` as a parameter
 
-  const Noti({super.key, required this.user});
+  const Noti({super.key, required this.userInfo});
 
   @override
   State<Noti> createState() => _NotificationState();
@@ -140,7 +140,7 @@ class _NotificationState extends State<Noti> {
                                     title: notification['title']!,
                                     datetime: notification['datetime']!,
                                     details: notification['details']!,
-                                    user: widget.user, // Pass UserModel
+                                    userInfo: widget.userInfo, // Pass UserModel
                                   ),
                                 ),
                               );
@@ -173,7 +173,7 @@ class _NotificationState extends State<Noti> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Home(user: widget.user), // Pass UserModel
+                    builder: (context) => HomePage(userInfo: widget.userInfo), // Pass UserModel
                   ),
                 );
               },
@@ -184,7 +184,7 @@ class _NotificationState extends State<Noti> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Insight(user: widget.user), // Pass UserModel
+                    builder: (context) => Insight(userInfo: widget.userInfo), // Pass UserModel
                   ),
                 );
               },
@@ -209,7 +209,7 @@ class _NotificationState extends State<Noti> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Account(user: widget.user), // Pass UserModel
+                    builder: (context) => Account(userInfo: widget.userInfo), // Pass UserModel
                   ),
                 );
               },

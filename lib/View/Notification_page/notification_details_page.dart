@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../ViewModel/UserModel.dart';
+import 'package:tab_bar_widget/View/Main_pages/homepage.dart';
+import '../../Model/insight_model.dart';
 import '../Main_pages/account_page.dart';
-import '../Main_pages/home_page.dart';
 import '../Main_pages/notification_page.dart';
 
 
@@ -9,14 +9,14 @@ class NotificationDetails extends StatefulWidget {
   final String title;
   final String datetime;
   final String details;
-  final UserModel user; // Accept UserModel as a parameter
+  final UserInfoModul userInfo; // Accept UserModel as a parameter
 
   const NotificationDetails({
     super.key,
     required this.title,
     required this.datetime,
     required this.details,
-    required this.user, // Include UserModel in the constructor
+    required this.userInfo, // Include UserModel in the constructor
   });
 
   @override
@@ -76,7 +76,7 @@ class _NotificationDetailsState extends State<NotificationDetails> {
                 Navigator.pushReplacement(
                   notificationContext,
                   MaterialPageRoute(
-                    builder: (context) => Home(user: widget.user), // Pass UserModel dynamically
+                    builder: (context) => HomePage(userInfo: widget.userInfo), // Pass UserModel dynamically
                   ),
                 );
               },
@@ -91,7 +91,7 @@ class _NotificationDetailsState extends State<NotificationDetails> {
                 Navigator.pushReplacement(
                   notificationContext,
                   MaterialPageRoute(
-                    builder: (context) => Noti(user: widget.user), // Pass UserModel dynamically
+                    builder: (context) => Noti(userInfo: widget.userInfo), // Pass UserModel dynamically
                   ),
                 );
               },
@@ -107,7 +107,7 @@ class _NotificationDetailsState extends State<NotificationDetails> {
                 Navigator.pushReplacement(
                   notificationContext,
                   MaterialPageRoute(
-                    builder: (context) => Account(user: widget.user), // Pass UserModel dynamically
+                    builder: (context) => Account(userInfo: widget.userInfo), // Pass UserModel dynamically
                   ),
                 );
               },

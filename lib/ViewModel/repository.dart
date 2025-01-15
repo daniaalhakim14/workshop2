@@ -177,6 +177,32 @@ class InsightRepository{
     print('Income deleted successfully');
   }
 
+  Future<bool> login(String email, String password) async {
+    final response = await _service.login(email, password);
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      //print('Login successful: ${data['user']}');
+      return true;
+    } else {
+      print('Login failed with status: ${response.statusCode}');
+      return false;
+    }
+  }
+
+  // Fetch user details using email
+  Future<UserInfoModul?> fetchUserDetailsByEmail(String email) async {
+    final response = await _service.fetchUserDetailsByEmail(email);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      print('Fetched User Details: ${data['user']}');
+      return UserInfoModul.fromJson(data['user']);
+    } else {
+      print('Failed to fetch user details with status: ${response.statusCode}');
+      return null;
+    }
+  }
+
 
 
 }

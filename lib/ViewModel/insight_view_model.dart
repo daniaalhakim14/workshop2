@@ -10,6 +10,9 @@ class InsightViewModel extends ChangeNotifier{
 
   bool fetchingData = false;
 
+  UserInfoModul? _userInfo;
+  UserInfoModul? get userInfo => _userInfo;
+
   List<TransactionsExpense> _transactionsExpense = [];
   List<TransactionsExpense> get transactionsExpense => _transactionsExpense;
 
@@ -191,6 +194,35 @@ class InsightViewModel extends ChangeNotifier{
     }
   }
 
+  Future<bool> login(String email, String password) async {
+    try {
+      final InsightRepository _repository = InsightRepository();
+      final success = await _repository.login(email, password);
+      return success;
+    } catch (e) {
+      print('Login failed: $e');
+      return false;
+    }
+  }
 
-
+  // Fetch user details using email
+  Future<void> fetchUserDetailsByEmail(String email) async {
+    try {
+      final InsightRepository _repository = InsightRepository();
+      _userInfo = await _repository.fetchUserDetailsByEmail(email);
+      if (_userInfo != null) {
+        print('User details fetched successfully: ${_userInfo!.toJson()}');
+      } else {
+        print('Failed to fetch user details');
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error fetching user details: $e');
+    }
+  }
 }
+
+
+
+
+

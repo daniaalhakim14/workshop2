@@ -7,22 +7,20 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tab_bar_widget/ViewModel/insight_view_model.dart';
 import '../../Model/insight_model.dart';
-import '../../ViewModel/UserModel.dart';
 import '../Insight_page/CategoryDetailScreen.dart';
 import '../Insight_page/TransactionDetailScreen.dart';
 import '../Insight_page/add_transaction.dart';
 import 'account_page.dart';
-import 'home_page.dart';
 import 'dart:async';
-
+import 'homepage.dart';
 import 'notification_page.dart';
 
 
 // configure daily spent and spent so far
 
 class Insight extends StatefulWidget {
-  final UserModel user; // Accept UserModel as a parameter
-  const Insight({super.key,required this.user});
+  final UserInfoModul userInfo; // Accept UserModel as a parameter
+  const Insight({super.key,required this.userInfo});
 
   @override
   State<Insight> createState() => _InsightState();
@@ -739,22 +737,24 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
 
         bottomNavigationBar: BottomAppBar(
           color: const Color(0xFF002B36),
-          child: _bottomBarConfiguration(context,widget.user),
+          child: _bottomBarConfiguration(context,widget.userInfo),
         ),
       ),
     );
   }
 }
 
-Row _bottomBarConfiguration(BuildContext context, UserModel user) {
+Row _bottomBarConfiguration(BuildContext context, UserInfoModul userInfo) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: <Widget>[
       IconButton(
         onPressed: () {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => Home(user: user)),
+            MaterialPageRoute(
+              builder: (context) => HomePage(userInfo: userInfo),
+            ),
           );
         },
         icon: const Icon(
@@ -774,9 +774,11 @@ Row _bottomBarConfiguration(BuildContext context, UserModel user) {
       ),
       IconButton(
         onPressed: () {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => Noti(user: user)),
+            MaterialPageRoute(
+              builder: (context) => Noti(userInfo: userInfo,), // Updated
+            ),
           );
         },
         icon: Image.asset(
@@ -788,9 +790,11 @@ Row _bottomBarConfiguration(BuildContext context, UserModel user) {
       ),
       IconButton(
         onPressed: () {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => Account(user: user)),
+            MaterialPageRoute(
+              builder: (context) => Account(userInfo: userInfo), // Updated
+            ),
           );
         },
         icon: Image.asset(
@@ -803,6 +807,7 @@ Row _bottomBarConfiguration(BuildContext context, UserModel user) {
     ],
   );
 }
+
 
 class DynamicButton extends StatelessWidget {
   final String label;

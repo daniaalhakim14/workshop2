@@ -46,6 +46,7 @@ dependencies:
   flutter_social_button: ^1.1.6+1
   image_picker: ^1.1.2
   image_cropper: ^8.1.0
+  postgres: ^3.4.7
 
 
 dev_dependencies:

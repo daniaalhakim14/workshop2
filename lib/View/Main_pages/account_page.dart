@@ -4,21 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import '../../ViewModel/UserModel.dart';
+import 'package:tab_bar_widget/View/Main_pages/homepage.dart';
+import '../../Model/insight_model.dart';
 import '../../ViewModel/account_viewmodel.dart';
 import '../../ViewModel/app_appearance_viewmodel.dart';
 import '../screens/ChangeEmailPage.dart';
 import '../screens/app_appearance.dart';
 import '../screens/change_password.dart';
 import '../screens/edit_profile_page.dart';
-import 'home_page.dart';
 import 'insight_page.dart';
 import 'notification_page.dart';
 
 class Account extends StatefulWidget {
-  final UserModel user;
+  final UserInfoModul userInfo;
 
-  const Account({super.key, required this.user});
+  const Account({super.key, required this.userInfo});
 
   @override
   State<Account> createState() => _AccountState();
@@ -35,14 +35,14 @@ class _AccountState extends State<Account> {
     super.initState();
 
     _pages = [
-      Home(user: widget.user),
-      Insight(user: widget.user),
-      Noti(user: widget.user),
-      Account(user: widget.user),
+      HomePage(userInfo: widget.userInfo),
+      Insight(userInfo: widget.userInfo),
+      Noti(userInfo: widget.userInfo),
+      Account(userInfo: widget.userInfo),
     ];
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<AccountViewModel>(context, listen: false)
-          .loadAvatar(widget.user.id.toString());
+          .loadAvatar(widget.userInfo.id.toString());
     });
   }
 
@@ -57,11 +57,12 @@ class _AccountState extends State<Account> {
 
   @override
   Widget build(BuildContext context) {
-    final accountViewModel = Provider.of<AccountViewModel>(context);
-
     return Consumer<AppAppearanceViewModel>(
       builder: (context, appAppearanceViewModel, child) {
+        final accountViewModel =
+        Provider.of<AccountViewModel>(context, listen: false);
         final isDarkModeValue = appAppearanceViewModel.isDarkMode;
+
         return Scaffold(
           appBar: AppBar(
             title: Text(
@@ -73,8 +74,7 @@ class _AccountState extends State<Account> {
                 color: isDarkModeValue ? Colors.white : Colors.black,
               ),
             ),
-            centerTitle: true,
-            backgroundColor: isDarkModeValue ? Colors.black : const Color(0xFF008080),
+            backgroundColor: isDarkModeValue ? Colors.black : const Color(0xFF65ADAD),
             elevation: 0,
             automaticallyImplyLeading: _showAdditionalOptions,
             leading: _showAdditionalOptions
@@ -105,7 +105,8 @@ class _AccountState extends State<Account> {
                               ? DateTime.now().millisecondsSinceEpoch
                               : 'default_avatar'), // Unique key to force rebuild
                           radius: 83.5,
-                          backgroundColor: isDarkModeValue ? Colors.grey[800] : Colors.white,
+                          backgroundColor:
+                          isDarkModeValue ? Colors.grey[800] : Colors.white,
                           backgroundImage: accountViewModel.avatarBytes != null
                               ? MemoryImage(accountViewModel.avatarBytes!)
                               : null,
@@ -114,7 +115,9 @@ class _AccountState extends State<Account> {
                             width: 167,
                             height: 167,
                             decoration: BoxDecoration(
-                              color: isDarkModeValue ? Colors.grey[800] : Colors.white,
+                              color: isDarkModeValue
+                                  ? Colors.grey[800]
+                                  : Colors.white,
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: Colors.white,
@@ -135,7 +138,9 @@ class _AccountState extends State<Account> {
                           onTap: _showAvatarOptions,
                           child: CircleAvatar(
                             radius: 20,
-                            backgroundColor: isDarkModeValue ? Colors.grey[800] : Colors.white,
+                            backgroundColor: isDarkModeValue
+                                ? Colors.grey[800]
+                                : Colors.white,
                             child: Icon(
                               Icons.edit,
                               size: 18,
@@ -143,14 +148,9 @@ class _AccountState extends State<Account> {
                             ),
                           ),
                         ),
-
-
-
                       ],
                     ),
                   ),
-
-
                   const SizedBox(height: 40),
                   if (!_showAdditionalOptions) ...[
                     buildOptionContainer(
@@ -172,7 +172,7 @@ class _AccountState extends State<Account> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                ChangePassword(userId: widget.user.id),
+                                ChangePassword(userId: widget.userInfo.id),
                           ),
                         );
                       },
@@ -185,7 +185,8 @@ class _AccountState extends State<Account> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AppAppearance(userId: widget.user.id),
+                            builder: (context) =>
+                                AppAppearance(userId: widget.userInfo.id),
                           ),
                         );
                       },
@@ -202,81 +203,76 @@ class _AccountState extends State<Account> {
                       },
                       alwaysRed: true,
                     ),
-                  ] else
-                    ...[
-                      buildOptionContainer(
-                        title: 'Edit Profile Information',
-                        icon: Icons.edit,
-                        isDarkModeValue: isDarkModeValue,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  EditProfilePage(userId: widget.user.id),
-                            ),
-                          );
-                        },
-                      ),
-                      buildOptionContainer(
-                        title: 'Change Password',
-                        icon: Icons.lock,
-                        isDarkModeValue: isDarkModeValue,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ChangePassword(userId: widget.user.id),
-                            ),
-                          );
-                        },
-                      ),
-                      buildOptionContainer(
-                        title: 'Change Email Address',
-                        icon: Icons.email,
-                        isDarkModeValue: isDarkModeValue,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ChangeEmailPage(userId: widget.user.id),
-                            ),
-                          );
-                        },
-                      ),
-
-                      buildOptionContainer(
-                        title: 'Notifications',
-                        icon: Icons.notifications,
-                        isDarkModeValue: isDarkModeValue,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  Noti(user: widget.user),
-                            ),
-                          );
-                        },
-                      ),
-
-
-
-                      buildOptionContainer(
-                        title: 'Logout',
-                        icon: Icons.logout,
-                        iconColor: Colors.red,
-                        textColor: Colors.red,
-                        isDarkModeValue: isDarkModeValue,
-                        onTap: () {
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, '/login', (route) => false);
-                        },
-                        alwaysRed: true,
-                      ),
-                    ],
+                  ] else ...[
+                    buildOptionContainer(
+                      title: 'Edit Profile Information',
+                      icon: Icons.edit,
+                      isDarkModeValue: isDarkModeValue,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EditProfilePage(userId: widget.userInfo.id),
+                          ),
+                        );
+                      },
+                    ),
+                    buildOptionContainer(
+                      title: 'Change Password',
+                      icon: Icons.lock,
+                      isDarkModeValue: isDarkModeValue,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ChangePassword(userId: widget.userInfo.id),
+                          ),
+                        );
+                      },
+                    ),
+                    buildOptionContainer(
+                      title: 'Change Email Address',
+                      icon: Icons.email,
+                      isDarkModeValue: isDarkModeValue,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ChangeEmailPage(userId: widget.userInfo.id),
+                          ),
+                        );
+                      },
+                    ),
+                    buildOptionContainer(
+                      title: 'Notifications',
+                      icon: Icons.notifications,
+                      isDarkModeValue: isDarkModeValue,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                Noti(userInfo: widget.userInfo),
+                          ),
+                        );
+                      },
+                    ),
+                    buildOptionContainer(
+                      title: 'Logout',
+                      icon: Icons.logout,
+                      iconColor: Colors.red,
+                      textColor: Colors.red,
+                      isDarkModeValue: isDarkModeValue,
+                      onTap: () {
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, '/login', (route) => false);
+                      },
+                      alwaysRed: true,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -290,21 +286,23 @@ class _AccountState extends State<Account> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) =>
-                          Home(user: widget.user)),
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            HomePage(userInfo: widget.userInfo),
+                      ),
                     );
                   },
-                  icon: Icon(Icons.home_outlined,
-                      color: Colors.white,
-                      size:
-                      30),
+                  icon: const Icon(Icons.home_outlined,
+                      color: Colors.white, size: 30),
                 ),
                 IconButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) =>
-                          Insight(user: widget.user)),
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            Insight(userInfo: widget.userInfo),
+                      ),
                     );
                   },
                   icon: Image.asset(
@@ -318,8 +316,10 @@ class _AccountState extends State<Account> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) =>
-                          Noti(user: widget.user)),
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            Noti(userInfo: widget.userInfo),
+                      ),
                     );
                   },
                   icon: Image.asset(
@@ -336,7 +336,6 @@ class _AccountState extends State<Account> {
                     height: 30,
                     width: 30,
                     color: const Color(0xFF65ADAD),
-
                   ),
                 ),
               ],
@@ -510,8 +509,8 @@ class _AccountState extends State<Account> {
           },
         );
 
-        await avatarViewModel.uploadAvatar(File(croppedFile.path), widget.user.id.toString());
-        await avatarViewModel.fetchAvatar(widget.user.id.toString());
+        await avatarViewModel.uploadAvatar(File(croppedFile.path), widget.userInfo.id.toString());
+        await avatarViewModel.fetchAvatar(widget.userInfo.id.toString());
 
 
         Navigator.pop(context);
