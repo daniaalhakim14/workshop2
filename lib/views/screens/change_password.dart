@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../viewmodels/app_appearance_viewmodel.dart';
 import '../../viewmodels/change_password_viewmodel.dart';
 
-
 class ChangePassword extends StatefulWidget {
   final int userId;
 
@@ -17,6 +16,8 @@ class _ChangePasswordState extends State<ChangePassword> {
   final TextEditingController currentPasswordController = TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
+
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -77,6 +78,15 @@ class _ChangePasswordState extends State<ChangePassword> {
                       confirmPasswordController,
                       isDarkModeValue,
                     ),
+                    if (_errorMessage != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Text(
+                          _errorMessage!,
+                          style: const TextStyle(color: Colors.red),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                     const SizedBox(height: 30),
                     viewModel.isLoading
                         ? const Center(child: CircularProgressIndicator())
@@ -89,28 +99,44 @@ class _ChangePasswordState extends State<ChangePassword> {
                         ),
                       ),
                       onPressed: () {
-                        final currentPassword = currentPasswordController.text.trim();
-                        final newPassword = newPasswordController.text.trim();
-                        final confirmPassword = confirmPasswordController.text.trim();
+                        final currentPassword =
+                        currentPasswordController.text.trim();
+                        final newPassword =
+                        newPasswordController.text.trim();
+                        final confirmPassword =
+                        confirmPasswordController.text.trim();
 
-                        if (currentPassword.isEmpty ||
-                            newPassword.isEmpty ||
-                            confirmPassword.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('All fields are required')),
-                          );
-                        } else if (newPassword != confirmPassword) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Passwords do not match')),
-                          );
-                        } else {
-                          viewModel.changePassword(
-                            context,
-                            widget.userId,
-                            currentPassword,
-                            newPassword,
-                          );
+                        // Validation checks
+                        if (currentPassword.isEmpty) {
+                          _setError('Current password cannot be empty');
+                          return;
                         }
+                        if (newPassword.isEmpty) {
+                          _setError('New password cannot be empty');
+                          return;
+                        }
+                        if (newPassword.length < 6) {
+                          _setError('Password must be at least 6 characters');
+                          return;
+                        }
+                        if (confirmPassword.isEmpty) {
+                          _setError('Please confirm your password');
+                          return;
+                        }
+                        if (newPassword != confirmPassword) {
+                          _setError('Passwords do not match');
+                          return;
+                        }
+
+                        // Clear any existing error and proceed
+                        _setError(null);
+                        viewModel.changePassword(
+                          context,
+                          widget.userId,
+                          currentPassword,
+                          newPassword,
+                          confirmPassword,
+                        );
                       },
                       child: const Text(
                         'Save',
@@ -158,5 +184,11 @@ class _ChangePasswordState extends State<ChangePassword> {
         ),
       ),
     );
+  }
+
+  void _setError(String? message) {
+    setState(() {
+      _errorMessage = message;
+    });
   }
 }
