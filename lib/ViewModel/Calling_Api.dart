@@ -6,7 +6,7 @@ import 'package:http/http.dart'as http;
 class CallingApi{
 // Indicates that the function is asynchronous and does not return a value.
 // Instead, it returns a Future, which represents a potential value or error that will be available at some point in the future.
-  final String baseUrl = 'http://192.168.0.12:3000';
+  final String baseUrl = 'http://10.131.75.179:3000';
 
   Future<http.Response> fetchTransactionsExpense() async{
     // change to Expense

@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workshop_2/View/edit_budget_page.dart';
-import 'package:workshop_2/ViewModel/BudgetViewModel.dart';
+import '../../../Model/Budget.dart';
+import '../../../ViewModel/BudgetViewModel.dart';
+import 'edit_budget_page.dart';
 
-import '../Model/Budget.dart';
 
 class BudgetDetail extends StatefulWidget{
   final BudgetDisplay budget;

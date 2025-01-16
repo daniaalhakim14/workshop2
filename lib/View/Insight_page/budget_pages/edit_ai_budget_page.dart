@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:month_year_picker/month_year_picker.dart';
-import 'package:workshop_2/View/budget_category_page.dart';
-import 'package:intl/intl.dart';
-import 'package:workshop_2/View/budget_tab_page.dart';
+
+import 'budget_category_page.dart';
+
 
 class EditAIBudget extends StatefulWidget{
   const EditAIBudget({super.key});

@@ -5,6 +5,7 @@ import 'package:tab_bar_widget/ViewModel/insight_view_model.dart';
 import 'newSubcategory_page.dart';
 
 
+
 class subcategory_page extends StatefulWidget {
 
   // Constructor accept category data from category_page

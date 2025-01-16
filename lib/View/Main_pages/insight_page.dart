@@ -6,14 +6,17 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tab_bar_widget/ViewModel/insight_view_model.dart';
+import '../../Model/Budget.dart';
 import '../../Model/insight_model.dart';
-import '../Insight_page/CategoryDetailScreen.dart';
-import '../Insight_page/TransactionDetailScreen.dart';
-import '../Insight_page/add_transaction.dart';
+import '../Insight_page/analysis_page/analysis_tab_page.dart';
+import '../Insight_page/transaction_page/CategoryDetailScreen.dart';
+import '../Insight_page/transaction_page/TransactionDetailScreen.dart';
+import '../Insight_page/transaction_page/add_transaction.dart';
 import 'account_page.dart';
 import 'dart:async';
 import 'homepage.dart';
 import 'notification_page.dart';
+import '../Insight_page/budget_pages/budget_tab_page.dart';
 
 
 // configure daily spent and spent so far
@@ -156,583 +159,598 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
             Expanded(
               child: TabBarView(
                 children: [
-                  const Center(child: Text('Budget Data')),
-                  SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 20.0),
-                      child: Column(
-                        children: [
-                          // Fetch Data from database
-                          Consumer<InsightViewModel>(
-                            builder: (context, viewModel, child) {
-                              if (viewModel.fetchingData) {
-                                return Container(
-                                    width: 250,
-                                    height: 250,
-                                    child: const Center(child: CircularProgressIndicator()));
-                              }
-                              if (viewModel.transactionsExpense.isEmpty) {
-                                return Column(
-                                  children: [
-                                    Image.asset(
-                                      'lib/Icons/statistics (2).png',
-                                      width: 250,
-                                      height: 250,
-                                      fit: BoxFit.contain,
-                                    ),
-                                    const SizedBox(height: 20),
-                                    const Center(
-                                      child: Text(
-                                        'No Transaction Made',
-                                        style: TextStyle(
-                                          fontSize: 13.5,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              }
-                              // to display expense pie graph
-                              // Step 1: Aggregate data by categoryname
-                              final Map<String, double> aggregatedData = {};
-                              final Map<String, Color> categoryColors = {};
-                              final Map<String, IconData> categoryIcons = {};
-                              double totalAmount = 0.0;
-
-                              // date conversion
-                              for (var expense in viewModel.transactionsExpense) {
-                                String isoFormatDate = expense.date.toString();
-                                DateTime dateTime = DateTime.parse(isoFormatDate);
-                                String formattedExpenseDate = _formatMonth(dateTime); // Format expense.date
-
-                                if (expense.categoryname != null && formattedExpenseDate == selectedMonth) {
-                                  if (!aggregatedData.containsKey(expense.categoryname)) {
-                                    aggregatedData[expense.categoryname!] = 0.0;
-                                    categoryColors[expense.categoryname!] = expense.iconcolor!;
-                                    categoryIcons[expense.categoryname!] = expense.icondata!;
+                  budget(),
+                  Stack(
+                    children: [
+                      SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 20.0),
+                          child: Column(
+                            children: [
+                              // Fetch Data from database
+                              Consumer<InsightViewModel>(
+                                builder: (context, viewModel, child) {
+                                  if (viewModel.fetchingData) {
+                                    return Container(
+                                        width: 250,
+                                        height: 250,
+                                        child: const Center(child: CircularProgressIndicator()));
                                   }
-                                  aggregatedData[expense.categoryname!] =
-                                      aggregatedData[expense.categoryname!]! +
-                                          (expense.amount ?? 0.0);
-
-                                  totalAmount += (expense.amount ?? 0.0); // Sum up total expenses
-                                }
-                              }
-
-                              // Check if there's any data to display
-                              if (aggregatedData.isEmpty) {
-                                return Column(
-                                  children: [
-                                    Image.asset(
-                                      'lib/Icons/statistics (2).png',
-                                      width: 250,
-                                      height: 250,
-                                      fit: BoxFit.contain,
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Center(
-                                      child: Text(
-                                        "No expense data for $selectedMonth",
-                                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10) // for spacing
-                                  ],
-                                );
-                              }
-
-                              // Step 2: Calculate daily average spending
-                              DateTime now = DateTime.now();
-                              DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
-                              int daysPassed = now.difference(firstDayOfMonth).inDays + 1; // Add 1 to include the current day
-                              double dailyAverageSpending = totalAmount / daysPassed;
-
-                              // Step 3: Calculate total and percentages for pie chart
-                              final List<PieChartSectionData> sections = aggregatedData.entries.map((entry) {
-                                final category = entry.key;
-                                final amount = entry.value;
-                                final percentage = (amount / totalAmount) * 100;
-                                // Set a minimum percentage threshold
-                                final adjustedPercentage = percentage < 0.01 ? 0.01 : percentage;
-                                // Adjust the radius and badge size dynamically
-                                final segmentRadius = adjustedPercentage < 1 ? 20.0 : 36.0; // Smaller radius for small percentages
-                                final badgeSize = adjustedPercentage < 1 ? 16.0 : 24.0; // Smaller badge size for small percentages
-                                // Enter data in pie chart
-                                return PieChartSectionData(
-                                  value: adjustedPercentage,
-                                  color: categoryColors[category], // Use color associated with the category
-                                  title: adjustedPercentage < 1 ? '' : '${adjustedPercentage.toStringAsFixed(1)}%', // Hide title for very small segments
-                                  radius: segmentRadius,
-                                  titleStyle: const TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                  badgeWidget: adjustedPercentage < 1
-                                      ? null // No badge for very small segments
-                                      : Icon(
-                                    categoryIcons[category],
-                                    color: categoryColors[category],
-                                    size: badgeSize,
-                                  ),
-                                  badgePositionPercentageOffset: 1.38, // Position badges outside
-                                );
-                              }).toList();
-                              // To display Pie chart
-                              return Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Container(
-                                      height: 300, // Set a fixed height
-                                      //color: Colors.blue,
-                                      child: PieChart(
-                                        duration: const Duration(milliseconds: 1500),
-                                        //curve: Curves.easeInOutQuint,
-                                        PieChartData(
-                                          sections: sections,
-                                          borderData: FlBorderData(show: false),
-                                          sectionsSpace: 2,
-                                          centerSpaceRadius: 75,
-                                        ),
-                                      ),
-                                    ),
-                                    // To show Daily Avg Spending and Spent So far
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                  if (viewModel.transactionsExpense.isEmpty) {
+                                    return Column(
                                       children: [
-                                        IconButton(
-                                          icon: const Icon(Icons.arrow_upward,color: Colors.black,),
-                                          onPressed: () {
-                                            setState(() {
-                                              showDailySpending = true;
-                                            });
-                                          },
+                                        Image.asset(
+                                          'lib/Icons/statistics (2).png',
+                                          width: 250,
+                                          height: 250,
+                                          fit: BoxFit.contain,
                                         ),
-                                        Text(
-                                          showDailySpending
-                                              ? "Daily Average Spending"
-                                              : "Spent So Far",
-                                          style: const TextStyle(
-                                            fontSize: 12,
+                                        const SizedBox(height: 20),
+                                        const Center(
+                                          child: Text(
+                                            'No Transaction Made',
+                                            style: TextStyle(
+                                              fontSize: 13.5,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          showDailySpending ? "RM ${dailyAverageSpending.toStringAsFixed(2)}" : "RM ${totalAmount.toStringAsFixed(2)}",
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(Icons.arrow_downward,color: Colors.black,),
-                                          onPressed: () {
-                                            setState(() {
-                                              showDailySpending = false;
-                                            });
-                                          },
                                         ),
                                       ],
-                                    )
-                                  ]
-                              );
-                            },
-                          ),
-                          // Horizontal scroll months syntax
-                          Center(
-                            child: Column(
-                              children: [
-                                // Horizontal scrollable months
-                                SizedBox(
-                                  height: 40,
-                                  child: ListView.builder(  // creates a horizontal scrollable list of months
-                                    controller: _scrollController,
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: months.length,
-                                    itemBuilder: (context, index) {
+                                    );
+                                  }
+                                  // to display expense pie graph
+                                  // Step 1: Aggregate data by categoryname
+                                  final Map<String, double> aggregatedData = {};
+                                  final Map<String, Color> categoryColors = {};
+                                  final Map<String, IconData> categoryIcons = {};
+                                  double totalAmount = 0.0;
 
-                                      if (index == 0) {
-                                        // Scroll to selected month when ListView is built
-                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                          if (_scrollController.hasClients) {
-                                            scrollToMonth(selectedMonth);
-                                          }
-                                        });
-                                      }
-
-                                      final month = months[index];
-                                      final monthString = _formatMonth(month);
-                                      final isSelected = monthString == selectedMonth;
-
-                                      return GestureDetector( // lets users select a month
-                                        onTap: () {
-                                          setState(() {
-                                            selectedMonth = monthString;
-                                          });
-                                          scrollToMonth(monthString);
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                monthString,
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                                  color: isSelected ? Colors.black : Colors.grey,
-                                                ),
-                                              ),
-                                              if (isSelected)
-                                                Container(
-                                                  width: 30,
-                                                  height: 2,
-                                                  color: Colors.black,
-                                                  margin: const EdgeInsets.only(top: 4),
-                                                ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Latest and Category Button
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // 'Latest' button
-                              DynamicButton(
-                                label: 'Latest',
-                                color: _selectedButtonIndex == 0
-                                    ? const Color(0xFF65ADAD)
-                                    : Colors.grey,
-                                onTap: () {
-                                  setState(() {
-                                    _selectedButtonIndex = 0;
-                                  });
-                                  print("Latest button tapped!");
-                                },
-                                padding: const EdgeInsets.only(right: 3.0), // position button slightly to the right
-                              ),
-                              // 'Category' button
-                              DynamicButton(
-                                label: 'Category',
-                                color: _selectedButtonIndex == 1
-                                    ? const Color(0xFF65ADAD)
-                                    : Colors.grey,
-                                onTap: () {
-                                  setState(() {
-                                    _selectedButtonIndex = 1;
-                                  });
-                                  print("Category button tapped!");
-                                },
-                                padding: const EdgeInsets.only(left: 3.0),
-                              ),
-                            ],
-                          ),
-                          // to add space
-                          const SizedBox(height: 18),
-                          // To display transaction list
-                          _selectedButtonIndex == 0
-                              ? Consumer<InsightViewModel>(
-                            builder: (context, viewModel, child) {
-                              final viewModel = Provider.of<InsightViewModel>(context, listen: false);
-                              List<TransactionList> transactionList = viewModel.transactionList;
-
-                              if (viewModel.fetchingData) {
-                                return Container(
-                                  width: 250,
-                                  height: 250,
-                                  child: const Center(child: CircularProgressIndicator()),
-                                );
-                              }
-
-                              // Filter transactions by the selected month
-                              final filteredTransactions = transactionList.where((transaction) {
-                                String isoFormatDate = transaction.date.toString();
-                                DateTime dateTime = DateTime.parse(isoFormatDate);
-                                String formattedDate = _formatMonth(dateTime); // Format transaction.date
-                                return formattedDate == selectedMonth;
-                              }).toList();
-
-                              if (filteredTransactions.isEmpty) {
-                                return Column(
-                                  children: [
-                                    Image.asset(
-                                      'lib/Icons/statistics (2).png',
-                                      width: 250,
-                                      height: 250,
-                                      fit: BoxFit.contain,
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Center(
-                                      child: Text(
-                                        'No transactions for $selectedMonth',
-                                        style: const TextStyle(
-                                          fontSize: 13.5,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              }
-
-                              return SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.43,
-                                child: ListView.builder(
-                                  itemCount: filteredTransactions.length,
-                                  itemBuilder: (context, index) {
-                                    final transaction = filteredTransactions[index];
-
-                                    String isoFormatDate = transaction.date.toString();
+                                  // date conversion
+                                  for (var expense in viewModel.transactionsExpense) {
+                                    String isoFormatDate = expense.date.toString();
                                     DateTime dateTime = DateTime.parse(isoFormatDate);
-                                    String formattedDate = _formatFullDate(dateTime); // Format transaction.date
+                                    String formattedExpenseDate = _formatMonth(dateTime); // Format expense.date
 
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => TransactionDetailScreen(
-                                              listDetail: transaction, // Pass the single transaction object
+                                    if (expense.categoryname != null && formattedExpenseDate == selectedMonth) {
+                                      if (!aggregatedData.containsKey(expense.categoryname)) {
+                                        aggregatedData[expense.categoryname!] = 0.0;
+                                        categoryColors[expense.categoryname!] = expense.iconcolor!;
+                                        categoryIcons[expense.categoryname!] = expense.icondata!;
+                                      }
+                                      aggregatedData[expense.categoryname!] =
+                                          aggregatedData[expense.categoryname!]! +
+                                              (expense.amount ?? 0.0);
+
+                                      totalAmount += (expense.amount ?? 0.0); // Sum up total expenses
+                                    }
+                                  }
+
+                                  // Check if there's any data to display
+                                  if (aggregatedData.isEmpty) {
+                                    return Column(
+                                      children: [
+                                        Image.asset(
+                                          'lib/Icons/statistics (2).png',
+                                          width: 250,
+                                          height: 250,
+                                          fit: BoxFit.contain,
+                                        ),
+                                        const SizedBox(height: 20),
+                                        Center(
+                                          child: Text(
+                                            "No expense data for $selectedMonth",
+                                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10) // for spacing
+                                      ],
+                                    );
+                                  }
+
+                                  // Step 2: Calculate daily average spending
+                                  DateTime now = DateTime.now();
+                                  DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
+                                  int daysPassed = now.difference(firstDayOfMonth).inDays + 1; // Add 1 to include the current day
+                                  double dailyAverageSpending = totalAmount / daysPassed;
+
+                                  // Step 3: Calculate total and percentages for pie chart
+                                  final List<PieChartSectionData> sections = aggregatedData.entries.map((entry) {
+                                    final category = entry.key;
+                                    final amount = entry.value;
+                                    final percentage = (amount / totalAmount) * 100;
+                                    // Set a minimum percentage threshold
+                                    final adjustedPercentage = percentage < 0.01 ? 0.01 : percentage;
+                                    // Adjust the radius and badge size dynamically
+                                    final segmentRadius = adjustedPercentage < 1 ? 20.0 : 36.0; // Smaller radius for small percentages
+                                    final badgeSize = adjustedPercentage < 1 ? 16.0 : 24.0; // Smaller badge size for small percentages
+                                    // Enter data in pie chart
+                                    return PieChartSectionData(
+                                      value: adjustedPercentage,
+                                      color: categoryColors[category], // Use color associated with the category
+                                      title: adjustedPercentage < 1 ? '' : '${adjustedPercentage.toStringAsFixed(1)}%', // Hide title for very small segments
+                                      radius: segmentRadius,
+                                      titleStyle: const TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                      badgeWidget: adjustedPercentage < 1
+                                          ? null // No badge for very small segments
+                                          : Icon(
+                                        categoryIcons[category],
+                                        color: categoryColors[category],
+                                        size: badgeSize,
+                                      ),
+                                      badgePositionPercentageOffset: 1.38, // Position badges outside
+                                    );
+                                  }).toList();
+                                  // To display Pie chart
+                                  return Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Container(
+                                          height: 300, // Set a fixed height
+                                          //color: Colors.blue,
+                                          child: PieChart(
+                                            duration: const Duration(milliseconds: 1500),
+                                            //curve: Curves.easeInOutQuint,
+                                            PieChartData(
+                                              sections: sections,
+                                              borderData: FlBorderData(show: false),
+                                              sectionsSpace: 2,
+                                              centerSpaceRadius: 75,
                                             ),
                                           ),
-                                        );
-                                      },
-                                      child: Column(
-                                        children: [
-                                          // List Header
-                                          if (index == 0 || filteredTransactions[index - 1].date != transaction.date)
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.grey[200],
-                                              ),
-                                              height: 30.0,
-                                              width: double.infinity,
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(4.0),
-                                                child: Text(
-                                                  formattedDate, // Display the transaction date
-                                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                                ),
+                                        ),
+                                        // To show Daily Avg Spending and Spent So far
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(Icons.arrow_upward,color: Colors.black,),
+                                              onPressed: () {
+                                                setState(() {
+                                                  showDailySpending = true;
+                                                });
+                                              },
+                                            ),
+                                            Text(
+                                              showDailySpending
+                                                  ? "Daily Average Spending"
+                                                  : "Spent So Far",
+                                              style: const TextStyle(
+                                                fontSize: 12,
                                               ),
                                             ),
+                                            Text(
+                                              showDailySpending ? "RM ${dailyAverageSpending.toStringAsFixed(2)}" : "RM ${totalAmount.toStringAsFixed(2)}",
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(Icons.arrow_downward,color: Colors.black,),
+                                              onPressed: () {
+                                                setState(() {
+                                                  showDailySpending = false;
+                                                });
+                                              },
+                                            ),
+                                          ],
+                                        )
+                                      ]
+                                  );
+                                },
+                              ),
+                              // Horizontal scroll months syntax
+                              Center(
+                                child: Column(
+                                  children: [
+                                    // Horizontal scrollable months
+                                    SizedBox(
+                                      height: 40,
+                                      child: ListView.builder(  // creates a horizontal scrollable list of months
+                                        controller: _scrollController,
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: months.length,
+                                        itemBuilder: (context, index) {
 
-                                          // Transaction Details
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: Colors.grey, // Border color
-                                                width: 1.0,         // Border width
-                                              ),
-                                              borderRadius: BorderRadius.circular(0.0), // Optional: Rounded corners
-                                            ),
-                                            child: ListTile(
-                                              leading: CircleAvatar(
-                                                backgroundColor: transaction.iconColor,
-                                                child: Icon(
-                                                  transaction.iconData,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              title: Text(
-                                                transaction.name.toString(),
-                                                style: const TextStyle(fontWeight: FontWeight.bold),
-                                              ),
-                                              subtitle: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                          if (index == 0) {
+                                            // Scroll to selected month when ListView is built
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              if (_scrollController.hasClients) {
+                                                scrollToMonth(selectedMonth);
+                                              }
+                                            });
+                                          }
+
+                                          final month = months[index];
+                                          final monthString = _formatMonth(month);
+                                          final isSelected = monthString == selectedMonth;
+
+                                          return GestureDetector( // lets users select a month
+                                            onTap: () {
+                                              setState(() {
+                                                selectedMonth = monthString;
+                                              });
+                                              scrollToMonth(monthString);
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   Text(
-                                                    transaction.description.toString(),
-                                                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                                    monthString,
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                                      color: isSelected ? Colors.black : Colors.grey,
+                                                    ),
                                                   ),
+                                                  if (isSelected)
+                                                    Container(
+                                                      width: 30,
+                                                      height: 2,
+                                                      color: Colors.black,
+                                                      margin: const EdgeInsets.only(top: 4),
+                                                    ),
                                                 ],
                                               ),
-                                              trailing: Padding(
-                                                padding: const EdgeInsets.only(left: 8.0),
-                                                child: Text(
-                                                  'RM ${transaction.amount}', // Format the amount
-                                                ),
-                                              ),
                                             ),
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
-
-                            },
-                          )
-                              : Consumer<InsightViewModel>(
-                            builder: (context, viewModel, child) {
-                              final viewModel = Provider.of<InsightViewModel>(context, listen: false);
-                              List<TransactionList> categoryList = viewModel.transactionList;
-
-                              if (viewModel.fetchingData) {
-                                return Container(
-                                  width: 250,
-                                  height: 250,
-                                  child: const Center(child: CircularProgressIndicator()),
-                                );
-                              }
-
-                              // Filter transactions by the selected month
-                              final filteredCategories = categoryList.where((categories) {
-                                String isoFormatDate = categories.date.toString();
-                                DateTime dateTime = DateTime.parse(isoFormatDate);
-                                String formattedDate = _formatMonth(dateTime); // Format transaction.date
-                                return formattedDate == selectedMonth;
-                              }).toList();
-
-                              if (filteredCategories.isEmpty) {
-                                return Column(
-                                  children: [
-                                    Image.asset(
-                                      'lib/Icons/statistics (2).png',
-                                      width: 250,
-                                      height: 250,
-                                      fit: BoxFit.contain,
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Center(
-                                      child: Text(
-                                        'No transactions for $selectedMonth',
-                                        style: const TextStyle(
-                                          fontSize: 13.5,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
+                                          );
+                                        },
                                       ),
                                     ),
                                   ],
-                                );
-                              }
-                              // Group by category and aggregate transactions
-                              final Map<String, List<TransactionList>> groupedCategories = {};
-                              for (var transaction in filteredCategories) {
-                                // Only include transactions that are 'Expense'
-                                if (transaction.transactiontype == 'Expense') {
-                                  groupedCategories.putIfAbsent(transaction.categoryname ?? 'Other', () => []);
-                                  groupedCategories[transaction.categoryname ?? 'Other']!.add(transaction);
-                                }
-                              }
+                                ),
+                              ),
+                              // Latest and Category Button
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // 'Latest' button
+                                  DynamicButton(
+                                    label: 'Latest',
+                                    color: _selectedButtonIndex == 0
+                                        ? const Color(0xFF65ADAD)
+                                        : Colors.grey,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedButtonIndex = 0;
+                                      });
+                                      print("Latest button tapped!");
+                                    },
+                                    padding: const EdgeInsets.only(right: 3.0), // position button slightly to the right
+                                  ),
+                                  // 'Category' button
+                                  DynamicButton(
+                                    label: 'Category',
+                                    color: _selectedButtonIndex == 1
+                                        ? const Color(0xFF65ADAD)
+                                        : Colors.grey,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedButtonIndex = 1;
+                                      });
+                                      print("Category button tapped!");
+                                    },
+                                    padding: const EdgeInsets.only(left: 3.0),
+                                  ),
+                                ],
+                              ),
+                              // to add space
+                              const SizedBox(height: 18),
+                              // To display transaction list
+                              _selectedButtonIndex == 0
+                                  ? Consumer<InsightViewModel>(
+                                builder: (context, viewModel, child) {
+                                  final viewModel = Provider.of<InsightViewModel>(context, listen: false);
+                                  List<TransactionList> transactionList = viewModel.transactionList;
 
-                              return SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.43,
-                                child: ListView.builder(
-                                  itemCount: groupedCategories.keys.length,
-                                  itemBuilder: (context, index) {
-                                    final categoryName = groupedCategories.keys.toList()[index];
-                                    final categoryTransactions = groupedCategories[categoryName]!;
-                                    final totalAmount = categoryTransactions.fold<double>(
-                                      0,
-                                          (sum, transaction) => sum + (transaction.amount ?? 0),
+                                  if (viewModel.fetchingData) {
+                                    return Container(
+                                      width: 250,
+                                      height: 250,
+                                      child: const Center(child: CircularProgressIndicator()),
                                     );
+                                  }
 
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => CategoryDetailScreen(
-                                              categoryName: categoryName, // Pass the category name
-                                              categoryTransactions: groupedCategories[categoryName]!, // Pass the transactions for this category
+                                  // Filter transactions by the selected month
+                                  final filteredTransactions = transactionList.where((transaction) {
+                                    String isoFormatDate = transaction.date.toString();
+                                    DateTime dateTime = DateTime.parse(isoFormatDate);
+                                    String formattedDate = _formatMonth(dateTime); // Format transaction.date
+                                    return formattedDate == selectedMonth;
+                                  }).toList();
+
+                                  if (filteredTransactions.isEmpty) {
+                                    return Column(
+                                      children: [
+                                        Image.asset(
+                                          'lib/Icons/statistics (2).png',
+                                          width: 250,
+                                          height: 250,
+                                          fit: BoxFit.contain,
+                                        ),
+                                        const SizedBox(height: 20),
+                                        Center(
+                                          child: Text(
+                                            'No transactions for $selectedMonth',
+                                            style: const TextStyle(
+                                              fontSize: 13.5,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
                                             ),
                                           ),
-                                        );
-                                      },
-                                        child: Column(
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.symmetric(vertical: 1.0, horizontal: 4.0),
-                                              child: Container(
+                                        ),
+                                      ],
+                                    );
+                                  }
+
+                                  return SizedBox(
+                                    height: MediaQuery.of(context).size.height * 0.43,
+                                    child: ListView.builder(
+                                      itemCount: filteredTransactions.length,
+                                      itemBuilder: (context, index) {
+                                        final transaction = filteredTransactions[index];
+
+                                        String isoFormatDate = transaction.date.toString();
+                                        DateTime dateTime = DateTime.parse(isoFormatDate);
+                                        String formattedDate = _formatFullDate(dateTime); // Format transaction.date
+
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => TransactionDetailScreen(
+                                                  listDetail: transaction, // Pass the single transaction object
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Column(
+                                            children: [
+                                              // List Header
+                                              if (index == 0 || filteredTransactions[index - 1].date != transaction.date)
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.grey[200],
+                                                  ),
+                                                  height: 30.0,
+                                                  width: double.infinity,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(4.0),
+                                                    child: Text(
+                                                      formattedDate, // Display the transaction date
+                                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                                    ),
+                                                  ),
+                                                ),
+
+                                              // Transaction Details
+                                              Container(
                                                 decoration: BoxDecoration(
                                                   border: Border.all(
                                                     color: Colors.grey, // Border color
                                                     width: 1.0,         // Border width
                                                   ),
-                                                  borderRadius: BorderRadius.circular(4.0), // Optional: Rounded corners
+                                                  borderRadius: BorderRadius.circular(0.0), // Optional: Rounded corners
                                                 ),
                                                 child: ListTile(
                                                   leading: CircleAvatar(
-                                                    backgroundColor: categoryTransactions.first.iconColor,
+                                                    backgroundColor: transaction.iconColor,
                                                     child: Icon(
-                                                      categoryTransactions.first.iconData,
+                                                      transaction.iconData,
                                                       color: Colors.white,
                                                     ),
                                                   ),
                                                   title: Text(
-                                                    categoryName,
+                                                    transaction.name.toString(),
                                                     style: const TextStyle(fontWeight: FontWeight.bold),
                                                   ),
-                                                  subtitle: Text(
-                                                    '${categoryTransactions.length} Transaction${categoryTransactions.length > 1 ? 's' : ''}', // Display transaction count
-                                                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                                  subtitle: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        transaction.description.toString(),
+                                                        style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                                      ),
+                                                    ],
                                                   ),
                                                   trailing: Padding(
                                                     padding: const EdgeInsets.only(left: 8.0),
                                                     child: Text(
-                                                      '-RM ${totalAmount.toStringAsFixed(2)}', // Display total amount
-                                                      style: const TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: 16,
-                                                        color: Colors.red,
+                                                      'RM ${transaction.amount}', // Format the amount
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  );
+
+                                },
+                              )
+                                  : Consumer<InsightViewModel>(
+                                builder: (context, viewModel, child) {
+                                  final viewModel = Provider.of<InsightViewModel>(context, listen: false);
+                                  List<TransactionList> categoryList = viewModel.transactionList;
+
+                                  if (viewModel.fetchingData) {
+                                    return Container(
+                                      width: 250,
+                                      height: 250,
+                                      child: const Center(child: CircularProgressIndicator()),
+                                    );
+                                  }
+
+                                  // Filter transactions by the selected month
+                                  final filteredCategories = categoryList.where((categories) {
+                                    String isoFormatDate = categories.date.toString();
+                                    DateTime dateTime = DateTime.parse(isoFormatDate);
+                                    String formattedDate = _formatMonth(dateTime); // Format transaction.date
+                                    return formattedDate == selectedMonth;
+                                  }).toList();
+
+                                  if (filteredCategories.isEmpty) {
+                                    return Column(
+                                      children: [
+                                        Image.asset(
+                                          'lib/Icons/statistics (2).png',
+                                          width: 250,
+                                          height: 250,
+                                          fit: BoxFit.contain,
+                                        ),
+                                        const SizedBox(height: 20),
+                                        Center(
+                                          child: Text(
+                                            'No transactions for $selectedMonth',
+                                            style: const TextStyle(
+                                              fontSize: 13.5,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                  // Group by category and aggregate transactions
+                                  final Map<String, List<TransactionList>> groupedCategories = {};
+                                  for (var transaction in filteredCategories) {
+                                    // Only include transactions that are 'Expense'
+                                    if (transaction.transactiontype == 'Expense') {
+                                      groupedCategories.putIfAbsent(transaction.categoryname ?? 'Other', () => []);
+                                      groupedCategories[transaction.categoryname ?? 'Other']!.add(transaction);
+                                    }
+                                  }
+
+                                  return SizedBox(
+                                    height: MediaQuery.of(context).size.height * 0.43,
+                                    child: ListView.builder(
+                                      itemCount: groupedCategories.keys.length,
+                                      itemBuilder: (context, index) {
+                                        final categoryName = groupedCategories.keys.toList()[index];
+                                        final categoryTransactions = groupedCategories[categoryName]!;
+                                        final totalAmount = categoryTransactions.fold<double>(
+                                          0,
+                                              (sum, transaction) => sum + (transaction.amount ?? 0),
+                                        );
+
+                                        return GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => CategoryDetailScreen(
+                                                    categoryName: categoryName, // Pass the category name
+                                                    categoryTransactions: groupedCategories[categoryName]!, // Pass the transactions for this category
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.symmetric(vertical: 1.0, horizontal: 4.0),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                        color: Colors.grey, // Border color
+                                                        width: 1.0,         // Border width
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(4.0), // Optional: Rounded corners
+                                                    ),
+                                                    child: ListTile(
+                                                      leading: CircleAvatar(
+                                                        backgroundColor: categoryTransactions.first.iconColor,
+                                                        child: Icon(
+                                                          categoryTransactions.first.iconData,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                      title: Text(
+                                                        categoryName,
+                                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                                      ),
+                                                      subtitle: Text(
+                                                        '${categoryTransactions.length} Transaction${categoryTransactions.length > 1 ? 's' : ''}', // Display transaction count
+                                                        style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                                      ),
+                                                      trailing: Padding(
+                                                        padding: const EdgeInsets.only(left: 8.0),
+                                                        child: Text(
+                                                          '-RM ${totalAmount.toStringAsFixed(2)}', // Display total amount
+                                                          style: const TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            fontSize: 16,
+                                                            color: Colors.red,
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 0.0), // Add spacing between items
-                                          ],
-                                        )
-                                    );
-                                  },
+                                                const SizedBox(height: 0.0), // Add spacing between items
+                                              ],
+                                            )
+                                        );
+                                      },
+                                    ),
+                                  );
+
+                                },
+                              )
+
+                            ],
+                          ),
+                        ),
+                      ),
+                      // Manually positioned FloatingActionButton.extended
+                      Positioned(
+                        bottom: 16.0,
+                        left: 0.0,
+                        right: 0.0,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: FloatingActionButton.extended(
+                            onPressed: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const add_transaction(),
                                 ),
                               );
-
+                              // If a new transaction was added, refresh the list
+                              if (result == true) {
+                                print("Refreshing transaction list...");
+                                final viewModel = Provider.of<InsightViewModel>(context, listen: false);
+                                viewModel.fetchTransactionsExpense(); // Fetch the latest transactions
+                                viewModel.fetchTransactionList();
+                              }
                             },
-                          )
-                        ],
+                            icon: const Icon(Icons.add),
+                            label: const Text('Add Transaction'),
+                          ),
+                        ),
                       ),
-                    ),
+
+                    ]
                   ),
-                  const Center(child: Text('Analysis Data')),
+                  Analysis(),
                 ],
               ),
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () async {
-            final result = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const add_transaction(),
-              ),
-            );
-            // If a new transaction was added, refresh the list
-            if (result == true) {
-              print("Refreshing transaction list...");
-              final viewModel = Provider.of<InsightViewModel>(context, listen: false);
-              viewModel.fetchTransactionsExpense(); // Fetch the latest transactions
-              viewModel.fetchTransactionList();
-            }
-          },
-          icon: const Icon(Icons.add),
-          label: const Text('Add Transaction'),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+
 
 
         bottomNavigationBar: BottomAppBar(

@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:workshop_2/Model/Budget.dart';
-import 'package:workshop_2/View/ai_budget.dart';
+
+import '../Model/Budget.dart';
 
 class AIBudgetViewModel extends ChangeNotifier {
   AIBudgetViewModel() {

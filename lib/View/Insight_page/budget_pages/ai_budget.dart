@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workshop_2/View/edit_budget_page.dart';
-import 'package:workshop_2/ViewModel/AIBudgetViewModel.dart';
 import 'package:intl/intl.dart';
-import 'package:workshop_2/ViewModel/BudgetViewModel.dart';
 
-import '../Model/Budget.dart';
+
+import '../../../Model/Budget.dart';
+import '../../../ViewModel/AIBudgetViewModel.dart';
+import '../../../ViewModel/BudgetViewModel.dart';
 
 class AIBudget extends StatefulWidget{
   const AIBudget({super.key});

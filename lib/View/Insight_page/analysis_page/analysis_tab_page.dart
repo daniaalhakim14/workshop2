@@ -2,12 +2,13 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:month_year_picker/month_year_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:workshop_2/Model/Analysis.dart';
-import 'package:workshop_2/ViewModel/AnalysisViewModel.dart';
-import 'package:workshop_2/ViewModel/DateViewModel.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+
+import '../../../Model/Analysis.dart';
+import '../../../ViewModel/AnalysisViewModel.dart';
+import '../../../ViewModel/DateViewModel.dart';
+
 
 class Analysis extends StatefulWidget{
   const Analysis({super.key});

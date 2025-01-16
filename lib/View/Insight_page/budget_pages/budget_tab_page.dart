@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workshop_2/Model/Budget.dart';
-import 'package:workshop_2/View/ai_budget.dart';
-import 'package:workshop_2/View/budget_detail_page.dart';
-import 'package:workshop_2/View/create_ai_budget_page.dart';
-import 'package:workshop_2/View/create_budget_page.dart';
-import 'package:workshop_2/ViewModel/BudgetViewModel.dart';
 
-class Budget extends StatefulWidget{
-  const Budget({super.key});
+import '../../../Model/Budget.dart';
+import '../../../ViewModel/BudgetViewModel.dart';
+import 'ai_budget.dart';
+import 'budget_detail_page.dart';
+import 'create_ai_budget_page.dart';
+import 'create_budget_page.dart';
+
+
+class budget extends StatefulWidget{
+  const budget({super.key});
 
   @override
-  State<Budget> createState() => _BudgetState();
+  State<budget> createState() => _budgetState();
 }
 
-class _BudgetState extends State<Budget> {
+class _budgetState extends State<budget> {
   int userid = 1;
 
   @override

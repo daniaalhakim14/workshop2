@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workshop_2/ViewModel/CategoryViewModel.dart';
-
-import '../Model/Category.dart';
+import '../../../Model/Category.dart';
+import '../../../ViewModel/CategoryViewModel.dart';
 
 class BudgetChoosingCategory extends StatefulWidget{
   const BudgetChoosingCategory({super.key});

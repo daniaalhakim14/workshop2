@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workshop_2/View/ai_budget.dart';
-import 'package:workshop_2/ViewModel/AIBudgetTextFieldViewModel.dart';
-import 'package:workshop_2/ViewModel/AIBudgetViewModel.dart';
+
+import '../../../ViewModel/AIBudgetTextFieldViewModel.dart';
+import '../../../ViewModel/AIBudgetViewModel.dart';
 
 class CreateAIBudget extends StatefulWidget{
   const CreateAIBudget({super.key});

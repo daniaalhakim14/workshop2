@@ -1,10 +1,10 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:tab_bar_widget/Model/insight_model.dart';
 import 'package:tab_bar_widget/ViewModel/insight_view_model.dart';
-
+import 'package:intl/intl.dart';
+import '../../main_pages/insight_page.dart';
 import 'category_page.dart';
 import 'incomeCategory_page.dart';
 
@@ -12,99 +12,39 @@ import 'incomeCategory_page.dart';
 // Global Variable
 const List<String> paymentType = <String>['Cash','Debit Card','Credit Card','Online Transfer','E-Wallet'];
 // store the selected payment type
-String dropdownValue = '';
+String dropdownValue = paymentType.first;
 
-class edit_transaction extends StatefulWidget {
-  const edit_transaction({super.key, required this.transactionDetail});
-  final TransactionList transactionDetail;
 
+
+class add_transaction extends StatefulWidget {
+  const add_transaction({super.key});
 
   @override
-  State<edit_transaction> createState() => _edit_transactionState();
+  State<add_transaction> createState() => _add_transactionState();
 }
 
-class _edit_transactionState extends State<edit_transaction> {
-  DateTime? selectedDate;
+class _add_transactionState extends State<add_transaction> {
+  int _selectedButtonIndex = 0; // dynamic latest and category button, 0 for Expense, for for Income
+  Map<String, dynamic>? _selectedSubcategory_Category;
+  late var _newTransactionType = 'Expense';
+
+
+
+  DateTime selectedDate = DateTime.now(); // initial selected date
   late String todayDate = 'Today';
   late String yesterdayDate = 'Yesterday';
   late String textdate = todayDate;
-  late var _textControllerAmount = TextEditingController();
-  late var _textControllerAddNote = TextEditingController();
-  Map<String, dynamic>? _selectedSubcategory_Category;
 
-
-  @override
-  void initState() {
-    super.initState();
-
-    // 1) Set up the selectedDate from the transaction
-    selectedDate = widget.transactionDetail.date;
-
-    // 2) Decide what text to show initially for the date
-    if (selectedDate != null) {
-      final now = DateTime.now();
-      final yesterday = now.subtract(const Duration(days: 1));
-
-      if (_isSameDay(selectedDate!, yesterday)) {
-        textdate = yesterdayDate; // "Yesterday"
-      } else if (_isSameDay(selectedDate!, now)) {
-        textdate = todayDate; // "Today"
-      } else {
-        textdate = DateFormat('dd-MM-yyyy').format(selectedDate!);
-      }
-    } else {
-      // If there's no date, just keep the default "Today"
-      // or handle it however you prefer
-      textdate = todayDate;
-    }
-
-    if (widget.transactionDetail.transactiontype == 'Expense') {
-      // If we have subcategory info in the transactionDetail
-      _selectedSubcategory_Category = {
-        'subcategoryId': widget.transactionDetail.subcategoryid,
-        'name': widget.transactionDetail.name,
-        'icon': widget.transactionDetail.iconData,
-        'color': widget.transactionDetail.iconColor,
-      };
-    } else {
-      // For Income
-      _selectedSubcategory_Category = {
-        'incomeCategoryId': widget.transactionDetail.incomecategoryid,
-        'name': widget.transactionDetail.name,
-        'icon': widget.transactionDetail.iconData,
-        'color': widget.transactionDetail.iconColor,
-      };
-    }
-
-    // 3) Set up other fields
-    double? amount = widget.transactionDetail.amount;
-    _textControllerAmount = TextEditingController(
-      text: amount != null ? amount.toStringAsFixed(2) : '',
-    );
-
-    _textControllerAddNote = TextEditingController(
-      text: widget.transactionDetail.description ?? '',
-    );
-
-    dropdownValue = widget.transactionDetail.paymenttype ?? paymentType.first;
-
-
-  }
-
-// Helper method to check if two DateTime objects represent the same calendar day
-  bool _isSameDay(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
-  }
+  final _textControllerAddNote = TextEditingController();  // to store user input
+  final _textControllerAmount = TextEditingController();
 
 
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Transaction',
+        title: const Text('Add Transaction',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -114,6 +54,40 @@ class _edit_transactionState extends State<edit_transaction> {
             Padding(padding: const EdgeInsets.all(2.0),
               child: Column(
                   children: [
+                    // syntax for expense income button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [ // Expense Button
+                      DynamicButton(
+                        label: 'Expense',
+                        color: _selectedButtonIndex == 0
+                            ? const Color(0xFF65ADAD)
+                            : Colors.grey,
+                        onTap: () {
+                          setState(() {
+                            _selectedButtonIndex = 0;
+                            _newTransactionType = 'Expense';  // to add to database
+                            _selectedSubcategory_Category = null; // Reset the selected category
+                          });
+                          },
+                        padding: const EdgeInsets.only(right:3.0),  // position button slightly to the right
+                      ),
+                    DynamicButton(
+                      label: 'Income',
+                      color: _selectedButtonIndex == 1
+                          ? const Color(0xFF65ADAD)
+                          : Colors.grey,
+                      onTap: () {
+                        setState(() {
+                          _selectedButtonIndex = 1;
+                          _newTransactionType = 'Income'; // to add to database
+                          _selectedSubcategory_Category = null; // Reset the selected category
+                        });
+                        },
+                      padding: const EdgeInsets.only(left:3.0),  // position button slightly to the left
+                      ),
+                  ],
+                ),
                     // btnCalender and enter transaction amount
                     Row(
                       children: [
@@ -134,16 +108,20 @@ class _edit_transactionState extends State<edit_transaction> {
                                 );
                                 if (dateTime != null && !dateTime.isAfter(DateTime.now())) {
                                   setState(() {
+                                    // Update `selectedDate` to the picked date
                                     selectedDate = dateTime;
 
-                                    // same logic
-                                    DateTime yesterday = DateTime.now().subtract(const Duration(days: 1));
-                                    if (_isSameDay(dateTime, yesterday)) {
-                                      textdate = yesterdayDate;
-                                    } else if (_isSameDay(dateTime, DateTime.now())) {
-                                      textdate = todayDate;
+                                    // Check if the date is yesterday
+                                    DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
+                                    if (dateTime.year == yesterday.year &&
+                                        dateTime.month == yesterday.month &&
+                                        dateTime.day == yesterday.day) {
+                                      textdate = yesterdayDate; // Set to 'Yesterday'
+                                      selectedDate = yesterday;
+                                    } else if (dateTime.year == DateTime.now().year && dateTime.month == DateTime.now().month && dateTime.day == DateTime.now().day) {
+                                      textdate = todayDate; // Set to 'Today'
                                     } else {
-                                      textdate = DateFormat('dd-MM-yyyy').format(dateTime);
+                                      textdate = DateFormat('dd-MM-yyyy').format(dateTime); // Default date format
                                     }
                                   });
                                 } else {
@@ -177,16 +155,16 @@ class _edit_transactionState extends State<edit_transaction> {
                               },
                               style: TextStyle(
                                 fontSize: 18,
-                                color: widget.transactionDetail.transactiontype == 'Expense' ? Colors.red : Colors.green,
+                                color: _selectedButtonIndex == 0 ? Colors.red : Colors.green,
                                 fontWeight: FontWeight.bold,
                               ),
                               decoration: InputDecoration(
                                 prefixIcon: Padding(
                                   padding: const EdgeInsets.only(left: 10.0),
                                   child: Text(
-                                    widget.transactionDetail.transactiontype == 'Expense' ? '-RM ' : '+RM ',
+                                    _selectedButtonIndex == 0 ? '-RM ' : '+RM ',
                                     style: TextStyle(
-                                      color: widget.transactionDetail.transactiontype == 'Expense' ? Colors.red : Colors.green,
+                                      color: _selectedButtonIndex == 0 ? Colors.red : Colors.green,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -201,7 +179,7 @@ class _edit_transactionState extends State<edit_transaction> {
                                 border: const OutlineInputBorder(),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
-                                    color: widget.transactionDetail.transactiontype == 'Expense' ? Colors.red : Colors.green,
+                                    color: _selectedButtonIndex == 0 ? Colors.red : Colors.green,
                                     width: 2,
                                   ),
                                 ),
@@ -232,7 +210,7 @@ class _edit_transactionState extends State<edit_transaction> {
                       children: [
                         GestureDetector(
                           onTap: () async {
-                            if(widget.transactionDetail.transactiontype == 'Expense') {
+                            if(_newTransactionType == 'Expense') {
                               final selectedSubcategory = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -248,7 +226,7 @@ class _edit_transactionState extends State<edit_transaction> {
                               final selectedIncomeCategory = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => incomeCategory_page(),
+                                    builder: (context) => incomeCategory_page(),
                                 ),
                               );
                               if (selectedIncomeCategory != null) {
@@ -271,9 +249,7 @@ class _edit_transactionState extends State<edit_transaction> {
                                     width: 47,
                                     height: 47,
                                     decoration: BoxDecoration(
-                                      color: _selectedSubcategory_Category != null
-                                          ? _selectedSubcategory_Category!['color']
-                                          : Colors.grey[300],
+                                      color: _selectedSubcategory_Category != null ? _selectedSubcategory_Category!['color'] : Colors.grey[300],
                                       shape: BoxShape.circle,
                                     ),
                                     child: _selectedSubcategory_Category != null
@@ -281,7 +257,7 @@ class _edit_transactionState extends State<edit_transaction> {
                                       child: Icon(
                                         _selectedSubcategory_Category?['icon'],
                                         size: 30,
-                                      color: Colors.white,
+                                        color: Colors.white,
                                       ),
                                     )
                                         : null,
@@ -293,9 +269,7 @@ class _edit_transactionState extends State<edit_transaction> {
                                 child: Row(
                                   children: [
                                     Text(
-                                      _selectedSubcategory_Category != null
-                                          ? _selectedSubcategory_Category!['name']
-                                          : 'Set Category',
+                                      _selectedSubcategory_Category != null ? _selectedSubcategory_Category!['name'] : 'Set Category',
                                       style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 22.0),
                                     ),
                                   ],
@@ -418,13 +392,13 @@ class _edit_transactionState extends State<edit_transaction> {
       ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.transparent,
-        child: Column(
+        child: Column( // Add Transaction button
           children: [
             GestureDetector(
               onTap: () async {
-                // save change
-                if(widget.transactionDetail.transactiontype == "Expense"){
-                  print(widget.transactionDetail.userid);
+
+                if(_newTransactionType == "Expense"){
+                  print(_newTransactionType);
                   print(selectedDate);
                   print(_textControllerAmount.text);
                   print(_selectedSubcategory_Category!['subcategoryId']);
@@ -432,59 +406,48 @@ class _edit_transactionState extends State<edit_transaction> {
                   print(dropdownValue);
 
                   final viewModel = InsightViewModel();
-                  UpdateExpense expense = UpdateExpense(
-                    expenseId: widget.transactionDetail.transactionId!,
+                  AddExpense expense = AddExpense(
                     expenseAmount: double.parse(_textControllerAmount.text),
                     expenseDate: selectedDate,
-                    expenseDescription:_textControllerAddNote.text,
-                    paymentType: dropdownValue,
-                    userId: widget.transactionDetail.userid,
-                    subCategoryId: _selectedSubcategory_Category!['subcategoryId']
-
-                  );try{
-                    await viewModel.updateExpense(expense);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Transaction Edited successfully!'),
-                        duration: Duration(seconds: 2), // SnackBar will disappear after 2 seconds
-                      ),
-                    );
-                    Navigator.pop(context, true); // Navigate back on success
-                  }catch (e){
+                    expenseDescription: _textControllerAddNote.text,
+                    paymenttype: dropdownValue,
+                    userid: 1,  // need to change later
+                    subcategoryid: _selectedSubcategory_Category!['subcategoryId']
+                  );
+                  try {
+                    await viewModel.addExpense(expense);
+                    print("Expense added successfully!");
+                    Navigator.pop(context,true); // Navigate back on success
+                  } catch (e) {
                     print("Failed to add Expense: $e");
                   }
+                }else
+                  {
+                    print(_newTransactionType);
+                    print(selectedDate);
+                    print(_textControllerAmount.text);
+                    print(_selectedSubcategory_Category!['incomeCategoryId']);
+                    print(_textControllerAddNote.text);
+                    print(dropdownValue);
 
-                }else{
-                  print(widget.transactionDetail.transactionId);
-                  print(selectedDate);
-                  print(_textControllerAmount.text);
-                  print(_selectedSubcategory_Category!['incomeCategoryId']);
-                  print(_textControllerAddNote.text);
-                  print(dropdownValue);
 
-                  final viewModel = InsightViewModel();
-                  UpdateIncome income = UpdateIncome(
-                      incomeId: widget.transactionDetail.transactionId!,
-                      incomeAmount: double.parse(_textControllerAmount.text),
-                      incomeDate: selectedDate,
-                      incomeDescription:_textControllerAddNote.text,
-                      paymentType: dropdownValue,
-                      userId: widget.transactionDetail.userid,
-                      incomeCategoryId: _selectedSubcategory_Category!['incomeCategoryId']
-
-                  );try{
-                    await viewModel.updateIncome(income);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Transaction Edited successfully!'),
-                        duration: Duration(seconds: 2), // SnackBar will disappear after 2 seconds
-                      ),
+                    final viewModel = InsightViewModel();
+                    AddIncome income = AddIncome(
+                        incomeAmount: double.parse(_textControllerAmount.text),
+                        incomeDate: selectedDate,
+                        incomeDescription: _textControllerAddNote.text,
+                        paymenttype: dropdownValue,
+                        userid: 1,  // need to change later
+                        incomecategoryid: _selectedSubcategory_Category!['incomeCategoryId']
                     );
-                    Navigator.pop(context, true); // Navigate back on success
-                  }catch (e){
-                    print("Failed to add Expense: $e");
+                    try {
+                      await viewModel.addIncome(income);
+                      print("income added successfully!");
+                      Navigator.pop(context,true); // Navigate back on success
+                    } catch (e) {
+                      print("Failed to add Income: $e");
+                    }
                   }
-                }
               },
               child: Padding(
                 padding: const EdgeInsets.all(1.0),
@@ -496,13 +459,15 @@ class _edit_transactionState extends State<edit_transaction> {
                   ),
                   width: 220.0,
                   height: 50.0,
-                  child: const Text('Save', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0, color: Colors.white)),
+                  child: const Text('Add Transaction', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0, color: Colors.white)),
                 ),
               ),
             )
           ],
         ),
       ),
+
     );
   }
 }
+

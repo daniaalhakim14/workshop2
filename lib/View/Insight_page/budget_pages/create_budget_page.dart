@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workshop_2/View/budget_category_page.dart';
-import 'package:workshop_2/ViewModel/BudgetViewModel.dart';
-import 'package:workshop_2/ViewModel/CategoryViewModel.dart';
-import 'package:workshop_2/ViewModel/DateViewModel.dart';
-import 'package:workshop_2/ViewModel/BudgetTextFieldViewModel.dart';
+
+import '../../../ViewModel/BudgetTextFieldViewModel.dart';
+import '../../../ViewModel/BudgetViewModel.dart';
+import '../../../ViewModel/CategoryViewModel.dart';
+import '../../../ViewModel/DateViewModel.dart';
+import 'budget_category_page.dart';
+
 
 class CreateBudget extends StatefulWidget{
   const CreateBudget({super.key});
