@@ -206,7 +206,9 @@ Future<List<Map<String, dynamic>>> fetchCategoriesForNotification(int notificati
 Future<List<Map<String, dynamic>>> fetchCategoriesForNotification(int notificationID) async {
   final box = GetStorage();
   final String cacheKey = 'categories_$notificationID';
-
+  
+  box.remove(cacheKey);
+  
   final cachedData = box.read<List<dynamic>>(cacheKey);
   if (cachedData != null) {
     final categories = cachedData.map((e) => e as Map<String, dynamic>).toList();
@@ -399,6 +401,7 @@ void clearCategoryCache(int notificationID) {
       bool success = await notificationRepository.updateNotificationCategories(notificationID, categoryIDs);
       if (success) {
         clearCategoryCache(notificationID);
+        
         await fetchNotifications();
         print('Notification categories updated successfully');
       } else {

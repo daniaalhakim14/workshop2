@@ -288,9 +288,11 @@ class _NotificationState extends State<Noti> {
   }
 
   Future<void> refreshNotifications() async {
+    
     viewModel.isLoading.value = true;
     await viewModel.initializeNotifications(userID);
     viewModel.isLoading.value = false;
   }
+  
 
 }
