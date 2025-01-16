@@ -10,13 +10,36 @@ class ChangePasswordViewModel extends ChangeNotifier {
       int userId,
       String currentPassword,
       String newPassword,
+      String repeatPassword,
       ) async {
-    final url = Uri.parse('http://192.168.0.6:3000/api/change-password');
+    if (currentPassword.isEmpty) {
+      _showError(context, 'Current password cannot be empty');
+      return;
+    }
+
+    if (newPassword.isEmpty) {
+      _showError(context, 'New password cannot be empty');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      _showError(context, 'Password must be at least 6 characters long');
+      return;
+    }
+
+    if (repeatPassword.isEmpty) {
+      _showError(context, 'Please confirm your password');
+      return;
+    }
+
+    if (newPassword != repeatPassword) {
+      _showError(context, 'Passwords do not match');
+      return;
+    }
+
+    final url = Uri.parse('http://192.168.0.20:3000/api/change-password');
     isLoading = true;
     notifyListeners();
-
-    print('Attempting to change password...');
-    print('API Request - UserID: $userId, Current Password: $currentPassword, New Password: $newPassword');
 
     try {
       final response = await http.post(
@@ -29,9 +52,6 @@ class ChangePasswordViewModel extends ChangeNotifier {
         }),
       );
 
-      print('API Response Status Code: ${response.statusCode}');
-      print('API Response Body: ${response.body}');
-
       isLoading = false;
       notifyListeners();
 
@@ -41,26 +61,24 @@ class ChangePasswordViewModel extends ChangeNotifier {
         );
         Navigator.pop(context);
       } else if (response.statusCode == 404) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('User not found')),
-        );
+        _showError(context, 'User not found');
       } else if (response.statusCode == 401) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Invalid current password')),
-        );
+        _showError(context, 'Invalid current password');
       } else {
         final error = jsonDecode(response.body)['error'] ?? 'Unknown error';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $error')),
-        );
+        _showError(context, 'Error: $error');
       }
     } catch (e) {
       isLoading = false;
       notifyListeners();
-      print('Error occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+      _showError(context, 'Error: ${e.toString()}');
     }
   }
+
+  void _showError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 }
+
