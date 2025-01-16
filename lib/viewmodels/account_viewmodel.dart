@@ -20,7 +20,7 @@ class AccountViewModel extends ChangeNotifier {
   }
 
   Future<void> fetchAvatar(String userId) async {
-    final uri = Uri.parse('http://192.168.0.6:3000/api/get-profile-image/$userId');
+    final uri = Uri.parse('http://192.168.0.20:3000/api/get-profile-image/$userId');
     try {
       final response = await http.get(uri);
 
@@ -39,7 +39,7 @@ class AccountViewModel extends ChangeNotifier {
   }
 
   Future<void> uploadAvatar(File avatar, String userId) async {
-    final uri = Uri.parse('http://192.168.0.6:3000/api/update-profile-image/$userId');
+    final uri = Uri.parse('http://192.168.0.20:3000/api/update-profile-image/$userId');
     final request = http.MultipartRequest('POST', uri)
       ..files.add(await http.MultipartFile.fromPath('personalImage', avatar.path));
 
