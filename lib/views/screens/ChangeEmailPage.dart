@@ -12,76 +12,84 @@ class ChangeEmailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = Provider.of<ChangeEmailViewModel>(context);
     final appAppearanceViewModel = Provider.of<AppAppearanceViewModel>(context);
+    final isDarkModeValue = appAppearanceViewModel.isDarkMode;
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: appAppearanceViewModel.isDarkMode
-            ? Colors.black
-            : Colors.white,
+        backgroundColor: isDarkModeValue ? Colors.black : Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(
-          color: appAppearanceViewModel.isDarkMode
-              ? Colors.white
-              : Colors.black,
+          color: isDarkModeValue ? Colors.white : Colors.black,
         ),
         title: Text(
           'Change Email',
           style: TextStyle(
-            color: appAppearanceViewModel.isDarkMode
-                ? Colors.white
-                : Colors.black,
+            color: isDarkModeValue ? Colors.white : Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: isDarkModeValue ? Colors.white : Colors.black,
+          ),
+          onPressed: () {
+            viewModel.oldEmailController.clear();
+            viewModel.newEmailController.clear();
+            Navigator.pop(context);
+          },
+        ),
       ),
-      backgroundColor: appAppearanceViewModel.isDarkMode
-          ? Colors.black
-          : Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      backgroundColor: isDarkModeValue ? Colors.black : Colors.white,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
-            buildLabel('Old Email', appAppearanceViewModel.isDarkMode),
+            buildLabel('Old Email', isDarkModeValue),
+            const SizedBox(height: 10),
             buildInputField(
               controller: viewModel.oldEmailController,
               hint: 'Enter your old email',
-              isDarkModeValue: appAppearanceViewModel.isDarkMode,
+              isDarkModeValue: isDarkModeValue,
             ),
             const SizedBox(height: 20),
-            buildLabel('New Email', appAppearanceViewModel.isDarkMode),
+            buildLabel('New Email', isDarkModeValue),
+            const SizedBox(height: 10),
             buildInputField(
               controller: viewModel.newEmailController,
-              hint: 'Enter your new email',
-              isDarkModeValue: appAppearanceViewModel.isDarkMode,
+              hint: 'name@example.com',
+              isDarkModeValue: isDarkModeValue,
             ),
             const SizedBox(height: 30),
             Center(
               child: SizedBox(
-                width: 265,
-                height: 53,
+                width: double.infinity,
                 child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal,
-                minimumSize: const Size(double.infinity, 48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                   onPressed: viewModel.isLoading
                       ? null
-                      : () => viewModel.changeEmail(context, userId),
+                      : () {
+                    FocusScope.of(context).unfocus();
+                    viewModel.changeEmail(context, userId);
+                  },
                   child: viewModel.isLoading
-                      ? const CircularProgressIndicator()
-                      : Text(
+                      ? const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  )
+                      : const Text(
                     'Change Email',
                     style: TextStyle(
                       fontSize: 16,
-                      color:
-                           Colors.white
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -111,13 +119,14 @@ class ChangeEmailPage extends StatelessWidget {
   }) {
     return TextField(
       controller: controller,
+      keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
         fillColor:
         isDarkModeValue ? Colors.grey[800] : const Color(0xFFF5F5F5),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
         ),
         hintStyle: TextStyle(
@@ -130,3 +139,4 @@ class ChangeEmailPage extends StatelessWidget {
     );
   }
 }
+
