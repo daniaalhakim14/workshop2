@@ -17,10 +17,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'ViewModel/edit_profile_viewmodel.dart';
 import 'configure_API.dart';
-
 void main() async {
-  // Update base URL based on new IP or environment
-  AppConfig.updateBaseUrl('http://10.131.75.179:3000');
   runApp(MyApp());
 }
 

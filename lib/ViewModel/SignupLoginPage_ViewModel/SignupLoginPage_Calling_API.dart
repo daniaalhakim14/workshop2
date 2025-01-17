@@ -10,7 +10,8 @@ class CallingApi {
 // Instead, it returns a Future, which represents a potential value or error that will be available at some point in the future.
 
   Future<http.Response> login(String email, String password) async {
-    final String endpoint = '/appuser/login';
+    const String endpoint = '/appuser/login';
+    print( '${AppConfig.baseUrl}$endpoint');
     final String url = '${AppConfig.baseUrl}$endpoint';
     return await http.post(
       Uri.parse(url),
