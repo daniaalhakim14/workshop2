@@ -52,6 +52,10 @@ dependencies:
   syncfusion_flutter_charts: ^28.1.39
   flutter_dotenv: ^5.2.1
   flutter_localization: ^0.3.1
+  get: ^4.6.6
+  get_storage: ^2.1.1
+  dio: ^5.7.0
+  image: ^4.5.2
 
 
 dev_dependencies:

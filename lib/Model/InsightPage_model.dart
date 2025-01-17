@@ -1,8 +1,6 @@
-//it means creating a data model that represents how a superhero
+// it means creating a data model that represents how a superhero
 // is structured or organized in the application.
 // This involves specifying the properties and types of data that each superhero should have (like name, realName, and imageUrl in this case).
-
-
 
 import 'package:flutter/material.dart';
 
