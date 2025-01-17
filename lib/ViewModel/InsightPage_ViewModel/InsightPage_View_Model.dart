@@ -1,8 +1,9 @@
 // A bridge between view layer and repository (data layer)
 
 import 'package:flutter/material.dart';
-import '../Model/insight_model.dart';
-import 'repository.dart';
+
+import '../../Model/InsightPage_model.dart';
+import 'InsightPage_Repository.dart';
 
 
 // ChangeNotifier allows View Model to notify listeners when data changes
@@ -10,18 +11,18 @@ class InsightViewModel extends ChangeNotifier{
 
   bool fetchingData = false;
 
-  UserInfoModul? _userInfo;
-  UserInfoModul? get userInfo => _userInfo;
-
   List<TransactionsExpense> _transactionsExpense = [];
   List<TransactionsExpense> get transactionsExpense => _transactionsExpense;
 
   List<TransactionList> _transactionList = [];
   List<TransactionList> get transactionList => _transactionList;
+
   List<BasicCategories> _basicCategories = [];
   List<BasicCategories> get basicCategories => _basicCategories;
+
   List<IncomeCategories> _incomeCategories = [];
   List<IncomeCategories> get incomeCategories => _incomeCategories;
+
   List<Subcategories> _subcategory = [];
   List<Subcategories> get subcategory => _subcategory;
 
@@ -194,32 +195,7 @@ class InsightViewModel extends ChangeNotifier{
     }
   }
 
-  Future<bool> login(String email, String password) async {
-    try {
-      final InsightRepository _repository = InsightRepository();
-      final success = await _repository.login(email, password);
-      return success;
-    } catch (e) {
-      print('Login failed: $e');
-      return false;
-    }
-  }
 
-  // Fetch user details using email
-  Future<void> fetchUserDetailsByEmail(String email) async {
-    try {
-      final InsightRepository _repository = InsightRepository();
-      _userInfo = await _repository.fetchUserDetailsByEmail(email);
-      if (_userInfo != null) {
-        print('User details fetched successfully: ${_userInfo!.toJson()}');
-      } else {
-        print('Failed to fetch user details');
-      }
-      notifyListeners();
-    } catch (e) {
-      print('Error fetching user details: $e');
-    }
-  }
 }
 
 

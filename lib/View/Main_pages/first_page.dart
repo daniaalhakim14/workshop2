@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tab_bar_widget/View/authentication_pages/signupage.dart';
+import 'package:tab_bar_widget/View/Main_pages/signupage.dart';
 import 'loginpage.dart';
 
 
@@ -48,8 +48,8 @@ class _FirstPageState extends State<FirstPage> {
                 ),
               ),
             ),
-
             const SizedBox(height: 40),
+            // Login Button
             SizedBox(
               width: 300, // Fixed width for both buttons
               child: ElevatedButton(
@@ -77,13 +77,14 @@ class _FirstPageState extends State<FirstPage> {
               ),
             ),
             const SizedBox(height: 20),
+            // Sign up Button
             SizedBox(
               width: 300, // Same fixed width for the second button
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SignupPage()), // Navigate to LoginPage
+                    MaterialPageRoute(builder: (context) => const SignupPage()), // Navigate to LoginPage
                   );
                   // Add navigation for sign-up here, if needed
                 },

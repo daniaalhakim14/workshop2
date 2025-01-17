@@ -5,18 +5,18 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tab_bar_widget/View/Main_pages/homepage.dart';
-import '../../Model/insight_model.dart';
+import '../../Model/SignupLoginPage_model.dart';
 import '../../ViewModel/account_viewmodel.dart';
 import '../../ViewModel/app_appearance_viewmodel.dart';
-import '../screens/ChangeEmailPage.dart';
-import '../screens/app_appearance.dart';
-import '../screens/change_password.dart';
-import '../screens/edit_profile_page.dart';
+import '../Account_page/ChangeEmailPage.dart';
+import '../Account_page/app_appearance.dart';
+import '../Account_page/change_password.dart';
+import '../Account_page/edit_profile_page.dart';
 import 'insight_page.dart';
 import 'notification_page.dart';
 
 class Account extends StatefulWidget {
-  final UserInfoModul userInfo;
+  final UserInfoModule userInfo;
 
   const Account({super.key, required this.userInfo});
 

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tab_bar_widget/View/Insight_page/transaction_page/subcategory_page.dart';
-import 'package:tab_bar_widget/ViewModel/insight_view_model.dart';
+import '../../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
+
 
 
 class CategoryPage extends StatefulWidget {

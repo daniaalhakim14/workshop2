@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../Model/insight_model.dart';
+import '../../Model/SignupLoginPage_model.dart';
 import '../../ViewModel/account_viewmodel.dart';
 import 'account_page.dart';
 import 'insight_page.dart';
 import 'notification_page.dart';
 
 class HomePage extends StatefulWidget {
-  final UserInfoModul userInfo;
+  final UserInfoModule userInfo;
 
   const HomePage({super.key, required this.userInfo});
 

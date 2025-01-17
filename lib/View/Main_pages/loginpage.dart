@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../ViewModel/insight_view_model.dart';
+import '../../ViewModel/SignupLoginPage_ViewModel/SignupLoginPage_View_Model.dart';
 import '../Main_pages/homepage.dart';
-import 'signupage.dart';
+import '../Main_pages/signupage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,41 +16,6 @@ class _LoginPageState extends State<LoginPage> {
   bool _isPasswordVisible = false; // Password visibility toggle
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  Future<void> _login() async {
-
-    final viewModel = Provider.of<InsightViewModel>(context, listen: false);
-    final String email = _emailController.text;
-    final String password = _passwordController.text;
-
-    final success = await viewModel.login(email, password);
-    if (success) {
-      // Fetch user details after successful login
-      await viewModel.fetchUserDetailsByEmail(email);
-
-      if (viewModel.userInfo != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HomePage(userInfo: viewModel.userInfo!),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Failed to fetch user details."),
-          ),
-        );
-      }
-    } else {
-      // Show error message if login fails
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Login failed. Please check your credentials."),
-        ),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -212,5 +177,40 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _login() async {
+    // access SignupLoginPage_ViewModule
+    final viewModel = Provider.of<SignupLoginPage_ViewModule>(context, listen: false);
+    final String email = _emailController.text;
+    final String password = _passwordController.text;
+
+    final success = await viewModel.login(email, password);
+    if (success) {
+      // Fetch user details after successful login
+      await viewModel.fetchUserDetailsByEmail(email);
+
+      if (viewModel.userInfo != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(userInfo: viewModel.userInfo!),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Failed to fetch user details."),
+          ),
+        );
+      }
+    } else {
+      // Show error message if login fails
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Login failed. Please check your credentials."),
+        ),
+      );
+    }
   }
 }

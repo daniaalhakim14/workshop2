@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tab_bar_widget/View/Main_pages/homepage.dart';
-import '../../Model/insight_model.dart';
+import '../../Model/SignupLoginPage_model.dart';
+
 import '../Main_pages/account_page.dart';
 import '../Main_pages/notification_page.dart';
 
@@ -9,7 +10,7 @@ class NotificationDetails extends StatefulWidget {
   final String title;
   final String datetime;
   final String details;
-  final UserInfoModul userInfo; // Accept UserModel as a parameter
+  final UserInfoModule userInfo; // Accept UserModel as a parameter
 
   const NotificationDetails({
     super.key,

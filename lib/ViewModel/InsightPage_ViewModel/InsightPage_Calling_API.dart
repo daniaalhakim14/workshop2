@@ -178,25 +178,6 @@ class CallingApi{
     return response;
   }
 
-  Future<http.Response> login(String email, String password) async {
-    final String endpoint = '/appuser/login';
-    final String url = '$baseUrl$endpoint';
-    return await http.post(
-      Uri.parse(url),
-      headers: {'Content-Type': 'application/json; charset=UTF-8'},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
-  }
 
-  // Fetch user details by email
-  Future<http.Response> fetchUserDetailsByEmail(String email) async {
-    final String endpoint = '/appuser/email/$email'; // Endpoint for fetching user details by email
-    final String url = '$baseUrl$endpoint';
-
-    return await http.get(
-      Uri.parse(url),
-      headers: {'Content-Type': 'application/json; charset=UTF-8'},
-    );
-  }
 
 }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:month_year_picker/month_year_picker.dart';
 import 'package:provider/provider.dart'; // Import the provider package
-import '../ViewModel/insight_view_model.dart';
-import 'View/authentication_pages/first_page.dart';
+import 'View/Main_pages/first_page.dart';
 import 'ViewModel/AIBudgetTextFieldViewModel.dart';
 import 'ViewModel/AIBudgetViewModel.dart';
 import 'ViewModel/AnalysisViewModel.dart';
@@ -10,9 +9,13 @@ import 'ViewModel/BudgetTextFieldViewModel.dart';
 import 'ViewModel/BudgetViewModel.dart';
 import 'ViewModel/CategoryViewModel.dart';
 import 'ViewModel/DateViewModel.dart';
+import 'ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
+import 'ViewModel/SignupLoginPage_ViewModel/SignupLoginPage_View_Model.dart';
 import 'ViewModel/account_viewmodel.dart';
 import 'ViewModel/app_appearance_viewmodel.dart'; // Import your InsightViewModel
 import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'ViewModel/edit_profile_viewmodel.dart';
 
 void main() async {
   runApp(MyApp());
@@ -27,6 +30,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => InsightViewModel()),
+        ChangeNotifierProvider(create: (_) => SignupLoginPage_ViewModule()),
         ChangeNotifierProvider(create: (_) => AccountViewModel()),
         ChangeNotifierProvider(create: (_) => AppAppearanceViewModel()),
         ChangeNotifierProvider(create: (context) => CategoryViewModel()),
@@ -35,7 +39,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => DateViewModel()),
         ChangeNotifierProvider(create: (context) => AIBudgetTextFieldViewModel()),
         ChangeNotifierProvider(create: (context) => AIBudgetViewModel()),
-        ChangeNotifierProvider(create: (context) => AnalysisViewModel())
+        ChangeNotifierProvider(create: (context) => AnalysisViewModel()),
+        ChangeNotifierProvider(create: (_) => EditProfileViewModel()),
+
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

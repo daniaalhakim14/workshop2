@@ -1,9 +1,9 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:tab_bar_widget/Model/insight_model.dart';
-import 'package:tab_bar_widget/ViewModel/insight_view_model.dart';
 import 'package:intl/intl.dart';
+import '../../../Model/InsightPage_model.dart';
+import '../../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
 import '../../main_pages/insight_page.dart';
 import 'category_page.dart';
 import 'incomeCategory_page.dart';

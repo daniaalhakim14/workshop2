@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:tab_bar_widget/View/Main_pages/homepage.dart';
-import '../../Model/insight_model.dart';
+import '../../Model/SignupLoginPage_model.dart';
 import '../Notification_page/notification_details_page.dart';
 import 'account_page.dart';
 import 'insight_page.dart';
 
 
 class Noti extends StatefulWidget {
-  final UserInfoModul userInfo; // Accept `UserModel` as a parameter
+  final UserInfoModule userInfo; // Accept `UserModel` as a parameter
 
   const Noti({super.key, required this.userInfo});
 

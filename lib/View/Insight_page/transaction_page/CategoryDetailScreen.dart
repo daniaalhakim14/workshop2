@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../Model/insight_model.dart';
+import '../../../Model/InsightPage_model.dart';
 import 'SubCategoryDetailScreen.dart';
 
 

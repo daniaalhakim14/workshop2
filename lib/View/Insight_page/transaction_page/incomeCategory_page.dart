@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
 
-import '../../../ViewModel/insight_view_model.dart';
 
 
 

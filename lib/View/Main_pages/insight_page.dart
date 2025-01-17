@@ -1,13 +1,10 @@
-
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:tab_bar_widget/ViewModel/insight_view_model.dart';
-import '../../Model/Budget.dart';
-import '../../Model/insight_model.dart';
+import '../../Model/InsightPage_model.dart';
+import '../../Model/SignupLoginPage_model.dart';
+import '../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
 import '../Insight_page/analysis_page/analysis_tab_page.dart';
 import '../Insight_page/transaction_page/CategoryDetailScreen.dart';
 import '../Insight_page/transaction_page/TransactionDetailScreen.dart';
@@ -22,7 +19,7 @@ import '../Insight_page/budget_pages/budget_tab_page.dart';
 // configure daily spent and spent so far
 
 class Insight extends StatefulWidget {
-  final UserInfoModul userInfo; // Accept UserModel as a parameter
+  final UserInfoModule userInfo; // Accept UserModel as a parameter
   const Insight({super.key,required this.userInfo});
 
   @override
@@ -762,7 +759,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
   }
 }
 
-Row _bottomBarConfiguration(BuildContext context, UserInfoModul userInfo) {
+Row _bottomBarConfiguration(BuildContext context, UserInfoModule userInfo) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: <Widget>[
