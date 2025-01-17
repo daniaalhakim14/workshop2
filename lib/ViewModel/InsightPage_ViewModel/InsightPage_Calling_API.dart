@@ -1,8 +1,6 @@
 // Service class
 import 'dart:convert';
-
 import 'package:http/http.dart'as http;
-
 import '../../configure_API.dart';
 
 class CallingApi{
