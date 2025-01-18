@@ -11,8 +11,6 @@ import '../Notification_page/notification_details_page.dart';
 import 'insight_page.dart';
 import 'account_page.dart';
 
-
-
 class Noti extends StatefulWidget {
   final UserInfoModule userInfo; // Accept `UserModel` as a parameter
   const Noti({super.key, required this.userInfo});
@@ -22,9 +20,9 @@ class Noti extends StatefulWidget {
 }
 
 class _NotificationState extends State<Noti> {
-
+  
   final NotificationViewModel viewModel = Get.put(NotificationViewModel());
-  final String userID = '10'; //for testing only, need to integrate with user module
+  final String userID = '11'; //for testing only, need to integrate with user module
 
   String truncateText(String text, int maxLength) {
     if (text.length > maxLength) {
@@ -39,14 +37,15 @@ class _NotificationState extends State<Noti> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewModel.initializeNotifications(userID);
     });
+    viewModel.fetchFinancialAidCategories();
   }
 
   @override
   Widget build(BuildContext notificationContext) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: const Text(
+        title: const Center(
+          child: Text(
             'Notification',
             style: TextStyle(
               fontFamily: 'Poppins',
@@ -65,31 +64,81 @@ class _NotificationState extends State<Noti> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Obx(() {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        viewModel.isDescending.value ? Icons.arrow_downward : Icons.arrow_upward,
-                      ),
-                      onPressed: () {
-                        viewModel.toggleSortOrder();
-                      },
+             Obx(() {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      viewModel.isDescending.value ? Icons.arrow_downward : Icons.arrow_upward,
                     ),
-                    Text(
-                      viewModel.isDescending.value ? 'Newer to Older  ' : 'Older to Newer  ',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                        color: const Color(0xFF002B36),
-                      ),
+                    onPressed: () {
+                      viewModel.toggleSortOrder();
+                    },
+                  ),
+                  Text(
+                    viewModel.isDescending.value ? 'Newer to Older  ' : 'Older to Newer  ',
+                    style: const TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      color: const Color(0xFF002B36),
                     ),
-                  ],
-                );
-              })
+                  ),
+                ],
+              );
+            })
             ],
           ),
+          Obx(() {
+            final isExpanded = viewModel.isExpanded.value;
+
+            return Column(
+              children: [
+                if (isExpanded)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+                    child: Wrap(
+                      spacing: 12.0, 
+                      runSpacing: 8.0, 
+                      alignment: WrapAlignment.start,
+                      children: viewModel.financialAidCategories.map((category) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width / 4 - 16,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              getIconForCategory(category['name']),
+                              const SizedBox(width: 4),
+                              Text(
+                                category['name'],
+                                style: const TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 10, 
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
+                                ),
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis, 
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                IconButton(
+                  icon: Icon(
+                    isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down, 
+                    size: 24,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    viewModel.isExpanded.toggle();
+                  },
+                ),
+              ],
+            );
+          }),
           Expanded(
             child: Obx(() {
               if (viewModel.isLoading.value) {
@@ -113,7 +162,7 @@ class _NotificationState extends State<Noti> {
                   itemCount: viewModel.notifications.length,
                   itemBuilder: (context, index) {
                     nt.Notification notification =
-                    viewModel.notifications[index];
+                        viewModel.notifications[index];
                     Color borderColor;
 
                     if (notification.type != 'transaction') {
@@ -142,49 +191,49 @@ class _NotificationState extends State<Noti> {
                             );
                           },
                           title: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  notification.title ?? 'Default Title',
-                                  style: const TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF002B36),
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                notification.title ?? 'Default Title',
+                                style: const TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF002B36),
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              FutureBuilder<List<Map<String, dynamic>>>(
-                                future: viewModel.fetchCategoriesForNotification(notification.notificationID!),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                                    return SizedBox(
-                                      height: 10,
-                                      width: 10,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 1,
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                          const Color.fromARGB(255, 220, 220, 220),
-                                        ),
+                            ),
+                            FutureBuilder<List<Map<String, dynamic>>>(
+                              future: viewModel.fetchCategoriesForNotification(notification.notificationID!),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const SizedBox(
+                                    height: 10,
+                                    width: 10,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 1,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        const Color.fromARGB(255, 220, 220, 220),
                                       ),
-                                    );
-                                  }
-                                  if (snapshot.hasError || !snapshot.hasData) {
-                                    return const SizedBox();
-                                  }
-                                  final categories = snapshot.data!;
-                                  return Wrap(
-                                    spacing: 4,
-                                    children: categories.map((category) {
-                                      return getIconForCategory(category['name']);
-                                    }).toList(),
+                                    ),
                                   );
-                                },
-                              ),
-                            ],
-                          ),
+                                }
+                                if (snapshot.hasError || !snapshot.hasData) {
+                                  return const SizedBox();
+                                }
+                                final categories = snapshot.data!;
+                                return Wrap(
+                                  spacing: 4,
+                                  children: categories.map((category) {
+                                    return getIconForCategory(category['name']);
+                                  }).toList(),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -194,7 +243,7 @@ class _NotificationState extends State<Noti> {
                                     'Posted: ',
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
-                                      fontSize: 12,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
                                     ),
@@ -203,7 +252,7 @@ class _NotificationState extends State<Noti> {
                                     '${notification.date ?? 'Unknown Date'} ${notification.time ?? ''}',
                                     style: const TextStyle(
                                       fontFamily: 'Poppins',
-                                      fontSize: 12,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w300,
                                       color: Colors.black,
                                     ),
@@ -212,10 +261,10 @@ class _NotificationState extends State<Noti> {
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                truncateText(notification.description ?? 'No Description', 200),
+                                truncateText(notification.description ?? 'No Description', 150),
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
-                                  fontSize: 12,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w300,
                                   color: Color.fromARGB(255, 56, 54, 54),
                                 ),
