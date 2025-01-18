@@ -22,8 +22,8 @@ class Noti extends StatefulWidget {
 class _NotificationState extends State<Noti> {
   
   final NotificationViewModel viewModel = Get.put(NotificationViewModel());
-  final String userID = '11'; //for testing only, need to integrate with user module
-
+  //final String userID = widget.userInfo.id.toString(); //for testing only, need to integrate with user module
+  late String userID;
   String truncateText(String text, int maxLength) {
     if (text.length > maxLength) {
       return '${text.substring(0, maxLength)}...';
@@ -34,6 +34,7 @@ class _NotificationState extends State<Noti> {
   @override
   void initState() {
     super.initState();
+    userID = widget.userInfo.id.toString();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewModel.initializeNotifications(userID);
     });
@@ -94,8 +95,8 @@ class _NotificationState extends State<Noti> {
 
             return Column(
               children: [
-                if (isExpanded)
-                  Padding(
+                isExpanded
+                ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
                     child: Wrap(
                       spacing: 12.0, 
@@ -107,6 +108,7 @@ class _NotificationState extends State<Noti> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
+                              const SizedBox(width: 16),
                               getIconForCategory(category['name']),
                               const SizedBox(width: 4),
                               Text(
@@ -125,17 +127,28 @@ class _NotificationState extends State<Noti> {
                         );
                       }).toList(),
                     ),
+                  )
+                  :const Text(
+                    'Icon Navigation',
+                    style:  TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14,
+                      color: Color.fromARGB(255, 51, 51, 51),
+                    ),
                   ),
-                IconButton(
-                  icon: Icon(
-                    isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down, 
-                    size: 24,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {
-                    viewModel.isExpanded.toggle();
-                  },
-                ),
+
+                      IconButton(
+                        icon: Icon(
+                          viewModel.isExpanded.value ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                          size: 24,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          viewModel.isExpanded.toggle(); 
+                        },
+                      ),
+
+
               ],
             );
           }),
@@ -161,8 +174,7 @@ class _NotificationState extends State<Noti> {
                 child: ListView.builder(
                   itemCount: viewModel.notifications.length,
                   itemBuilder: (context, index) {
-                    nt.Notification notification =
-                        viewModel.notifications[index];
+                    nt.Notification notification =  viewModel.notifications[index];
                     Color borderColor;
 
                     if (notification.type != 'transaction') {
@@ -179,7 +191,7 @@ class _NotificationState extends State<Noti> {
                         decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 240, 240, 240),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: borderColor),
+                          border: Border.all(color: borderColor, width: 2.0,),
                         ),
                         child: ListTile(
                           onTap: () {
@@ -215,7 +227,7 @@ class _NotificationState extends State<Noti> {
                                     child: CircularProgressIndicator(
                                       strokeWidth: 1,
                                       valueColor: AlwaysStoppedAnimation<Color>(
-                                        const Color.fromARGB(255, 220, 220, 220),
+                                        Color.fromARGB(255, 220, 220, 220),
                                       ),
                                     ),
                                   );
@@ -343,6 +355,7 @@ class _NotificationState extends State<Noti> {
   Future<void> refreshNotifications() async {
 
     viewModel.isLoading.value = true;
+    //await viewModel.initializeNotifications(userID);
     await viewModel.initializeNotifications(userID);
     viewModel.isLoading.value = false;
   }
