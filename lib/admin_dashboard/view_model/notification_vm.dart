@@ -24,7 +24,7 @@ class NotificationViewModel extends GetxController {
   final RxList<Map<String, dynamic>> _notificationCategories = <Map<String, dynamic>>[].obs;
   List<Map<String, dynamic>> get notificationCategories => _notificationCategories;
 
-  
+  var isExpanded = true.obs;
   
   final RxBool isLoading = false.obs;
 
@@ -52,6 +52,7 @@ class NotificationViewModel extends GetxController {
     });
     _notifications.refresh(); 
   }
+
 
   /*
   Future<void> initializeNotifications(String userID) async {
@@ -95,7 +96,7 @@ class NotificationViewModel extends GetxController {
       final results = await Future.wait([
         autoSendTransactionAlert(userID), 
         notificationRepository.fetchNotifications(), 
-        notificationRepository.fetchNotificationsByUserID(userID), // 用户相关通知
+        notificationRepository.fetchNotificationsByUserID(userID),
       ]);
 
       final List<nt.Notification>? generalNotifications = results[1] as List<nt.Notification>?;
@@ -114,6 +115,10 @@ class NotificationViewModel extends GetxController {
         });
 
         _notifications.assignAll(combinedNotifications);
+        _notifications.refresh();
+        print('Notification count: ${_notifications.length}');
+
+
       } else {
         _notifications.clear();
       }

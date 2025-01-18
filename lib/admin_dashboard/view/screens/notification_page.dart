@@ -1,5 +1,5 @@
-
 import 'dart:typed_data';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
@@ -12,7 +12,9 @@ import '../../view_model/notification_vm.dart';
 
 
 class NotificationPage extends StatefulWidget {
+  const NotificationPage({super.key}); 
   @override
+  // ignore: library_private_types_in_public_api
   _NotificationPageState createState() => _NotificationPageState();
 }
 
@@ -37,11 +39,11 @@ class _NotificationPageState extends State<NotificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF008080),
+        backgroundColor: const Color(0xFF008080),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
+            const Row(
               children: [
                 Text(
                   'NOTIFICATION',
@@ -59,25 +61,25 @@ class _NotificationPageState extends State<NotificationPage> {
                 GestureDetector(
                   onTap: () => _selectDate(context),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.date_range, color: Colors.black, size: 16),
-                        SizedBox(width: 10),
+                        const Icon(Icons.date_range, color: Colors.black, size: 16),
+                        const SizedBox(width: 10),
                         Text(
                           _selectedDate ?? 'Select Date',
-                          style: TextStyle(color: Colors.black, fontSize: 16),
+                          style: const TextStyle(color: Colors.black, fontSize: 16),
                         ),
                       ],
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.clear, color: Colors.white),
+                  icon: const Icon(Icons.clear, color: Colors.white),
                   onPressed: () async {
                     setState(() {
                       _selectedDate = null; 
@@ -91,10 +93,10 @@ class _NotificationPageState extends State<NotificationPage> {
             Row(
               children: [
                 IconButton(
-                  icon: Icon(Icons.add, color: Colors.white),
+                  icon: const Icon(Icons.add, color: Colors.white),
                   onPressed: () => _showAddPostDialog(context)
                 ),
-                Text(
+                const Text(
                   'NEW',
                   style: TextStyle(
                     fontFamily: 'Poppins',
@@ -103,7 +105,7 @@ class _NotificationPageState extends State<NotificationPage> {
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
               ],
             ),
           ],
@@ -113,14 +115,14 @@ class _NotificationPageState extends State<NotificationPage> {
       body: Obx(() {
         if (viewModel.notifications.isEmpty) {
           if (viewModel.isLoading.value) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
-          return Center(child: Text('No Notifications'));
+          return const Center(child: Text('No Notifications'));
         }
         return GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
@@ -154,29 +156,29 @@ class _NotificationPageState extends State<NotificationPage> {
                           children: [
                             Text(
                               notification.title ?? 'Default Title',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             FutureBuilder<List<Map<String, dynamic>>> (
                               future: viewModel.fetchCategoriesForNotification(
                                   notification.notificationID!),
                               builder: (context, snapshot) {
                                 
                                 if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return SizedBox(
+                                  return const SizedBox(
                                     height: 10,
                                     width: 10,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 1,
-                                      valueColor: AlwaysStoppedAnimation<Color>(const Color.fromARGB(255, 220, 220, 220)),
+                                      valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 220, 220, 220)),
                                       ),
                                   );
                                 }
                                 if (snapshot.hasError || !snapshot.hasData) {
-                                  return Text(
+                                  return const Text(
                                     'No category',
                                     style: TextStyle(fontSize: 12),
                                   );
@@ -238,7 +240,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
     context: context,
     builder: (context) => Dialog(
       child: Padding(
-        padding: EdgeInsets.all(30),
+        padding: const EdgeInsets.all(30),
         child: Row(
           children: [
             Expanded(
@@ -251,7 +253,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                     )
                   : const Icon(Icons.image_not_supported, size: 100),
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,24 +262,24 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                     children: [
                       Text(
                         '${notification.date ?? 'Unknown Date'} ${notification.time ?? ''}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 18,
                           fontWeight: FontWeight.w300,
-                          color: const Color.fromARGB(255, 0, 0, 0),
+                          color: Color.fromARGB(255, 0, 0, 0),
                         ),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       IconButton(
-                        icon: Icon(Icons.close),
+                        icon: const Icon(Icons.close),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Text(
                     notification.title ?? 'Default Title',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -290,7 +292,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                       children: [
                         Text(
                           'Type: ${notification.type}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 18,
                             fontWeight: FontWeight.w400,
@@ -309,7 +311,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                                 SizedBox(width: 4), 
                                 Text(
                                   category['name'],
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontFamily: 'Poppins',
                                     fontSize: 16,
                                   ),
@@ -324,7 +326,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                         Divider(),
                         Text(
                           notification.description ?? 'No description',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w300,
                             fontSize: 18,
@@ -346,7 +348,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                         style: TextButton.styleFrom(
                           backgroundColor: Color(0xFF008080),
                         ),
-                        child: Text(
+                        child: const Text(
                           'EDIT',
                           style: TextStyle(
                             fontFamily: 'Poppins',
@@ -356,7 +358,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                           ),
                         ),
                       ),
-                      SizedBox(width: 30),
+                      const SizedBox(width: 30),
                       TextButton(
                         onPressed: () {
                           _confirmDelete(context, notification.notificationID.toString());
@@ -364,7 +366,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                         style: TextButton.styleFrom(
                           backgroundColor: Color(0xFF008080),
                         ),
-                        child: Text(
+                        child: const Text(
                           'DELETE',
                           style: TextStyle(
                             fontFamily: 'Poppins',
@@ -409,7 +411,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
       context: context,
       builder: (context) => Dialog(
         child: Padding(
-          padding: EdgeInsets.all(30),
+          padding: const EdgeInsets.all(30),
           child: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) 
           {
@@ -419,7 +421,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Align(
+                      const Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Edit Post',
@@ -431,7 +433,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                           ),
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       Expanded(
                         child: imageUrl != null
                         ? Image.network(
@@ -467,7 +469,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                         style: TextButton.styleFrom(
                           backgroundColor: Color(0xFF008080),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Upload Image',
                           style: TextStyle(
                             fontFamily: 'Poppins',
@@ -491,7 +493,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                           Expanded(
                             child: TextField(
                               controller: titleController,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Title',
                                 labelStyle: TextStyle(
                                   fontFamily: 'Poppins',
@@ -506,18 +508,18 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                           ),
                         ],
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       DropdownButtonFormField<String>(
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                            borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                           ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
                         ),
                         value: selectedType,
-                        hint: Text("Select Financial Aid Type"),
-                        items: [
+                        hint: const Text("Select Financial Aid Type"),
+                        items: const [
                           DropdownMenuItem(value: 'welfare', child: Text('Welfare')),
                           DropdownMenuItem(value: 'subsidy', child: Text('Subsidy')),
                           DropdownMenuItem(value: 'tax relief', child: Text('Tax Relief')),
@@ -528,17 +530,17 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                           });
                         },
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Obx(() {
                         return DropdownButtonFormField<int>(
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0),
-                              borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                              borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                             ),
                           ),
                           value: selectedCategories.isNotEmpty ? selectedCategories.first : null,
-                          hint: Text("Select Categories"),
+                          hint: const Text("Select Categories"),
                           items: viewModel.financialAidCategories
                               .map((category) => DropdownMenuItem<int>(
                                     value: category['financialaidcategoryid'],
@@ -580,7 +582,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                       TextField(
                         controller: descriptionController,
                         maxLines: 10,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Description',
                           labelStyle: TextStyle(
                             fontFamily: 'Poppins',
@@ -589,7 +591,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                         ),
                         textAlign: TextAlign.justify,
                       ),
-                      SizedBox(height: 30),
+                      const SizedBox(height: 30),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -628,9 +630,9 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                             style: TextButton.styleFrom(
                               backgroundColor: titleController.text.isEmpty || descriptionController.text.isEmpty || selectedCategories.isEmpty || selectedType == null
                                   ? Colors.grey
-                                  : Color(0xFF008080),
+                                  : const Color(0xFF008080),
                             ),
-                            child: Text(
+                            child: const Text(
                               'SAVE',
                               style: TextStyle(
                                 fontFamily: 'Poppins',
@@ -648,7 +650,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                             style: TextButton.styleFrom(
                               backgroundColor: const Color.fromARGB(255, 225, 77, 66),
                             ),
-                            child: Text(
+                            child: const Text(
                               'CANCEL',
                               style: TextStyle(
                                 fontFamily: 'Poppins',
@@ -677,11 +679,12 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
 
 void _showAddPostDialog(BuildContext context) {
 
+  String? selectedType;
+
   setState(() {
     imageUrl = null;
+    selectedType = 'welfare';
   });
-
-  String? selectedType;
 
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
@@ -707,7 +710,7 @@ void _showAddPostDialog(BuildContext context) {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Align(
+                      const Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Add Notification',
@@ -751,7 +754,6 @@ void _showAddPostDialog(BuildContext context) {
                               title: "Success",
                               description: "Image uploaded successfully.",
                             );
-                            print("Image uploaded successfully: $uploadedImageUrl");
                           } else {
                             MessageUtils.showMessage(
                               context: context,
@@ -761,9 +763,9 @@ void _showAddPostDialog(BuildContext context) {
                           }
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: Color(0xFF008080),
+                          backgroundColor: const Color(0xFF008080),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Upload Image',
                           style: TextStyle(
                             fontFamily: 'Poppins',
@@ -783,7 +785,7 @@ void _showAddPostDialog(BuildContext context) {
                     children: [
                       TextField(
                         controller: titleController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Title',
                           labelStyle: TextStyle(
                             fontFamily: 'Poppins',
@@ -791,7 +793,7 @@ void _showAddPostDialog(BuildContext context) {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       DropdownButtonFormField<String>(
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
@@ -808,9 +810,9 @@ void _showAddPostDialog(BuildContext context) {
                           ),
                           contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
                         ),
-                        hint: Text("Select Financial Aid Type",style: TextStyle(color: Colors.grey,),),
+                        hint: const Text("Select Financial Aid Type",style: TextStyle(color: Colors.grey,),),
                         value: selectedType,
-                        items: [
+                        items: const [
                           DropdownMenuItem(
                             value: 'welfare',
                             child: Text('Welfare'),
@@ -830,25 +832,25 @@ void _showAddPostDialog(BuildContext context) {
                           });
                         },
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Obx(() {
                         return DropdownButtonFormField<int>(
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0),
-                              borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                              borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0),
-                              borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                              borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0),
-                              borderSide: BorderSide(color: Color(0xFF008080), width: 2.0),
+                              borderSide: const BorderSide(color: Color(0xFF008080), width: 2.0),
                             ),
                           ),
                           value: null,
-                          hint: Text("Select Categories",style: TextStyle(color: Colors.grey,),),
+                          hint: const Text("Select Categories",style: TextStyle(color: Colors.grey,),),
                           items: viewModel.financialAidCategories
                               .map((category) => DropdownMenuItem<int>(
                                     value: category['financialaidcategoryid'],
@@ -893,11 +895,11 @@ void _showAddPostDialog(BuildContext context) {
                                 ))
                             .toList(),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       TextField(
                         controller: descriptionController,
-                        maxLines: 14,
-                        decoration: InputDecoration(
+                        maxLines: 10,
+                        decoration: const InputDecoration(
                           labelText: 'Description',
                           labelStyle: TextStyle(
                             fontFamily: 'Poppins',
@@ -906,14 +908,12 @@ void _showAddPostDialog(BuildContext context) {
                         ),
                         textAlign: TextAlign.justify,
                       ),
-                      SizedBox(height: 30),
+                      const SizedBox(height: 30),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TextButton(
-                            onPressed: titleController.text.isEmpty || descriptionController.text.isEmpty || selectedCategories.isEmpty || selectedType == null
-                              ? null
-                              : () async {
+                            onPressed: () async {
                               final title = titleController.text;
                               final description = descriptionController.text;
 
@@ -927,11 +927,9 @@ void _showAddPostDialog(BuildContext context) {
                               );
                             },
                             style: TextButton.styleFrom(
-                              backgroundColor: titleController.text.isEmpty || descriptionController.text.isEmpty || selectedCategories.isEmpty || selectedType == null
-                              ? Colors.grey
-                              : Color(0xFF008080),
+                              backgroundColor:  Color(0xFF008080),
                             ),
-                            child: Text(
+                            child: const Text(
                               'SAVE',
                               style: TextStyle(
                                 fontFamily: 'Poppins',
@@ -949,7 +947,7 @@ void _showAddPostDialog(BuildContext context) {
                             style: TextButton.styleFrom(
                               backgroundColor: const Color.fromARGB(255, 225, 77, 66),
                             ),
-                            child: Text(
+                            child: const Text(
                               'CANCEL',
                               style: TextStyle(
                                 fontFamily: 'Poppins',
@@ -985,8 +983,8 @@ void _showAddPostDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Confirm Delete'),
-        content: Text('Are you sure you want to delete this post?'),
+        title: const Text('Confirm Delete'),
+        content: const Text('Are you sure you want to delete this post?'),
         actions: [
           TextButton(
             onPressed: () async {
@@ -1007,13 +1005,13 @@ void _showAddPostDialog(BuildContext context) {
                 );
               }
             },
-            child: Text('Yes'),
+            child: const Text('Yes'),
           ),
           TextButton(
             onPressed: () {
               navigator.pop();
             },
-            child: Text('No'),
+            child: const Text('No'),
           ),
         ],
       ),

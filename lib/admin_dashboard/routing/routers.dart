@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import '../../View/Main_pages/homepage.dart';
-import '../../View/Main_pages/loginpage.dart';
+import '../view/screens/login_page.dart';
 import '../view/screens/profile_page.dart';
+import '../view/screens/notification_page.dart';
 import 'routes.dart';
 
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case notificationPageRoute:
-      return _getPageRoute(NotificationPage());
+      return _getPageRoute(const NotificationPage());
     case logoutPageRoute:
-      return _getPageRoute(LoginPage());
+      return _getPageRoute(const LoginPage());
     case profilePageRoute:
       return _getPageRoute(const ProfilePage());
     default:
-      return _getPageRoute(NotificationPage());
+      return _getPageRoute(const NotificationPage());
   }
 }
 
