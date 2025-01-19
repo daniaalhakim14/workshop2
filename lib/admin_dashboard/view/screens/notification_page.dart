@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 // ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+//import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
@@ -23,7 +23,7 @@ class _NotificationPageState extends State<NotificationPage> {
   final NotificationViewModel viewModel = Get.put(NotificationViewModel());
   final CloudinaryService cloudinaryService = CloudinaryService();
   String? _selectedDate;
-  html.File? _selectedImage;
+  //html.File? _selectedImage;
   String? imageUrl;
 
   @override
@@ -224,6 +224,7 @@ Future<void> _selectDate(BuildContext context) async {
     if (selectedDate != null) {
       String formattedDate = "${selectedDate.toLocal()}".split(' ')[0];
 
+      if (!mounted) return; //
       setState(() {
         _selectedDate = formattedDate; 
       });
@@ -235,7 +236,7 @@ Future<void> _selectDate(BuildContext context) async {
 
 void _showNotificationDetails(BuildContext context, nt.Notification notification) async {
   await viewModel.fetchCategoriesForNotification(notification.notificationID!);
-
+  if (!mounted) return; //
   showDialog(
     context: context,
     builder: (context) => Dialog(
@@ -286,7 +287,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Expanded(
                     child: ListView(
                       children: [
@@ -298,7 +299,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                             fontWeight: FontWeight.w400,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(children: [
@@ -308,7 +309,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                             child: Row(
                               children: [
                                 getIconForCategory(category['name']),
-                                SizedBox(width: 4), 
+                                const SizedBox(width: 4), 
                                 Text(
                                   category['name'],
                                   style: const TextStyle(
@@ -322,8 +323,8 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
 
                         }),
                         ],)),
-                        SizedBox(height: 20),
-                        Divider(),
+                        const SizedBox(height: 20),
+                        const Divider(),
                         Text(
                           notification.description ?? 'No description',
                           style: const TextStyle(
@@ -337,7 +338,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                       ],
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -346,7 +347,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                           _showEditPostDialog(context, notification);
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: Color(0xFF008080),
+                          backgroundColor: const Color(0xFF008080),
                         ),
                         child: const Text(
                           'EDIT',
@@ -364,7 +365,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                           _confirmDelete(context, notification.notificationID.toString());
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: Color(0xFF008080),
+                          backgroundColor: const Color(0xFF008080),
                         ),
                         child: const Text(
                           'DELETE',
@@ -378,7 +379,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
@@ -467,7 +468,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                           }
                         },
                         style: TextButton.styleFrom(
-                          backgroundColor: Color(0xFF008080),
+                          backgroundColor: const Color(0xFF008080),
                         ),
                         child: const Text(
                           'Upload Image',
@@ -483,7 +484,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                   ),
                   
                 ),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -503,7 +504,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                             ),
                           ),
                           IconButton(
-                            icon: Icon(Icons.close),
+                            icon: const Icon(Icons.close),
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                         ],
@@ -523,6 +524,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                           DropdownMenuItem(value: 'welfare', child: Text('Welfare')),
                           DropdownMenuItem(value: 'subsidy', child: Text('Subsidy')),
                           DropdownMenuItem(value: 'tax relief', child: Text('Tax Relief')),
+                          DropdownMenuItem(value: 'tips', child: Text('Tips')),
                         ],
                         onChanged: (value) {
                           setState(() {
@@ -578,7 +580,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                             },
                           )).toList(),
                       ),
-                      SizedBox(height: 30),
+                      const SizedBox(height: 30),
                       TextField(
                         controller: descriptionController,
                         maxLines: 10,
@@ -628,7 +630,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                                     
                                   },
                             style: TextButton.styleFrom(
-                              backgroundColor: titleController.text.isEmpty || descriptionController.text.isEmpty || selectedCategories.isEmpty || selectedType == null
+                              backgroundColor: titleController.text.isEmpty || descriptionController.text.isEmpty || selectedCategories.isEmpty
                                   ? Colors.grey
                                   : const Color(0xFF008080),
                             ),
@@ -642,7 +644,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                               ),
                             ),
                           ),
-                          SizedBox(width: 30),
+                          const SizedBox(width: 30),
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
@@ -662,7 +664,7 @@ void _showNotificationDetails(BuildContext context, nt.Notification notification
                           ),
                         ],
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
@@ -701,7 +703,7 @@ void _showAddPostDialog(BuildContext context) {
     context: context,
     builder: (context) => Dialog(
       child: Padding(
-        padding: EdgeInsets.all(30),
+        padding: const EdgeInsets.all(30),
         child: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return Row(
@@ -722,7 +724,7 @@ void _showAddPostDialog(BuildContext context) {
                           ),
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       Expanded(
                         child: imageBytes != null
                             ? Image.memory(
@@ -778,7 +780,7 @@ void _showAddPostDialog(BuildContext context) {
                     ],
                   ),
                 ),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -798,17 +800,17 @@ void _showAddPostDialog(BuildContext context) {
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.grey, width: 1.0), 
+                            borderSide: const BorderSide(color: Colors.grey, width: 1.0), 
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                            borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Color(0xFF008080), width: 2.0), 
+                            borderSide: const BorderSide(color: Color(0xFF008080), width: 2.0), 
                           ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
                         ),
                         hint: const Text("Select Financial Aid Type",style: TextStyle(color: Colors.grey,),),
                         value: selectedType,
@@ -824,6 +826,10 @@ void _showAddPostDialog(BuildContext context) {
                           DropdownMenuItem(
                             value: 'tax relief',
                             child: Text('Tax Relief'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'tips', 
+                            child: Text('Tips')
                           ),
                         ],
                         onChanged: (value) {
@@ -856,7 +862,7 @@ void _showAddPostDialog(BuildContext context) {
                                     value: category['financialaidcategoryid'],
                                     child: Text(
                                       category['name'],
-                                      style: TextStyle(fontSize: 16),
+                                      style: const TextStyle(fontSize: 16),
                                     ),
                                   ))
                               .toList(),
@@ -927,7 +933,7 @@ void _showAddPostDialog(BuildContext context) {
                               );
                             },
                             style: TextButton.styleFrom(
-                              backgroundColor:  Color(0xFF008080),
+                              backgroundColor:  const Color(0xFF008080),
                             ),
                             child: const Text(
                               'SAVE',
@@ -939,7 +945,7 @@ void _showAddPostDialog(BuildContext context) {
                               ),
                             ),
                           ),
-                          SizedBox(width: 30),
+                          const SizedBox(width: 30),
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
@@ -959,7 +965,7 @@ void _showAddPostDialog(BuildContext context) {
                           ),
                         ],
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),

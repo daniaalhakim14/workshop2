@@ -28,6 +28,8 @@ class NotificationViewModel extends GetxController {
   
   final RxBool isLoading = false.obs;
 
+  final RxString fcmToken = ''.obs;
+
   bool _isMounted = true;
 
   @override
