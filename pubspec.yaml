@@ -56,6 +56,13 @@ dependencies:
   get_storage: ^2.1.1
   dio: ^5.7.0
   image: ^4.5.2
+  pusher_client: ^2.0.0
+  flutter_local_notifications: ^15.0.0
+  #googleapis: ^13.2.0
+  #googleapis_auth: ^1.6.0
+
+
+
 
 
 dev_dependencies:

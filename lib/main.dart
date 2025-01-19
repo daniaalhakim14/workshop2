@@ -14,10 +14,15 @@ import 'ViewModel/SignupLoginPage_ViewModel/SignupLoginPage_View_Model.dart';
 import 'ViewModel/account_viewmodel.dart';
 import 'ViewModel/app_appearance_viewmodel.dart'; // Import your InsightViewModel
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'admin_dashboard/models/services/local_notification_service.dart';
 
 import 'ViewModel/edit_profile_viewmodel.dart';
 import 'configure_API.dart';
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initNotifications(); 
+  initPusher(); 
+  listenToNotifications();
   runApp(MyApp());
 }
 
