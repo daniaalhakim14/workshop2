@@ -16,15 +16,15 @@ class AnalysisViewModel extends ChangeNotifier {
   List<AnalysisData> _analysis = [];
   double _totalBudget = 0.0;
   double _totalExpense = 0.0;
-  String? _savingMaximization;
   String? _apiKey;
+  Map<String, dynamic>? _jsonResponse;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
   List<AnalysisData> get analysis => _analysis;
   double get totalBudget => _totalBudget;
   double get totalExpense => _totalExpense;
-  String? get savingMaximization => _savingMaximization;
+  Map<String, dynamic>? get jsonRespose => _jsonResponse;
 
   Future<void> fetchAnalysis(int userid, String date) async {
     _isLoading = true;
@@ -90,10 +90,13 @@ class AnalysisViewModel extends ChangeNotifier {
 
       final message = 'Overall:\nTotal Budget: RM $totalBudget\nTotal Expense: RM $totalExpense\nCategory:\n$expenseJson';
       final content = Content.text(message);
+      print(content);
 
       final response = await chat.sendMessage(content);
 
-      _savingMaximization = response.text;
+      String cleanedResponse = response.text!.replaceAll(RegExp(r'```json|```'), '').trim();
+
+      _jsonResponse = jsonDecode(cleanedResponse);
 
       notifyListeners();
     } catch (e) {
@@ -133,6 +136,42 @@ class AnalysisViewModel extends ChangeNotifier {
       ]),
       Content.model([
         TextPart('**Problem:** Overspent RM 500. Unaccounted expenses total RM 3729.50. This signifies a severe budget misalignment.\n\n**Recommendations:**\n\n1.  **Detailed Expense Analysis (Critical):** Identify the missing RM 3729.50. Thoroughly examine bank statements, receipts, and any other spending records. Categorize *every* expense, even small ones, to understand where money is leaking. The more detailed your categorization, the better you can understand your spending habits. Avoid broad categories such as "miscellaneous" and break it down into very specific sub categories, like \'transportation-car\', or \'entertainment-movies\'.\n\n2.  **Immediate Spending Reductions (Essential):** Immediately cut non-essential spending. This includes entertainment, dining out, impulse purchases, subscriptions, etc. This is not about permanent deprivation, but rather an immediate recalibration of spending to align with your budget. Aim to reduce spending in all areas that are not absolutely required.\n\n3.  **Realistic Budget Creation (Crucial):** Your current budget isn\'t working. Therefore, a new budget should be built based on *your actual spending patterns*. This is very important. Be realistic in your allocations, and include a buffer for unexpected expenses within each category.\n\n4.  **Emergency Fund (Important):** Build an emergency fund covering 3-6 months of essential living expenses. This should be a priority, starting with whatever amount you can reasonably save each month.\n\n5.  **Debt Management (If Applicable):** If the overspending is related to debt, create a strategy for paying it down, beginning with any high-interest debts.\n\n**Action:** You *must* identify where the missing money is going, *immediately cut* back on non-essential spending, and build a *realistic budget and savings plan* to correct the overspending.\n'),
+      ]),
+      Content.multi([
+        TextPart('Overall:\nTotal Budget: RM 3500\nTotal Expense: RM 2500\n\nCategory:\n{\n"expenses": [\n{\n"category_name": "Food",\n"budget_amount": "150.00",\n"expense_amount": "145.50"\n},\n{\n"category_name": "Healthcare",\n"budget_amount": "100.00",\n"expense_amount": "50.00"\n},\n{\n"category_name": "Personal",\n"budget_amount": "100.00",\n"expense_amount": "75.00"\n}\n]\n}\n\nresponse simple and clear'),
+      ]),
+      Content.model([
+        TextPart('**Problem:** You underspent by RM 1000 (RM 2500 spent vs. RM 3500 budget).\n\n**Recommendations:**\n\n1.  **Increase Savings:** Allocate the RM 1000 surplus to savings or investments.\n2.  **Review Budget:** Consider reallocating funds from underspent categories (Healthcare) to areas you might need more.\n3.  **Set Goals:** Define short-term and long-term financial goals to guide your savings.\n4.  **Maintain Good Habits:** Continue managing your spending effectively, particularly in food and personal categories.\n\n**Action:** Save the surplus, fine-tune budget, set goals, and stay consistent.\n'),
+      ]),
+      Content.multi([
+        TextPart('Overall:\nTotal Budget: RM 3500\nTotal Expense: RM 4000\n\nCategory:\n{\n"expenses": [\n{\n"category_name": "Food",\n"budget_amount": "150.00",\n"expense_amount": "145.50"\n},\n{\n"category_name": "Healthcare",\n"budget_amount": "100.00",\n"expense_amount": "50.00"\n},\n{\n"category_name": "Personal",\n"budget_amount": "100.00",\n"expense_amount": "75.00"\n}\n]\n}'),
+      ]),
+      Content.model([
+        TextPart('**Problem:** Overspent RM 500. RM 3729.50 unaccounted.\n\n**Recommendations:**\n\n1.  **Track Missing Expenses:** Review bank/card statements, categorize RM 3729.50.\n2.  **Cut Spending:** Reduce non-essential expenses immediately.\n3.  **Realistic Budget:** Create a budget reflecting actual spending.\n4.  **Emergency Fund:** Start saving for this.\n5.  **Debt Management:** Address any debt.\n\n**Action:** Track spending, cut costs, create realistic budget, start savings.\n'),
+      ]),
+      Content.multi([
+        TextPart('Response in json format like this:\n{\n  "Problem": "",\n  "Recommendations": "",\n  "Action": ""\n}'),
+      ]),
+      Content.model([
+        TextPart('```json\n{\n  "Problem": "Overspent RM 500. RM 3729.50 unaccounted.",\n  "Recommendations": "1. Track missing RM 3729.50 (bank/card statements). 2. Cut non-essential spending. 3. Create realistic budget. 4. Build emergency fund. 5. Address debt.",\n  "Action": "Track spending, cut costs, create realistic budget, start savings."\n}\n```\n'),
+      ]),
+      Content.multi([
+        TextPart('Overall:\nTotal Budget: RM 3500\nTotal Expense: RM 4000\n\nCategory:\n{\n"expenses": [\n{\n"category_name": "Food",\n"budget_amount": "150.00",\n"expense_amount": "145.50"\n},\n{\n"category_name": "Healthcare",\n"budget_amount": "100.00",\n"expense_amount": "50.00"\n},\n{\n"category_name": "Personal",\n"budget_amount": "100.00",\n"expense_amount": "75.00"\n}\n]\n}'),
+      ]),
+      Content.model([
+        TextPart('```json\n{\n  "Problem": "Overspent RM 500; RM 3729.50 expenses unaccounted.",\n  "Recommendations": "1. Review statements, categorize missing RM 3729.50. 2. Cut non-essential spending immediately. 3. Create realistic budget. 4. Start emergency fund. 5. Address debt, if any.",\n  "Action": "Track expenses, cut spending, budget realistically, start saving."\n}\n```\n'),
+      ]),
+      Content.multi([
+        TextPart('can you add on \'\\n\' before the numbering in Recommendations?'),
+      ]),
+      Content.model([
+        TextPart('```json\n{\n  "Problem": "Overspent RM 500; RM 3729.50 expenses unaccounted.",\n  "Recommendations": "\\n1. Review statements, categorize missing RM 3729.50. \\n2. Cut non-essential spending immediately. \\n3. Create realistic budget. \\n4. Start emergency fund. \\n5. Address debt, if any.",\n  "Action": "Track expenses, cut spending, budget realistically, start saving."\n}\n```\n'),
+      ]),
+      Content.multi([
+        TextPart('Overall:\nTotal Budget: RM 3500\nTotal Expense: RM 2500\n\nCategory:\n{\n"expenses": [\n{\n"category_name": "Food",\n"budget_amount": "150.00",\n"expense_amount": "145.50"\n},\n{\n"category_name": "Healthcare",\n"budget_amount": "100.00",\n"expense_amount": "50.00"\n},\n{\n"category_name": "Personal",\n"budget_amount": "100.00",\n"expense_amount": "75.00"\n}\n]\n}\n'),
+      ]),
+      Content.model([
+        TextPart('```json\n{\n  "Problem": "Underspent by RM 1000.",\n  "Recommendations": "\\n1. Allocate RM 1000 surplus to savings/investments. \\n2. Review budget, reallocate if needed. \\n3. Set financial goals. \\n4. Maintain good spending habits.",\n  "Action": "Save surplus, fine-tune budget, set goals, stay consistent."\n}\n```\n'),
       ]),
     ];
   }
