@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://10.131.74.186:3000/admin/login'), // Ensure this URL is correct
+        Uri.parse('http://192.168.0.90:3000/admin/login'), // Ensure this URL is correct
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
