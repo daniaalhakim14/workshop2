@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../ViewModel/SignupLoginPage_ViewModel/SignupLoginPage_View_Model.dart';
 import '../Main_pages/homepage.dart';
 import '../Main_pages/signupage.dart';
@@ -180,14 +181,20 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login() async {
-    // access SignupLoginPage_ViewModule
-    final viewModel = Provider.of<SignupLoginPage_ViewModule>(context, listen: false);
+    final viewModel = Provider.of<SignupLoginPage_ViewModule>(
+        context, listen: false);
     final String email = _emailController.text;
     final String password = _passwordController.text;
 
     final success = await viewModel.login(email, password);
     if (success) {
-      // Fetch user details after successful login
+      // Save login info to shared preferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('userEmail', email);
+      await prefs.setString('userPassword', password);
+
+      // Fetch user details
       await viewModel.fetchUserDetailsByEmail(email);
 
       if (viewModel.userInfo != null) {
@@ -205,7 +212,6 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } else {
-      // Show error message if login fails
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Login failed. Please check your credentials."),

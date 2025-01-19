@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tab_bar_widget/View/Main_pages/first_page.dart';
 import 'package:tab_bar_widget/View/Main_pages/homepage.dart';
 import '../../Model/SignupLoginPage_model.dart';
 import '../../ViewModel/account_viewmodel.dart';
 import '../../ViewModel/app_appearance_viewmodel.dart';
+import '../../admin_dashboard/view/screens/login_page.dart';
 import '../Account_page/ChangeEmailPage.dart';
 import '../Account_page/app_appearance.dart';
 import '../Account_page/change_password.dart';
@@ -197,9 +200,15 @@ class _AccountState extends State<Account> {
                       iconColor: Colors.red,
                       textColor: Colors.red,
                       isDarkModeValue: isDarkModeValue,
-                      onTap: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, '/login', (route) => false);
+                      onTap: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.clear();
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FirstPage(),
+                          ),
+                        );
                       },
                       alwaysRed: true,
                     ),
@@ -266,9 +275,15 @@ class _AccountState extends State<Account> {
                       iconColor: Colors.red,
                       textColor: Colors.red,
                       isDarkModeValue: isDarkModeValue,
-                      onTap: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, '/login', (route) => false);
+                      onTap: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.clear();
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FirstPage(),
+                          ),
+                        );
                       },
                       alwaysRed: true,
                     ),
