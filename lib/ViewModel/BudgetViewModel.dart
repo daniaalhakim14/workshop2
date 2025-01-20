@@ -6,10 +6,11 @@ import '../Model/Budget.dart';
 import '../Model/Category.dart';
 import 'package:intl/intl.dart';
 
+import '../configure_API.dart';
 import 'ExpenseViewModel.dart';
 
 class BudgetViewModel extends ChangeNotifier {
-  final String apiUrl = 'http://10.131.75.179:3000/budget';
+  final String apiUrl = '${AppConfig.baseUrl}/budget';
   bool _isLoading = false;
   String? _error;
   BudgetResponse? budgetresponse;

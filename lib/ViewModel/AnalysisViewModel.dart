@@ -4,13 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:http/http.dart' as http;
 import '../Model/Analysis.dart';
+import '../configure_API.dart';
 
 class AnalysisViewModel extends ChangeNotifier {
   AnalysisViewModel () {
     _loadEnvVariables();
   }
 
-  final String apiUrl = 'http://10.131.75.179:3000/analysis';
+  final String apiUrl = '${AppConfig.baseUrl}/analysis';
   bool _isLoading = false;
   String? _error;
   List<AnalysisData> _analysis = [];
