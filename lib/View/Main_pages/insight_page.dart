@@ -48,7 +48,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
       if (!viewModel.fetchingData && viewModel.transactionsExpense.isEmpty) {
         viewModel.fetchTransactionsExpense();
       }
-      viewModel.fetchTransactionList();
+
     });
 
     // Start a timer to check for month changes
@@ -823,7 +823,6 @@ Row _bottomBarConfiguration(BuildContext context, UserInfoModule userInfo) {
   );
 }
 
-
 class DynamicButton extends StatelessWidget {
   final String label;
   final Color color;
@@ -873,7 +872,6 @@ class DynamicButton extends StatelessWidget {
     );
   }
 }
-
 
 void addIconExample() async {
   final viewModel = InsightViewModel();

@@ -9,6 +9,9 @@ import 'InsightPage_Repository.dart';
 // ChangeNotifier allows View Model to notify listeners when data changes
 class InsightViewModel extends ChangeNotifier{
 
+  final repository = InsightRepository();
+  final InsightRepository _repository = InsightRepository();
+
   bool fetchingData = false;
 
   List<TransactionsExpense> _transactionsExpense = [];
@@ -31,7 +34,6 @@ class InsightViewModel extends ChangeNotifier{
     notifyListeners();
 
     try {
-      final repository = InsightRepository();
       _transactionsExpense = await repository.getTransactionsExpense();
     } catch (e) {
       print('Failed to load transaction expenses: $e');
@@ -47,7 +49,6 @@ class InsightViewModel extends ChangeNotifier{
     notifyListeners();
 
     try {
-      final repository = InsightRepository();
       _transactionList = await repository.getTransactionList();
       print('Loaded Transaction list: $_transactionList');
     } catch (e) {
@@ -64,7 +65,6 @@ class InsightViewModel extends ChangeNotifier{
     notifyListeners();
 
     try {
-      final repository = InsightRepository();
       _basicCategories = await repository.getBasicCategories();
      // print('Loaded Basic Categories: $_basicCategories');
     } catch (e) {
@@ -81,7 +81,6 @@ class InsightViewModel extends ChangeNotifier{
     notifyListeners();
 
     try {
-      final repository = InsightRepository();
       _incomeCategories = await repository.getIncomeCategories();
       print('Loaded Income Categories: $_incomeCategories');
     } catch (e) {
@@ -98,7 +97,6 @@ class InsightViewModel extends ChangeNotifier{
     _subcategory = []; // Clear the subcategory list
     notifyListeners();
     try {
-      final repository = InsightRepository();
       _subcategory = await repository.getSubcategories(parentCategoryId);
       //print('Loaded Subcategories: $_subcategory');
     } catch (e) {
@@ -112,7 +110,6 @@ class InsightViewModel extends ChangeNotifier{
 
   Future<void> addIcon(AddIcon icon) async {
     try {
-      final repository = InsightRepository();
       await repository.addIcon(icon);
     } catch (e) {
       print('Failed to add icon: $e');
@@ -121,7 +118,6 @@ class InsightViewModel extends ChangeNotifier{
 
   Future<bool> addSubcategory(AddSubcategories subcategory) async {
     try {
-      final repository = InsightRepository();
       await repository.addSubcategory(subcategory);
       notifyListeners();
       return true; // Indicate success
@@ -133,7 +129,6 @@ class InsightViewModel extends ChangeNotifier{
 
   Future<void> addExpense(AddExpense expense) async{
     try{
-      final repository = InsightRepository();
       await repository.addExpense(expense);
     }catch (e){
       print('Failed to add new expense: $e');
@@ -142,7 +137,6 @@ class InsightViewModel extends ChangeNotifier{
 
   Future<void> addIncome(AddIncome income) async{
     try{
-      final repository = InsightRepository();
       await repository.addIncome(income);
     }catch (e){
       print('Failed to add new income: $e');
@@ -151,7 +145,6 @@ class InsightViewModel extends ChangeNotifier{
 
   Future<void> updateExpense(UpdateExpense expense) async {
     try {
-      final repository = InsightRepository();
       await repository.updateExpense(expense);
     } catch (e) {
       print('Failed to update expense: $e');
@@ -160,7 +153,6 @@ class InsightViewModel extends ChangeNotifier{
 
   Future<void> updateIncome(UpdateIncome income) async {
     try {
-      final repository = InsightRepository();
       await repository.updateIncome(income);
     } catch (e) {
       print('Failed to update income: $e');
@@ -169,7 +161,6 @@ class InsightViewModel extends ChangeNotifier{
 
   Future<void> deleteExpense(int expenseId) async {
     try {
-      final repository = InsightRepository();
       await repository.deleteExpense(DeleteExpense(expenseId: expenseId));
       print('Transaction deleted successfully!');
 
@@ -183,7 +174,6 @@ class InsightViewModel extends ChangeNotifier{
 
   Future<void> deleteIncome(int incomeId) async {
     try {
-      final repository = InsightRepository();
       await repository.deleteIncome(DeleteIncome(incomeId: incomeId));
       print('Transaction deleted successfully!');
 
@@ -193,6 +183,13 @@ class InsightViewModel extends ChangeNotifier{
     } catch (e) {
       print('Failed to delete transaction: $e');
     }
+  }
+
+  @override
+  void dispose() {
+    _repository.dispose(); // Call repository's dispose method
+    super.dispose();
+    print("ViewModel disposed.");
   }
 
 

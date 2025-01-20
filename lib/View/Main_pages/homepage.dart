@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:tab_bar_widget/Model/Income_model.dart';
+import '../../Model/InsightPage_model.dart';
 import '../../Model/SignupLoginPage_model.dart';
+import '../../ViewModel/Income/Income_View_Model.dart';
+import '../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
 import '../../ViewModel/account_viewmodel.dart';
 import 'account_page.dart';
 import 'insight_page.dart';
@@ -16,9 +21,38 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String selectedMonth = DateFormat('MMMM yyyy').format(DateTime.now());  // Declare variable selectedMonth to store selectedMonth
+  String _formatMonth(DateTime date) {
+    return "${_monthNameTransactionList(date.month)} ${date.year}";
+  }
+
+  String _monthNameTransactionList(int month) {
+    const monthNames = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+    return monthNames[month - 1];
+  }
+  String _formatFullDate(DateTime date) {
+    return "${date.day.toString().padLeft(2, '0')} ${_monthNameTransactionList(date.month)} ${date.year}";
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      final viewModel = Provider.of<InsightViewModel>(context, listen: false);
+      viewModel.fetchTransactionList();
+      final incomeViewModel = Provider.of<IncomeViewModel>(context, listen: false);
+      incomeViewModel.fetchIncomeAmount(widget.userInfo.id); // Pass the user ID
+    });
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF2F2F2),
       appBar: AppBar(
         elevation: 0,
         toolbarHeight: 69,
@@ -43,7 +77,7 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                      Text(
-                      'Hello,\n${widget.userInfo.name}',
+                      'Hello, ${widget.userInfo.name}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -58,131 +92,334 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Container(
-            color: Colors.blue,
-            width: double.infinity,
-            height: 220,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.only(top:10.0,bottom: 10,left: 30,right: 30),
-                  child: Container(
-                    height: 180,
-                    decoration: BoxDecoration(
-                      color: Colors.teal[100],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Balance',
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 20,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                color: Color(0xFF65ADAD)
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(top:10.0,bottom: 30,left: 30,right: 30),
+                    child: Container(
+                      height: 180,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD7C1E6),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Balance',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 20,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'RM ****',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Consumer<IncomeViewModel>(
+                                builder: (context, incomeViewModel, child) {
+                                  if (incomeViewModel.fetchingData) {
+                                    return const CircularProgressIndicator(); // Show a loader while data is being fetched
+                                  }
+                                  if (incomeViewModel.income.isNotEmpty) {
+                                    // Get the first income amount
+                                    final incomeAmount = incomeViewModel.income[0].incomeAmount ?? 0.0;
+                                    return Text(
+                                      'RM ${incomeAmount.toStringAsFixed(2)}',
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  } else {
+                                    return const Text(
+                                      'RM 0.00', // Default value if income is empty
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  }
+                                },
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(Icons.visibility_off),
-                            ),
-                          ],
+                              const SizedBox(width: 8),
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.visibility_off),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 10),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+             const SizedBox(height: 5.0),
+             Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: SizedBox(
+                width: 430,
+                height: 45,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0,right: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Spending Summary',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 10),
-                        const Text(
-                          'View All Wallets',
+                      ),
+                      GestureDetector(
+                        onTap: ()
+                        {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (homeContext) => Insight(userInfo: widget.userInfo), // Pass UserModel
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'View All',
                           style: TextStyle(
                             color: Colors.blue,
-                            fontSize: 16,
                             decoration: TextDecoration.underline,
                             decorationColor: Colors.blue,
                           ),
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 5),
+            Consumer<InsightViewModel>(
+              builder: (context, viewModel, child) {
+                List<TransactionList> transactionList = viewModel.transactionList;
+                print('transaction List: $transactionList');
+
+                if (viewModel.fetchingData) {
+                  return Container(
+                    width: 250,
+                    height: 250,
+                    child: const Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                // Filter transactions by the selected month
+                final filteredTransactions = transactionList.where((transaction) {
+                  String isoFormatDate = transaction.date.toString();
+                  DateTime dateTime = DateTime.parse(isoFormatDate);
+                  String formattedDate = DateFormat('MMMM yyyy').format(dateTime);
+                  return formattedDate == selectedMonth;
+                }).toList();
+
+                print('filteredTransactions: $filteredTransactions');
+
+
+                if (filteredTransactions.isEmpty) {
+                  return Column(
+                    children: [
+                      Image.asset(
+                        'lib/Icons/statistics (2).png',
+                        width: 250,
+                        height: 250,
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(height: 20),
+                      Center(
+                        child: Text(
+                          'No transactions for $selectedMonth',
+                          style: const TextStyle(
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                return  Padding(
+                  padding: const EdgeInsets.only(left: 16.0, right: 16.0,bottom: 10.0),
+                  child: Container(
+                    height: 384, // Adjust the height as needed
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 12.0, bottom: 0.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Latest Transaction: ",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Divider(color: Colors.grey[400], thickness: 1),
+                            ],
+                          ),
+                        ),
+                        // Transactions List
+                        Column(
+                          children: filteredTransactions.take(3).map((transaction) {
+                            String isoFormatDate = transaction.date.toString();
+                            DateTime dateTime = DateTime.parse(isoFormatDate);
+                            String formattedDate = _formatFullDate(dateTime);
+
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 7.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(16.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      // Leading Icon and Transaction Details
+                                      Row(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 24,
+                                            backgroundColor: transaction.iconColor,
+                                            child: Icon(
+                                              transaction.iconData,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          // Transaction Details
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                transaction.name.toString(),
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                transaction.description.toString(),
+                                                style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                formattedDate,
+                                                style: const TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      Text(
+                                        transaction.transactiontype == 'Expense'
+                                            ? '- RM ${transaction.amount?.toStringAsFixed(2)}'
+                                            : '+ RM ${transaction.amount?.toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                          color: transaction.transactiontype == 'Expense' ? Colors.red : Colors.green,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        )
                       ],
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Spending Summary',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+
+                );
+
+              },
+            )
+            /*
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  SpendingTile(
+                    icon: Icons.lunch_dining,
+                    title: 'Lunch',
+                    subtitle: 'Nasi Ayam Merah',
+                    amount: '- RM 5.00',
+                    date: '04 October, 2024 at 11:50 AM',
+                    category: 'Food & Drinks',
+                    backgroundColor: Colors.green[100],
                   ),
-                ),
-                Text(
-                  'View All',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
-                    decorationColor: Colors.blue,
+                  SpendingTile(
+                    icon: Icons.home,
+                    title: 'Rumah Sewa',
+                    subtitle: 'Bayar sewa',
+                    amount: '- RM 150.00',
+                    date: '03 October, 2024 at 09:30 AM',
+                    category: 'Home',
+                    backgroundColor: Colors.orange[100],
                   ),
-                ),
-              ],
+                  SpendingTile(
+                    icon: Icons.shopping_cart,
+                    title: 'Barang Dapur',
+                    subtitle: 'Telur, Susu dan Ayam',
+                    amount: '- RM 17.35',
+                    date: '02 October, 2024 at 19:50 PM',
+                    category: 'Groceries',
+                    backgroundColor: Colors.green[100],
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: [
-                SpendingTile(
-                  icon: Icons.lunch_dining,
-                  title: 'Lunch',
-                  subtitle: 'Nasi Ayam Merah',
-                  amount: '- RM 5.00',
-                  date: '04 October, 2024 at 11:50 AM',
-                  category: 'Food & Drinks',
-                  backgroundColor: Colors.green[100],
-                ),
-                SpendingTile(
-                  icon: Icons.home,
-                  title: 'Rumah Sewa',
-                  subtitle: 'Bayar sewa',
-                  amount: '- RM 150.00',
-                  date: '03 October, 2024 at 09:30 AM',
-                  category: 'Home',
-                  backgroundColor: Colors.orange[100],
-                ),
-                SpendingTile(
-                  icon: Icons.shopping_cart,
-                  title: 'Barang Dapur',
-                  subtitle: 'Telur, Susu dan Ayam',
-                  amount: '- RM 17.35',
-                  date: '02 October, 2024 at 19:50 PM',
-                  category: 'Groceries',
-                  backgroundColor: Colors.green[100],
-                ),
-              ],
-            ),
-          ),
-        ],
+            */
+          ],
+        ),
       ),
+
       bottomNavigationBar: BottomAppBar(
         color: const Color(0xFF002B36), // Dark blue
         child: Row(

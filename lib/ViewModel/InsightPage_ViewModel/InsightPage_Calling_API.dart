@@ -7,6 +7,7 @@ class CallingApi{
 // Indicates that the function is asynchronous and does not return a value.
 // Instead, it returns a Future, which represents a potential value or error that will be available at some point in the future.
 
+final http.Client _httpClient = http.Client();
 
   Future<http.Response> fetchTransactionsExpense() async{
     // change to Expense
@@ -178,6 +179,10 @@ class CallingApi{
     return response;
   }
 
-
+// Add a dispose method to clean up
+void dispose() {
+  _httpClient.close(); // Close the HTTP client to release resources
+  print("HTTP client closed.");
+}
 
 }

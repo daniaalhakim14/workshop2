@@ -9,6 +9,7 @@ import 'ViewModel/BudgetTextFieldViewModel.dart';
 import 'ViewModel/BudgetViewModel.dart';
 import 'ViewModel/CategoryViewModel.dart';
 import 'ViewModel/DateViewModel.dart';
+import 'ViewModel/Income/Income_View_Model.dart';
 import 'ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
 import 'ViewModel/SignupLoginPage_ViewModel/SignupLoginPage_View_Model.dart';
 import 'ViewModel/account_viewmodel.dart';
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => AIBudgetViewModel()),
         ChangeNotifierProvider(create: (context) => AnalysisViewModel()),
         ChangeNotifierProvider(create: (_) => EditProfileViewModel()),
+        ChangeNotifierProvider(create: (_) => IncomeViewModel()),
 
       ],
       child: MaterialApp(

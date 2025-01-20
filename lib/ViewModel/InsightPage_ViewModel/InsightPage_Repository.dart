@@ -177,4 +177,11 @@ class InsightRepository{
     print('Income deleted successfully');
   }
 
+  // Add a dispose method to clean up resources
+  void dispose() {
+    _service.dispose(); // Call dispose in the service
+    print("Repository resources cleaned up.");
+  }
+
+
 }
