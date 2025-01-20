@@ -22,7 +22,7 @@ class CategoryViewModel extends ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      final response = await http.get(Uri.parse('http://192.168.0.3:3000/category'));
+      final response = await http.get(Uri.parse('http://10.131.75.179:3000/category'));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = json.decode(response.body);

@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import '../Model/Expense.dart';
 
 class ExpenseViewModel extends ChangeNotifier {
-  final String apiUrl = 'http://192.168.0.3:3000/expense';
+  final String apiUrl = 'http://10.131.75.179:3000/expense';
   bool _isLoading = false;
   String? _error;
   List<Expense> _expenses = [];

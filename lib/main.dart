@@ -1,34 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:postgres/postgres.dart';
-import 'package:provider/provider.dart';
-import 'package:workshop_2/ViewModel/AIBudgetTextFieldViewModel.dart';
-import 'package:workshop_2/ViewModel/AIBudgetViewModel.dart';
-import 'package:workshop_2/ViewModel/AnalysisViewModel.dart';
-import 'package:workshop_2/ViewModel/CategoryViewModel.dart';
-import 'package:workshop_2/ViewModel/DateViewModel.dart';
-import 'View/home_page.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:month_year_picker/month_year_picker.dart';
-
-import 'ViewModel/BudgetViewModel.dart';
+import 'package:provider/provider.dart'; // Import the provider package
+import 'View/Main_pages/first_page.dart';
+import 'ViewModel/AIBudgetTextFieldViewModel.dart';
+import 'ViewModel/AIBudgetViewModel.dart';
+import 'ViewModel/AnalysisViewModel.dart';
 import 'ViewModel/BudgetTextFieldViewModel.dart';
+import 'ViewModel/BudgetViewModel.dart';
+import 'ViewModel/CategoryViewModel.dart';
+import 'ViewModel/DateViewModel.dart';
+import 'ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
+import 'ViewModel/SignupLoginPage_ViewModel/SignupLoginPage_View_Model.dart';
+import 'ViewModel/account_viewmodel.dart';
+import 'ViewModel/app_appearance_viewmodel.dart'; // Import your InsightViewModel
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'admin_dashboard/models/services/local_notification_service.dart';
 
-
-void main() async{
-  int userid = 1;
-
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (context) => CategoryViewModel()),
-      ChangeNotifierProvider(create: (context) => BudgetTextFieldViewModel()),
-      ChangeNotifierProvider(create: (context) => BudgetViewModel()),
-      ChangeNotifierProvider(create: (context) => DateViewModel()),
-      ChangeNotifierProvider(create: (context) => AIBudgetTextFieldViewModel()),
-      ChangeNotifierProvider(create: (context) => AIBudgetViewModel()),
-      ChangeNotifierProvider(create: (context) => AnalysisViewModel())
-    ],
-    child: MyApp(),
-  ));
+import 'ViewModel/edit_profile_viewmodel.dart';
+import 'configure_API.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initNotifications(); 
+  initPusher(); 
+  listenToNotifications();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -36,24 +31,43 @@ class MyApp extends StatelessWidget {
 
   // root widget
   @override
-  Widget build(BuildContext context){
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        MonthYearPickerLocalizations.delegate, // Add this for month-year picker
-      ],
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => InsightViewModel()),
+        ChangeNotifierProvider(create: (_) => SignupLoginPage_ViewModule()),
+        ChangeNotifierProvider(create: (_) => AccountViewModel()),
+        ChangeNotifierProvider(create: (_) => AppAppearanceViewModel()),
+        ChangeNotifierProvider(create: (context) => CategoryViewModel()),
+        ChangeNotifierProvider(create: (context) => BudgetTextFieldViewModel()),
+        ChangeNotifierProvider(create: (context) => BudgetViewModel()),
+        ChangeNotifierProvider(create: (context) => DateViewModel()),
+        ChangeNotifierProvider(create: (context) => AIBudgetTextFieldViewModel()),
+        ChangeNotifierProvider(create: (context) => AIBudgetViewModel()),
+        ChangeNotifierProvider(create: (context) => AnalysisViewModel()),
+        ChangeNotifierProvider(create: (_) => EditProfileViewModel()),
 
-      title: 'Homepage',
-      theme: ThemeData(
-        primarySwatch: Colors.teal, // determines the overall color palette for app
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.tealAccent,
-        )
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          MonthYearPickerLocalizations.delegate, // Add this for month-year picker
+        ],
+
+        title: 'Homepage',
+        theme: ThemeData(
+          primarySwatch: Colors.teal, // determines the overall color palette for app
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xFF65ADAD),
+          ),
+        ),
+        home: FirstPage(),
       ),
-      home: Home(),
     );
   }
 }
+
+

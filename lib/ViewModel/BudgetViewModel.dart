@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 import 'ExpenseViewModel.dart';
 
 class BudgetViewModel extends ChangeNotifier {
-  final String apiUrl = 'http://192.168.0.3:3000/budget';
+  final String apiUrl = 'http://10.131.75.179:3000/budget';
   bool _isLoading = false;
   String? _error;
   BudgetResponse? budgetresponse;
