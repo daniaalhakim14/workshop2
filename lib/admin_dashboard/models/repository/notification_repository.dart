@@ -65,6 +65,22 @@ class NotificationRepository {
     return null; 
   }
 
+  // get notification {id} 
+  Future<List<Notification>?> fetchNotificationsById(String notificationid) async {
+    try {
+      final endpoint = '/noti/$notificationid'; 
+      Map<String, dynamic>? serverResponse = await _notificationService.getResponse(endpoint);
+
+      if (serverResponse != null && serverResponse['data'] != null) {
+        final List<dynamic> data = serverResponse['data'];
+        return data.map((json) => Notification.fromJson(json)).toList();
+      }
+    } catch (e) {
+      print('Error fetching notifications by date: $e');
+    }
+    return null; 
+  }
+
   // get all financial aid categories 
   Future<List<Map<String, dynamic>>?> fetchCategories() async {
     try {
@@ -219,6 +235,32 @@ class NotificationRepository {
       return false;
     }
   }
+
+  // auto send transaction alert notification after user add expense (When expense reach 50%/70%/90%/100% of budget)
+  // -> request userid & subcategoryid, response message 
+
+  Future<bool> checkSubcategoryBudget(String  userID, String  subcategoryID) async {
+      try {
+          const endpoint = '/check-subcategory-budget';
+          final Map<String, dynamic> requestBody = {
+              'userid': userID,
+              'subcategoryid': subcategoryID,
+          };
+
+          Map<String, dynamic>? serverResponse = await _notificationService.postResponse(endpoint, requestBody);
+          if (serverResponse != null && serverResponse['errorCode'] == 0) {
+            print('Transaction alert notification sent successfully for userID: $userID');
+            return true;
+          } else {
+            print('Failed to send transaction alert notification: ${serverResponse?['message']}');
+            return false;
+          }
+      } catch (e) {
+          print('Failed to check subcategory budget: $e');
+          return false;
+      }
+  }
+
 
 
   

@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import '../../../Model/InsightPage_model.dart';
+import '../../../Model/SignupLoginPage_model.dart';
 import '../../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
+import '../../../admin_dashboard/view_model/notification_vm.dart';
 import '../../main_pages/insight_page.dart';
 import 'category_page.dart';
 import 'incomeCategory_page.dart';
+import 'package:get/get.dart';
 
 
 // Global Variable
@@ -423,6 +426,22 @@ class _add_transactionState extends State<add_transaction> {
                   } catch (e) {
                     print("Failed to add Expense: $e");
                   }
+
+                  //add transaction alert based on subcategory
+                  final NotificationViewModel notificationViewModel = Get.put(NotificationViewModel());
+                  if (_selectedSubcategory_Category != null && _selectedSubcategory_Category!['subcategoryId'] != null) {
+                    final String subcategoryId = _selectedSubcategory_Category!['subcategoryId'].toString();
+                    try {
+                      await notificationViewModel.checkSubcategoryBudget("13", subcategoryId); // need to change later to combine with user module
+                      print("Notification added successfully!");
+                    } catch (e) {
+                      print("Failed to add Notification: $e");
+                    }
+                  } else {
+                    print("Subcategory ID is null or invalid");
+                  }
+
+
                 }else
                   {
                     print(_newTransactionType);

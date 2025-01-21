@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../Model/Expense.dart';
+import '../configure_API.dart';
 
 class ExpenseViewModel extends ChangeNotifier {
-  final String apiUrl = 'http://10.131.75.179:3000/expense';
+  final String apiUrl = '${AppConfig.baseUrl}/expense';
   bool _isLoading = false;
   String? _error;
   List<Expense> _expenses = [];

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import '../../admin_dashboard/utils/icon_utils.dart';
 import '../../admin_dashboard/view_model/notification_vm.dart';
 import '../../admin_dashboard/models/model/notification.dart' as nt;
@@ -30,7 +29,11 @@ class _NotificationDetailsState extends State<NotificatioNDetails> {
 
   Future<void> _fetchCategories() async {
     await viewModel.fetchCategoriesForNotification(widget.notification.notificationID!);
-    setState(() {});
+    if (mounted)
+    {
+      setState(() {});
+    }
+
   }
 
 
@@ -41,13 +44,16 @@ class _NotificationDetailsState extends State<NotificatioNDetails> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
-          widget.notification.title ?? 'Notification Title',
-          style: const TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+        title:  SingleChildScrollView(
+          scrollDirection: Axis.horizontal, 
+          child: Text(
+            widget.notification.title ?? 'Notification Title',
+            style: const TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
         ),
         backgroundColor: const Color(0xFF008080),
@@ -90,7 +96,7 @@ class _NotificationDetailsState extends State<NotificatioNDetails> {
                     }
                   },
                   errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                    return Icon(Icons.broken_image, size: 100, color: Colors.grey);
+                    return const Icon(Icons.broken_image, size: 100, color: Colors.grey);
                   },
                 ),
               ),
@@ -102,6 +108,16 @@ class _NotificationDetailsState extends State<NotificatioNDetails> {
                 fontSize: 14,
                 fontWeight: FontWeight.w300,
                 color: Color.fromARGB(255, 67, 67, 67),
+              ),
+            ),
+            const SizedBox(height: 10), 
+            Text(
+              'Type: ${widget.notification.type ?? 'Unknown Type'}', 
+              style: const TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                color: Colors.black,
               ),
             ),
             const SizedBox(height: 10),

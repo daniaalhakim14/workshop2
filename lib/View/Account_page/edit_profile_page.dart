@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../ViewModel/app_appearance_viewmodel.dart';
 import '../../ViewModel/edit_profile_viewmodel.dart';
 
+
 class EditProfilePage extends StatefulWidget {
   final int userId;
 
@@ -13,6 +14,8 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+  bool _isShowingToast = false;
+
   @override
   void initState() {
     super.initState();
@@ -21,9 +24,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       final viewModel = Provider.of<EditProfileViewModel>(context, listen: false);
       viewModel.fetchUserDetails(widget.userId).catchError((error) {
         debugPrint('[ERROR] Fetch User Details Failed: $error');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to fetch user details: $error')),
-        );
+        _showErrorMessage('Failed to fetch user details: $error');
       });
     });
   }
@@ -62,8 +63,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
                 centerTitle: true,
               ),
-              backgroundColor:
-              isDarkModeValue ? Colors.black : Colors.white,
+              backgroundColor: isDarkModeValue ? Colors.black : Colors.white,
               body: viewModel.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : SingleChildScrollView(
@@ -78,7 +78,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         controller: viewModel.nameController,
                         width: 351,
                         height: 62,
-                        hint: 'Insert New Name',
+                        hint: 'Enter your full name',
                         isDarkModeValue: isDarkModeValue,
                       ),
                       const SizedBox(height: 20),
@@ -87,7 +87,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         controller: viewModel.phoneController,
                         width: 351,
                         height: 62,
-                        hint: 'Insert Phone Number',
+                        hint: '(+xx) xx-xxx xxxx',
                         isDarkModeValue: isDarkModeValue,
                       ),
                       const SizedBox(height: 20),
@@ -96,7 +96,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         controller: viewModel.addressController,
                         width: 351,
                         height: 122,
-                        hint: 'Insert Address',
+                        hint:
+                        ' (e.g., No.1234 Jalan 2, Taman, 76100, Melaka)',
                         isDarkModeValue: isDarkModeValue,
                       ),
                       const SizedBox(height: 30),
@@ -107,7 +108,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.teal,
-                              minimumSize: const Size(double.infinity, 48),
+                              minimumSize:
+                              const Size(double.infinity, 48),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -115,32 +117,58 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             onPressed: viewModel.isLoading
                                 ? null
                                 : () async {
+                              final name = viewModel
+                                  .nameController.text
+                                  .trim();
+                              final phone = viewModel
+                                  .phoneController.text
+                                  .trim();
+                              final address = viewModel
+                                  .addressController.text
+                                  .trim();
+
+                              if (name.isEmpty ||
+                                  name.length < 3) {
+                                _showErrorMessage(
+                                    'Name must be at least 3 characters long');
+                                return;
+                              }
+
+                              if (phone.isEmpty ||
+                                  !RegExp(
+                                      r"^\+?[0-9]{1,4}?[0-9]{7,15}")
+                                      .hasMatch(phone)) {
+                                _showErrorMessage(
+                                    'Enter a valid phone number (e.g., +60123456789)');
+                                return;
+                              }
+
+                              if (address.isEmpty ||
+                                  !RegExp(
+                                      r"^No\.\d{1,4}\s[A-Za-z0-9\s]+,\s[A-Za-z]+,\s\d{5},\s[A-Za-z]+$")
+                                      .hasMatch(address)) {
+                                _showErrorMessage(
+                                    'Address must be valid (e.g., No.1234 Jalan 2, Taman, 76100, Melaka)');
+                                return;
+                              }
+
                               debugPrint(
                                   '[DEBUG] Calling saveProfile with userId: ${widget.userId}');
                               try {
                                 await viewModel.saveProfile(
-                                    widget.userId);
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                        'Profile updated successfully'),
-                                    duration: Duration(seconds: 2),
-                                  ),
-                                );
+                                    context, widget.userId);
+                                _showSuccessMessage(
+                                    'Profile updated successfully');
                                 Future.delayed(
-                                    const Duration(seconds: 2), () {
-                                  Navigator.pop(context);
-                                });
+                                    const Duration(seconds: 2),
+                                        () {
+                                      Navigator.pop(context);
+                                    });
                               } catch (error) {
                                 debugPrint(
                                     '[ERROR] Save Profile Error: $error');
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          error.toString())),
-                                );
+                                _showErrorMessage(
+                                    'Failed to update profile: $error');
                               }
                             },
                             child: const Text(
@@ -211,5 +239,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
       ),
     );
+  }
+
+  void _showErrorMessage(String message) {
+    if (_isShowingToast) return;
+    _isShowingToast = true;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 2),
+      ),
+    ).closed.then((_) => _isShowingToast = false);
+  }
+
+  void _showSuccessMessage(String message) {
+    if (_isShowingToast) return;
+    _isShowingToast = true;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    ).closed.then((_) => _isShowingToast = false);
   }
 }

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:tab_bar_widget/View/Main_pages/signupage.dart';
 import 'package:tab_bar_widget/loading.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../ViewModel/SignupLoginPage_ViewModel/SignupLoginPage_View_Model.dart';
 import 'loginpage.dart';
-
-
+import 'homepage.dart'; // Import HomePage class
+import 'signupage.dart'; // Import SignupPage class
 
 class FirstPage extends StatefulWidget {
   const FirstPage({super.key});
@@ -14,38 +17,76 @@ class FirstPage extends StatefulWidget {
 
 class _FirstPageState extends State<FirstPage> {
   @override
+  void initState() {
+    super.initState();
+    _checkLoginState();
+  }
+
+  // Check login state from SharedPreferences
+  Future<void> _checkLoginState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (isLoggedIn) {
+      final viewModel = Provider.of<SignupLoginPage_ViewModule>(
+          context, listen: false);
+      final String email = prefs.getString('userEmail') ?? '';
+      final String password = prefs.getString('userPassword') ?? '';
+
+      final success = await viewModel.login(email, password,context);
+
+      if (success) {
+        await viewModel.fetchUserDetailsByEmail(email);
+        if (viewModel.userInfo != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(userInfo: viewModel.userInfo!),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Failed to fetch user details."),
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xE665ADAD), // Background color using hex code
+      backgroundColor: const Color(0xE665ADAD), // Background color using hex code
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Add your image here
             Image.asset(
               'lib/Icons/appfirstpage.png', // Replace with your image path
-              width: 230, // Adjust the size
-              height: 230, // Adjust the size
-              fit: BoxFit.contain, // Adjust the fit
+              width: 230,
+              height: 230,
+              fit: BoxFit.contain,
             ),
-            const SizedBox(height: 10), // Spacing between the image and the text
+            const SizedBox(height: 10),
             const Text(
               "MyDuit",
               style: TextStyle(
-                fontSize: 50, // Text size
-                fontWeight: FontWeight.bold, // Bold text
-                color: Colors.white, // Text color using hex code
+                fontSize: 50,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: 10),
             const Center(
               child: Text(
-                "One step closer to smarter \nmoney management,every day",
-                textAlign: TextAlign.center, // Ensures text is centered within the widget
+                "One step closer to smarter \nmoney management, every day",
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 13.5, // Text size
-                  fontWeight: FontWeight.normal, // Bold text
-                  color: Colors.white, // Text color
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -59,25 +100,25 @@ class _FirstPageState extends State<FirstPage> {
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Colors.teal, // Button background color
-                  shape: RoundedRectangleBorder( // Shape
+                  backgroundColor: Colors.teal,
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 12), // Adjusted padding
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
                 child: const Text(
                   "LOGIN",
                   style: TextStyle(
-                    fontSize: 18, // Text size
-                    fontWeight: FontWeight.bold, // Text weight
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            // Sign up Button
+            // Sign Up Button
             SizedBox(
-              width: 300, // Same fixed width for the second button
+              width: 300,
               child: ElevatedButton(
                 onPressed: () {
                   _navigateWithLoading(const SignupPage()); // Navigate with loading to SignupPage
@@ -117,8 +158,9 @@ class _FirstPageState extends State<FirstPage> {
       Navigator.pop(context); // Close the loading dialog
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) =>  page),
+        MaterialPageRoute(builder: (context) => page),
       );
     });
   }
-}
+
+

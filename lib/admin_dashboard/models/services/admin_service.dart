@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import '../apis/app_exception.dart';
+import '../../../configure_API.dart';
 
 
 class AdminService{
 
-  final String adminBaseUrl = "http://localhost:3000/admin";
+  final String adminBaseUrl = "${AppConfig.baseUrl}/admin";
 
 
   Future getResponse(String endpoint) async {

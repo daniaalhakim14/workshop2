@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tab_bar_widget/View/Main_pages/first_page.dart';
 import 'package:tab_bar_widget/View/Main_pages/homepage.dart';
 import '../../Model/SignupLoginPage_model.dart';
 import '../../ViewModel/account_viewmodel.dart';
 import '../../ViewModel/app_appearance_viewmodel.dart';
+import '../../admin_dashboard/view/screens/login_page.dart';
 import '../Account_page/ChangeEmailPage.dart';
 import '../Account_page/app_appearance.dart';
 import '../Account_page/change_password.dart';
@@ -98,61 +101,63 @@ class _AccountState extends State<Account> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  Center(
-                    child: Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        CircleAvatar(
-                          key: ValueKey(accountViewModel.avatarBytes != null
-                              ? DateTime.now().millisecondsSinceEpoch
-                              : 'default_avatar'), // Unique key to force rebuild
-                          radius: 83.5,
-                          backgroundColor:
-                          isDarkModeValue ? Colors.grey[800] : Colors.white,
-                          backgroundImage: accountViewModel.avatarBytes != null
-                              ? MemoryImage(accountViewModel.avatarBytes!)
-                              : null,
-                          child: accountViewModel.avatarBytes == null
-                              ? Container(
-                            width: 167,
-                            height: 167,
-                            decoration: BoxDecoration(
-                              color: isDarkModeValue
-                                  ? Colors.grey[800]
-                                  : Colors.white,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 4,
-                              ),
-                            ),
-                            child: const Center(
-                              child: Icon(
-                                Icons.person,
-                                size: 167,
-                                color: Colors.black,
-                              ),
-                            ),
-                          )
-                              : null,
-                        ),
-                        GestureDetector(
-                          onTap: _showAvatarOptions,
-                          child: CircleAvatar(
-                            radius: 20,
-                            backgroundColor: isDarkModeValue
-                                ? Colors.grey[800]
-                                : Colors.white,
-                            child: Icon(
-                              Icons.edit,
-                              size: 18,
-                              color: isDarkModeValue ? Colors.white : Colors.black,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+        Center(
+        child: Consumer<AccountViewModel>(
+        builder: (context, accountViewModel, child) {
+        return Stack(
+        alignment: Alignment.bottomRight,
+        children: [
+        CircleAvatar(
+        key: ValueKey(accountViewModel.avatarBytes != null
+        ? DateTime.now().millisecondsSinceEpoch
+            : 'default_avatar'), // Unique key to force rebuild
+        radius: 83.5,
+        backgroundColor: isDarkModeValue ? Colors.grey[800] : Colors.white,
+        backgroundImage: accountViewModel.avatarBytes != null
+        ? MemoryImage(accountViewModel.avatarBytes!)
+            : null,
+        child: accountViewModel.avatarBytes == null
+        ? Container(
+        width: 167,
+        height: 167,
+        decoration: BoxDecoration(
+        color: isDarkModeValue ? Colors.grey[800] : Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(
+        color: Colors.white,
+        width: 4,
+        ),
+        ),
+        child: const Center(
+        child: Icon(
+        Icons.person,
+        size: 167,
+        color: Colors.black,
+        ),
+        ),
+        )
+            : null,
+        ),
+        GestureDetector(
+        onTap: _showAvatarOptions,
+        child: CircleAvatar(
+        radius: 20,
+        backgroundColor:
+        isDarkModeValue ? Colors.grey[800] : Colors.white,
+        child: Icon(
+        Icons.edit,
+        size: 18,
+        color: isDarkModeValue ? Colors.white : Colors.black,
+        ),
+        ),
+        ),
+        ],
+        );
+        },
+        ),
+        ),
+
+
                   const SizedBox(height: 40),
                   if (!_showAdditionalOptions) ...[
                     buildOptionContainer(
@@ -199,12 +204,24 @@ class _AccountState extends State<Account> {
                       iconColor: Colors.red,
                       textColor: Colors.red,
                       isDarkModeValue: isDarkModeValue,
-                      onTap: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, '/login', (route) => false);
+                      onTap: () async {
+                        final prefs = await SharedPreferences.getInstance();
+
+                        final accountViewModel = Provider.of<AccountViewModel>(context, listen: false);
+                        accountViewModel.clearAvatar();
+
+                        await prefs.clear();
+
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FirstPage(),
+                          ),
+                        );
                       },
                       alwaysRed: true,
                     ),
+
                   ] else ...[
                     buildOptionContainer(
                       title: 'Edit Profile Information',
@@ -268,19 +285,34 @@ class _AccountState extends State<Account> {
                       iconColor: Colors.red,
                       textColor: Colors.red,
                       isDarkModeValue: isDarkModeValue,
-                      onTap: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, '/login', (route) => false);
+                      onTap: () async {
+                        final prefs = await SharedPreferences.getInstance();
+
+                        // Log preferences before clearing session-specific data
+                        debugPrint('Preferences before logout: isDarkMode = ${prefs.getBool("13-isDarkMode")}');
+
+                        // Clear session-specific data
+
+                        // Navigate to the FirstPage
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FirstPage(),
+                          ),
+                        );
                       },
                       alwaysRed: true,
                     ),
+
+
+
                   ],
                 ],
               ),
             ),
           ),
           bottomNavigationBar: BottomAppBar(
-            color: const Color(0xFF002B36),
+            color: isDarkModeValue ? Colors.black : const Color(0xFF002B36),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

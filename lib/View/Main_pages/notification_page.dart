@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:provider/provider.dart';
 import 'package:tab_bar_widget/View/Main_pages/homepage.dart';
+import '../../ViewModel/app_appearance_viewmodel.dart';
 import '../../admin_dashboard/models/model/notification.dart' as nt;
 import '../../admin_dashboard/utils/icon_utils.dart';
 import '../../Model/SignupLoginPage_model.dart';
-import '../../admin_dashboard/utils/icon_utils.dart';
 import '../../admin_dashboard/view_model/notification_vm.dart';
 import '../Notification_page/notification_details_page.dart';
 import 'insight_page.dart';
@@ -43,6 +43,8 @@ class _NotificationState extends State<Noti> {
 
   @override
   Widget build(BuildContext notificationContext) {
+    final isDarkMode =
+        Provider.of<AppAppearanceViewModel>(notificationContext).isDarkMode;
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -56,7 +58,7 @@ class _NotificationState extends State<Noti> {
             ),
           ),
         ),
-        backgroundColor: const Color(0xFF65ADAD), //0xFF008080
+        backgroundColor: isDarkMode ? Colors.black : const Color(0xFF65ADAD),
         automaticallyImplyLeading: false,
       ),
 
@@ -82,7 +84,7 @@ class _NotificationState extends State<Noti> {
                     style: const TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14,
-                      color: const Color(0xFF002B36),
+                      color: Color(0xFF002B36),
                     ),
                   ),
                 ],
@@ -98,35 +100,42 @@ class _NotificationState extends State<Noti> {
                 isExpanded
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-                    child: Wrap(
-                      spacing: 12.0, 
-                      runSpacing: 8.0, 
+                    child:Wrap(
+                      spacing: MediaQuery.of(context).size.width > 600 ? 12.0 : 8.0, //tablet
+                      runSpacing: MediaQuery.of(context).size.width > 600 ? 12.0 : 8.0, //phone
                       alignment: WrapAlignment.start,
                       children: viewModel.financialAidCategories.map((category) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width / 4 - 16,
+                        return SizedBox(
+
+                          width: MediaQuery.of(context).size.width > 600
+                              ? MediaQuery.of(context).size.width / 4 - 16 // tablet
+                              : MediaQuery.of(context).size.width / 2 - 16, // phone
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const SizedBox(width: 16),
+                              const SizedBox(width: 8), 
                               getIconForCategory(category['name']),
-                              const SizedBox(width: 4),
-                              Text(
-                                category['name'],
-                                style: const TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 10, 
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black,
+                              const SizedBox(width: 8), 
+                              Flexible(
+                                child: Text(
+                                  category['name'],
+                                  style: const TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 12, 
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.visible, 
                                 ),
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis, 
                               ),
                             ],
                           ),
                         );
                       }).toList(),
-                    ),
+                    )
+
+
                   )
                   :const Text(
                     'Icon Navigation',
@@ -177,9 +186,11 @@ class _NotificationState extends State<Noti> {
                     nt.Notification notification =  viewModel.notifications[index];
                     Color borderColor;
 
-                    if (notification.type != 'transaction') {
+                    if (notification.type == 'Tips') {
+                      borderColor = const Color.fromARGB(255, 144, 179, 243);
+                    } else if (notification.type != 'Transaction') {
                       borderColor = Colors.green;
-                    } else if (notification.type == 'transaction') {
+                    } else if (notification.type == 'Transaction') {
                       borderColor = const Color.fromARGB(255, 216, 110, 110);
                     } else {
                       borderColor = Colors.grey;
@@ -213,8 +224,8 @@ class _NotificationState extends State<Noti> {
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF002B36),
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                overflow: TextOverflow.visible,
                               ),
                             ),
                             FutureBuilder<List<Map<String, dynamic>>>(
@@ -281,7 +292,7 @@ class _NotificationState extends State<Noti> {
                                   color: Color.fromARGB(255, 56, 54, 54),
                                 ),
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                             ],
                           ),
                         ),
@@ -298,7 +309,7 @@ class _NotificationState extends State<Noti> {
 
 
       bottomNavigationBar: BottomAppBar(
-        color: const Color(0xFF002B36),
+        color: isDarkMode ? Colors.black : const Color(0xFF002B36),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
@@ -306,7 +317,7 @@ class _NotificationState extends State<Noti> {
               onPressed: () {
                 Navigator.push(notificationContext, MaterialPageRoute(builder: (notificationContext) =>  HomePage(userInfo: widget.userInfo)),);
               },
-              icon: Icon(
+              icon: const Icon(
                 Icons.home_outlined,
                 color: Colors.white,
                 size: 30,
@@ -331,7 +342,7 @@ class _NotificationState extends State<Noti> {
                 'lib/Icons/notification.png',
                 height: 30,
                 width: 30,
-                color: Color(0xFF65ADAD),
+                color: const Color(0xFF65ADAD),
               ),
             ),
 

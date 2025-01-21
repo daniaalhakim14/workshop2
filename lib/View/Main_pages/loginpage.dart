@@ -1,10 +1,15 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../ViewModel/SignupLoginPage_ViewModel/SignupLoginPage_View_Model.dart';
 import '../../loading.dart';
 import '../Main_pages/homepage.dart';
 import '../Main_pages/signupage.dart';
+import 'package:tab_bar_widget/configure_API.dart';
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -99,14 +104,12 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                Padding(
+                /*Padding(
                   padding: const EdgeInsets.only(right: 20),
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () {
-                        // Add recovery password action here
-                      },
+                      onPressed: () {},
                       child: const Text(
                         "Recovery Password",
                         style: TextStyle(
@@ -117,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                ),
+                ),*/
                 const SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -181,14 +184,20 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login() async {
-    // access SignupLoginPage_ViewModule
-    final viewModel = Provider.of<SignupLoginPage_ViewModule>(context, listen: false);
+    final viewModel = Provider.of<SignupLoginPage_ViewModule>(
+        context, listen: false);
     final String email = _emailController.text;
     final String password = _passwordController.text;
 
-    final success = await viewModel.login(email, password);
+    final success = await viewModel.login(email, password,context);
     if (success) {
-      // Fetch user details after successful login
+      // Save login info to shared preferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('userEmail', email);
+      await prefs.setString('userPassword', password);
+
+      // Fetch user details
       await viewModel.fetchUserDetailsByEmail(email);
 
       if (viewModel.userInfo != null) {
@@ -201,7 +210,6 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } else {
-      // Show error message if login fails
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Login failed. Please check your credentials."),
