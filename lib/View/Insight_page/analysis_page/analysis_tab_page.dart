@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -18,6 +20,7 @@ class Analysis extends StatefulWidget{
 }
 
 class _AnalysisState extends State<Analysis> {
+  int _currentIndex = 0;
   String activeTab = "Overall"; // Default active tab
   String selectedDate = DateFormat('MMMM yyyy').format(DateTime.now());
   int userid = 1;
@@ -75,10 +78,22 @@ class _AnalysisState extends State<Analysis> {
                   children: [
                     Center(child: Padding(
                       padding: const EdgeInsets.only(top: 16.0), // Adjust padding as needed
-                      child: activeTab == "Overall"? BudgetVsRealPieChart(
-                        analysis: viewModel.analysis,
-                        totalBudget: viewModel.totalBudget,
-                        totalExpense: viewModel.totalExpense,
+                      child: activeTab == "Overall"? Column(
+                        children: [
+                          BudgetVsRealPieChart(
+                            currentIndex: _currentIndex,
+                            onPageChanged: (index) {
+                              setState(() {
+                                _currentIndex = index; // Update the current index
+                              });
+                            },
+                            analysis: viewModel.analysis,
+                            totalBudget: viewModel.totalBudget,
+                            totalExpense: viewModel.totalExpense,
+                          ),
+                          SizedBox(height: 16), // Space between the carousel and the indicators
+                          _buildDotIndicators(),
+                        ],
                       ) : BudgetVsRealChart(
                         analysis: viewModel.analysis,
                       ),
@@ -119,8 +134,8 @@ class _AnalysisState extends State<Analysis> {
                     Center(
                       child: Padding(
                         padding: const EdgeInsets.only(top: 50, left: 16.0, right: 16.0, bottom: 16.0),
-                        child: viewModel.savingMaximization != null
-                            ? MessageBox(savingMaximization: viewModel.savingMaximization!)
+                        child: viewModel.jsonRespose != null
+                            ? MessageBox(savingMaximization: viewModel.jsonRespose!)
                             : Container(),
                       ),
                     )
@@ -131,6 +146,23 @@ class _AnalysisState extends State<Analysis> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildDotIndicators() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(2, (index) {
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 4.0),
+          width: 8.0,
+          height: 8.0,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: _currentIndex == index ? Colors.teal : Colors.grey,
+          ),
+        );
+      }),
     );
   }
 }
@@ -177,18 +209,6 @@ class DatePickerButton extends StatelessWidget {
 }
 
 class BudgetVsRealChart extends StatelessWidget {
-  // final List<ChartData> chartData = [
-  //   ChartData(category: 'Food', budget: 1000, actual: 800),
-  //   ChartData(category: 'Transportation', budget: 1200, actual: 1150),
-  //   ChartData(category: 'Shopping', budget: 1500, actual: 1400),
-  //   ChartData(category: 'Entertainment', budget: 1000, actual: 800),
-  //   ChartData(category: 'Healthcare', budget: 1200, actual: 1500),
-  //   ChartData(category: 'Personal', budget: 1500, actual: 1300),
-  //   ChartData(category: 'Education', budget: 1000, actual: 800),
-  //   ChartData(category: 'Saving', budget: 1200, actual: 1100),
-  //   ChartData(category: 'Others', budget: 1500, actual: 1300),
-  //   // ... more data points
-  // ];
 
   final List<AnalysisData> analysis;
 
@@ -225,6 +245,7 @@ class BudgetVsRealChart extends StatelessWidget {
               dataLabelSettings: DataLabelSettings(
                 isVisible: true,
                 labelAlignment: ChartDataLabelAlignment.top,
+                textStyle: TextStyle(color: Colors.black),
               ),
             ),
             ColumnSeries<AnalysisData, String>(
@@ -236,6 +257,7 @@ class BudgetVsRealChart extends StatelessWidget {
               dataLabelSettings: DataLabelSettings(
                 isVisible: true,
                 labelAlignment: ChartDataLabelAlignment.top,
+                textStyle: TextStyle(color: Colors.black),
               ),
             ),
           ],
@@ -244,13 +266,6 @@ class BudgetVsRealChart extends StatelessWidget {
     );
   }
 }
-
-// class ChartData {
-//   ChartData({required this.category, required this.budget, required this.actual});
-//   final String category;
-//   final double budget;
-//   final double actual;
-// }
 
 // Custom TabButton Widget
 class TabButton extends StatelessWidget {
@@ -275,6 +290,7 @@ class TabButton extends StatelessWidget {
         style: TextStyle(
           fontWeight: FontWeight.bold,
           color: isActive ? Colors.white : Colors.black,
+          fontSize: 18.0,
         ),
       ),
     );
@@ -282,7 +298,7 @@ class TabButton extends StatelessWidget {
 }
 
 class MessageBox extends StatelessWidget {
-  final String savingMaximization;
+  final Map<String, dynamic> savingMaximization;
 
   MessageBox({
     super.key,
@@ -298,105 +314,175 @@ class MessageBox extends StatelessWidget {
         Text(
           'Saving Maximization',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 16), // Spacing between title and content
         // Background Box with Text Content
         Container(
+          margin: EdgeInsets.only(top: 16.0, bottom: 16.0, left: 48.0, right: 48.0),
           padding: const EdgeInsets.all(16.0), // Inner padding for the text
           decoration: BoxDecoration(
             color: Colors.grey.shade300, // Light gray background color
-            borderRadius: BorderRadius.circular(8.0), // Rounded corners
+            borderRadius: BorderRadius.circular(45.0), // Rounded corners
           ),
-          child: Text(savingMaximization),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Text(
+                  'Problem',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                savingMaximization['Problem'] ?? '',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 20),
+              Center(
+                child: Text(
+                  'Recommendations',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                savingMaximization['Recommendations'] ?? '',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 20),
+              Center(
+                child: Text(
+                  'Action',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                savingMaximization['Action'] ?? '',
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
         )
       ],
     );
   }
 }
 
-// class PieChartData {
-//   PieChartData({required this.category, required this.value});
-//   final String category;
-//   final double value;
-// }
-
 class BudgetVsRealPieChart extends StatelessWidget {
-  // final List<PieChartData> budgetData = [
-  //   PieChartData(category: 'Category 1', value: 100),
-  //   PieChartData(category: 'Category 2', value: 200),
-  //   PieChartData(category: 'Category 3', value: 100),
-  //   PieChartData(category: 'Category 4', value: 200),
-  // ];
-  //
-  // final List<PieChartData> actualData = [
-  //   PieChartData(category: 'Category 1', value: 80),
-  //   PieChartData(category: 'Category 2', value: 180),
-  //   PieChartData(category: 'Category 3', value: 80),
-  //   PieChartData(category: 'Category 4', value: 180),
-  // ];
-
   final List<AnalysisData> analysis;
   final double totalBudget;
   final double totalExpense;
+  final int currentIndex; // Current index of the carousel
+  final Function(int) onPageChanged; // Callback to update the index
 
   BudgetVsRealPieChart({
     super.key,
     required this.analysis,
     required this.totalBudget,
     required this.totalExpense,
+    required this.currentIndex,
+    required this.onPageChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          SfCircularChart(
-            title: ChartTitle(text: 'Budget\nTotal: RM ${totalBudget.toStringAsFixed(2)}'),
-            legend: Legend(
-                isVisible: true,
-                // Border color and border width of legend
-                borderColor: Colors.black,
-                borderWidth: 2
-            ),
-            series: <CircularSeries>[
-              PieSeries<AnalysisData, String>(
-                dataSource: analysis,
-                xValueMapper: (AnalysisData data, _) => data.category_name,
-                yValueMapper: (AnalysisData data, _) => data.budget_amount,
-                dataLabelSettings: DataLabelSettings(
-                  isVisible: true,
-                  labelPosition: ChartDataLabelPosition.inside,
-                ),
-              ),
-            ],
-          ),
-          SfCircularChart(
-            title: ChartTitle(text: 'Actual Expenses\nTotal: RM ${totalExpense.toStringAsFixed(2)}'),
-            legend: Legend(
-                isVisible: true,
-                // Border color and border width of legend
-                borderColor: Colors.black,
-                borderWidth: 2
-            ),
-            series: <CircularSeries>[
-              PieSeries<AnalysisData, String>(
-                dataSource: analysis,
-                xValueMapper: (AnalysisData data, _) => data.category_name,
-                yValueMapper: (AnalysisData data, _) => data.expense_amount,
-                dataLabelSettings: DataLabelSettings(
-                  isVisible: true,
-                  labelPosition: ChartDataLabelPosition.inside,
-                ),
-              ),
-            ],
-          ),
-        ],
+    return CarouselSlider(
+      options: CarouselOptions(
+        height: 500, // Set the height of the carousel
+        enlargeCenterPage: true,
+        autoPlay: false,
+        aspectRatio: 16 / 9,
+        viewportFraction: 1.0,
+        //autoPlayInterval: Duration(seconds: 3),
+        onPageChanged: (index, reason) {
+          onPageChanged(index); // Call the callback to update the index
+        },
       ),
+      items: [
+        _buildPieChart(
+          title: 'Budget\nTotal: RM ${totalBudget.toStringAsFixed(2)}',
+          dataSource: analysis,
+          valueMapper: (AnalysisData data, _) => data.budget_amount,
+        ),
+        _buildPieChart(
+          title: 'Actual Expenses\nTotal: RM ${totalExpense.toStringAsFixed(2)}',
+          dataSource: analysis,
+          valueMapper: (AnalysisData data, _) => data.expense_amount,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPieChart({
+    required String title,
+    required List<AnalysisData> dataSource,
+    required ChartValueMapper<AnalysisData, num> valueMapper,
+  }) {
+    return SfCircularChart(
+      title: ChartTitle(
+        text: title,
+        textStyle: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold, // Make the title bold
+        ),
+      ),
+      legend: Legend(
+        isVisible: true,
+        borderColor: Colors.black,
+        borderWidth: 2,
+        legendItemBuilder: (String name, ChartSeries<dynamic, dynamic>? series, ChartPoint<dynamic> point, int index) {
+          final data = dataSource[index]; // Get the corresponding data
+          return Row(
+            children: [
+              Icon(
+                IconData(data.codepoint, fontFamily: data.fontfamily), // Use the dynamically generated icon
+                size: 18,
+                color: Color(data.color), // Use the dynamically assigned color
+              ),
+              SizedBox(width: 8), // Space between icon and text
+              Text(
+                name, // Display the category name
+                style: TextStyle(
+                  fontSize: 18, // Set the font size for the category labels
+                  fontWeight: FontWeight.bold, // Optional: make the labels bold
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+      series: <CircularSeries>[
+        PieSeries<AnalysisData, String>(
+          dataSource: dataSource,
+          pointColorMapper: (AnalysisData data, _) => Color(data.color),
+          xValueMapper: (AnalysisData data, _) => data.category_name,
+          yValueMapper: valueMapper,
+          dataLabelSettings: DataLabelSettings(
+            isVisible: true,
+            labelPosition: ChartDataLabelPosition.outside,
+            textStyle: TextStyle(
+              fontSize: 18, // Set the font size for the category labels
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

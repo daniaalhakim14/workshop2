@@ -57,7 +57,7 @@ class AIBudgetViewModel extends ChangeNotifier {
       final model = _createGenerativeModel();
       final chat = model.startChat(history: _buildChatHistory());
 
-      final message = 'The category id just base on this only:\n1.Food2.Transportation\n3.Entertainment\n4.Housing\n5.ShoppingMonthly \nIncome: $monthly_income\nEssential Expenses: $essential_expenses\nVariable Expenses: $variable_expenses\nSaving Goals In 10 Years: $saving_goals';
+      final message = 'The category id just base on this only:\n1.Food2.Transportation\n3.Entertainment\n4.Housing\n5.ShoppingMonthly \nIncome: $monthly_income\nEssential Expenses: $essential_expenses\nVariable Expenses: $variable_expenses\nSaving Goals In 10 Years: $saving_goals\n\n Budget for shopping always 5% of the monthly income';
       final content = Content.text(message);
 
       final response = await chat.sendMessage(content);
