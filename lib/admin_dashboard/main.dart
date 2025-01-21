@@ -11,6 +11,7 @@ import 'view/screens/profile_page.dart';
 
 
 void main() async{
+  
   Get.put(menu_controller.MenuController());
   Get.put(navigation_controller.NavigationController());
   await GetStorage.init();

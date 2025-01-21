@@ -3,13 +3,14 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
+import '../../../configure_API.dart';
 import '../apis/app_exception.dart';
 
 
 class NotificationService {
 
    final Dio _dio = Dio();
-   final String notificationBaseUrl = "http://192.168.132.198:3000/notification";
+   final String notificationBaseUrl = "${AppConfig.baseUrl}/notification";
    /* final String notificationBaseUrl = "http://localhost:3000/notification";*/
   
   
