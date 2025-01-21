@@ -6,7 +6,8 @@ import '../../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
 import 'edit_transaction.dart';
 
 class TransactionDetailScreen extends StatefulWidget {
-  const TransactionDetailScreen({super.key, required this.listDetail});
+  const TransactionDetailScreen({super.key, required this.userid,required this.listDetail});
+  final int userid;
   final TransactionList listDetail;
 
   @override
@@ -23,8 +24,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
 
   Future<void> refreshTransactionDetails() async {
     final viewModel = Provider.of<InsightViewModel>(context, listen: false);
-    await viewModel.fetchTransactionsExpense(); // Refresh transactions from view model
-    await viewModel.fetchTransactionList();
+    await viewModel.fetchTransactionsExpense(widget.userid); // Refresh transactions from view model
+    await viewModel.fetchTransactionList(widget.userid);
 
     // Find the updated transaction in the list
     final updatedTransaction = viewModel.transactionList.firstWhere(
@@ -148,6 +149,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => edit_transaction(
+                              userid: widget.userid,
                               transactionDetail: transactionDetail,
                             ),
                           ),
@@ -270,12 +272,12 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       onPressed: () async {
                         if(transactionDetail.transactiontype == "Expense"){
                           final viewModel = Provider.of<InsightViewModel>(context, listen: false);
-                          await viewModel.deleteExpense(transactionDetail.transactionId!);
+                          await viewModel.deleteExpense(transactionDetail.transactionId!,widget.userid);
                           Navigator.of(context).pop(); // Close dialog
                           Navigator.of(context).pop(true); // Go back with result
                         }else{
                           final viewModel = Provider.of<InsightViewModel>(context, listen: false);
-                          await viewModel.deleteIncome(transactionDetail.transactionId!);
+                          await viewModel.deleteIncome(transactionDetail.transactionId!,widget.userid);
                           Navigator.of(context).pop(); // Close dialog
                           Navigator.of(context).pop(true); // Go back with result
                         }

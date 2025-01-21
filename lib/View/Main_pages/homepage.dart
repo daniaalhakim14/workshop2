@@ -21,6 +21,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool isVisible = true; // Tracks whether the balance is visible
   String selectedMonth = DateFormat('MMMM yyyy').format(DateTime.now());  // Declare variable selectedMonth to store selectedMonth
   String _formatMonth(DateTime date) {
     return "${_monthNameTransactionList(date.month)} ${date.year}";
@@ -43,6 +44,7 @@ class _HomePageState extends State<HomePage> {
     WidgetsBinding.instance.addPostFrameCallback((_){
       final viewModel = Provider.of<InsightViewModel>(context, listen: false);
       viewModel.fetchTransactionList(widget.userInfo.id);
+      viewModel.fetchTransactionsExpense(widget.userInfo.id);
       final incomeViewModel = Provider.of<IncomeViewModel>(context, listen: false);
       incomeViewModel.fetchIncomeAmount(widget.userInfo.id); // Pass the user ID
     });
@@ -100,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                 color: Color(0xFF65ADAD)
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 10),
                   Padding(
@@ -123,52 +125,67 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           const SizedBox(height: 2),
-                        Row(
-                          children: [
-                            Consumer<IncomeViewModel>(
-                              builder: (context, incomeViewModel, child) {
-                                if (incomeViewModel.fetchingData) {
-                                  return const CircularProgressIndicator(); // Show a loader while data is being fetched
-                                }
-
-                                double totalIncome = 0.0;
-                                for (var income in incomeViewModel.incomeAmount) {
-                                  if (income.incomeAmount != null) {
-                                    totalIncome += income.incomeAmount!;
+                          Row(
+                            children: [
+                              Consumer<IncomeViewModel>(
+                                builder: (context, incomeViewModel, child) {
+                                  if (incomeViewModel.fetchingData) {
+                                    return const CircularProgressIndicator(); // Show a loader while data is being fetched
                                   }
-                                }
-
-                                return Consumer<InsightViewModel>(
-                                  builder: (context, viewModel, child) {
-                                    double totalExpense = 0.0;
-
-                                    for (var expense in viewModel.transactionsExpense) {
-                                      if (expense.amount != null) {
-                                        totalExpense += expense.amount!;
-                                      }
+                                  double totalIncome = 0.0;
+                                  for (var income in incomeViewModel.incomeAmount) {
+                                    if (income.incomeAmount != null) {
+                                      totalIncome += income.incomeAmount!;
                                     }
+                                  }
+                                  return Consumer<InsightViewModel>(
+                                    builder: (context, viewModel, child) {
+                                      double totalExpense = 0.0;
 
-                                    double balance = totalIncome - totalExpense;
-                                    print('total expense: $totalExpense');
+                                      for (var expense in viewModel.transactionsExpense) {
+                                        if (expense.amount != null) {
+                                          totalExpense += expense.amount!;
+                                        }
+                                      }
 
-                                    return Text(
-                                      'RM ${balance.toStringAsFixed(2)}',
-                                      style: const TextStyle(
+                                      double balance = totalIncome - totalExpense;
+                                      print('total expense: $totalExpense');
+                                      return Row(
+                                        children: [
+                                          // Conditional rendering of the balance text
+                                      isVisible
+                                          ? Text(
+                                        'RM ${balance.toStringAsFixed(2)}',
+                                        style: const TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                          : const Text(
+                                        'RM ****', // Placeholder when hidden
+                                      style: TextStyle(
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,
                                       ),
-                                    );
+                                      ),
+
+                                          IconButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                isVisible = !isVisible; // Toggle visibility
+                                              });},
+                                            icon: Icon(
+                                              isVisible ? Icons.visibility : Icons.visibility_off,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                      },
+                                  );
                                   },
-                                );
-                              },
-                            ),
-                            const SizedBox(width: 8),
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(Icons.visibility_off),
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
                         const SizedBox(height: 10),
                         ],
                       ),
@@ -224,7 +241,6 @@ class _HomePageState extends State<HomePage> {
             Consumer<InsightViewModel>(
               builder: (context, viewModel, child) {
                 List<TransactionList> transactionList = viewModel.transactionList;
-
                 if (viewModel.fetchingData) {
                   return Container(
                     width: 250,
@@ -232,7 +248,6 @@ class _HomePageState extends State<HomePage> {
                     child: const Center(child: CircularProgressIndicator()),
                   );
                 }
-
                 // Filter transactions by the selected month
                 final filteredTransactions = transactionList.where((transaction) {
                   String isoFormatDate = transaction.date.toString();
@@ -240,9 +255,6 @@ class _HomePageState extends State<HomePage> {
                   String formattedDate = DateFormat('MMMM yyyy').format(dateTime);
                   return formattedDate == selectedMonth;
                 }).toList();
-
-
-
 
                 if (filteredTransactions.isEmpty) {
                   return Column(
@@ -304,7 +316,6 @@ class _HomePageState extends State<HomePage> {
                             String isoFormatDate = transaction.date.toString();
                             DateTime dateTime = DateTime.parse(isoFormatDate);
                             String formattedDate = _formatFullDate(dateTime);
-
                             return Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 7.0),
                               child: Container(

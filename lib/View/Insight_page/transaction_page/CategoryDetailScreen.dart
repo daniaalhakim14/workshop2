@@ -4,11 +4,13 @@ import 'SubCategoryDetailScreen.dart';
 
 
 class CategoryDetailScreen extends StatefulWidget {
+  final userid;
   final String categoryName;
   final List<TransactionList> categoryTransactions;
 
   const CategoryDetailScreen({
     super.key,
+    required this.userid,
     required this.categoryName,
     required this.categoryTransactions,
   });
@@ -92,6 +94,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => SubCategoryDetailScreen(
+                        userid: widget.userid,
                         subcategoryName: subcategoryName,
                         transactions: subcategoryTransactions,
                       ),
