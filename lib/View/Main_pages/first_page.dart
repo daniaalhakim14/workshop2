@@ -31,7 +31,7 @@ class _FirstPageState extends State<FirstPage> {
       final String email = prefs.getString('userEmail') ?? '';
       final String password = prefs.getString('userPassword') ?? '';
 
-      final success = await viewModel.login(email, password);
+      final success = await viewModel.login(email, password,context);
 
       if (success) {
         await viewModel.fetchUserDetailsByEmail(email);

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../ViewModel/app_appearance_viewmodel.dart';
 
-
 class AppAppearance extends StatefulWidget {
   final int userId;
 
@@ -16,8 +15,12 @@ class _AppAppearanceState extends State<AppAppearance> {
   @override
   void initState() {
     super.initState();
-    final viewModel = Provider.of<AppAppearanceViewModel>(context, listen: false);
-    viewModel.initialize(widget.userId.toString());
+
+    // Defer initialization to avoid build conflicts
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final viewModel = Provider.of<AppAppearanceViewModel>(context, listen: false);
+      viewModel.initialize(widget.userId.toString());
+    });
   }
 
   @override
@@ -61,10 +64,6 @@ class _AppAppearanceState extends State<AppAppearance> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  '',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
                 const SizedBox(height: 20),
                 ListTile(
                   title: Text(

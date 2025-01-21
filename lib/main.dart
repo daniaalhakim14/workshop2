@@ -64,7 +64,6 @@ class MyApp extends StatelessWidget {
           MonthYearPickerLocalizations.delegate, // Add this for month-year picker
         ],
 
-
         title: 'Homepage',
         theme: ThemeData(
           primarySwatch: Colors.teal, // determines the overall color palette for app

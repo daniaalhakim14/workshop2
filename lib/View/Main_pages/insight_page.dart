@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../Model/InsightPage_model.dart';
 import '../../Model/SignupLoginPage_model.dart';
 import '../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
+import '../../ViewModel/app_appearance_viewmodel.dart';
 import '../Insight_page/analysis_page/analysis_tab_page.dart';
 import '../Insight_page/transaction_page/CategoryDetailScreen.dart';
 import '../Insight_page/transaction_page/TransactionDetailScreen.dart';
@@ -16,7 +17,6 @@ import 'notification_page.dart';
 import '../Insight_page/budget_pages/budget_tab_page.dart';
 
 
-// configure daily spent and spent so far
 
 class Insight extends StatefulWidget {
   final UserInfoModule userInfo; // Accept UserModel as a parameter
@@ -132,14 +132,19 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     return DefaultTabController(
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(
+          title: Text(
             'Insight',
             style: TextStyle(
-              color: Colors.white,
+              color: textColor,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -751,7 +756,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
 
 
         bottomNavigationBar: BottomAppBar(
-          color: const Color(0xFF002B36),
+          color: isDarkMode ? Colors.black : const Color(0xFF002B36),
           child: _bottomBarConfiguration(context,widget.userInfo),
         ),
       ),
@@ -848,6 +853,8 @@ class DynamicButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode; // Access dark mode state
+
     return Padding(
       padding: padding,
       child: GestureDetector(
@@ -855,7 +862,7 @@ class DynamicButton extends StatelessWidget {
         child: Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: color,
+            color: isDarkMode ? Colors.grey[800] : color, // Dynamic background color
             borderRadius: borderRadius,
           ),
           margin: margin,
@@ -863,8 +870,8 @@ class DynamicButton extends StatelessWidget {
           height: height,
           child: Text(
             label,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: isDarkMode ? Colors.white : Colors.black, // Dynamic text color
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -872,6 +879,7 @@ class DynamicButton extends StatelessWidget {
       ),
     );
   }
+
 }
 
 

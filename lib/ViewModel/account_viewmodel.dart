@@ -11,7 +11,7 @@ class AccountViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   Future<void> loadAvatar(String userId) async {
-    if (_isLoading) return; // Prevent multiple simultaneous requests
+    if (_isLoading) return;
     _setLoading(true);
 
     try {
@@ -63,7 +63,7 @@ class AccountViewModel extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         debugPrint('Avatar uploaded successfully');
-        await fetchAvatar(userId); // Refresh avatar after upload
+        await fetchAvatar(userId);
       } else {
         final responseBody = await response.stream.bytesToString();
         debugPrint('Failed to upload avatar: $responseBody');

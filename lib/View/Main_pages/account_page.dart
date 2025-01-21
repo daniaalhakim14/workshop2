@@ -204,7 +204,12 @@ class _AccountState extends State<Account> {
                       isDarkModeValue: isDarkModeValue,
                       onTap: () async {
                         final prefs = await SharedPreferences.getInstance();
+
+                        final accountViewModel = Provider.of<AccountViewModel>(context, listen: false);
+                        accountViewModel.clearAvatar();
+
                         await prefs.clear();
+
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -214,6 +219,7 @@ class _AccountState extends State<Account> {
                       },
                       alwaysRed: true,
                     ),
+
                   ] else ...[
                     buildOptionContainer(
                       title: 'Edit Profile Information',
@@ -279,7 +285,13 @@ class _AccountState extends State<Account> {
                       isDarkModeValue: isDarkModeValue,
                       onTap: () async {
                         final prefs = await SharedPreferences.getInstance();
-                        await prefs.clear();
+
+                        // Log preferences before clearing session-specific data
+                        debugPrint('Preferences before logout: isDarkMode = ${prefs.getBool("13-isDarkMode")}');
+
+                        // Clear session-specific data
+
+                        // Navigate to the FirstPage
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -289,13 +301,16 @@ class _AccountState extends State<Account> {
                       },
                       alwaysRed: true,
                     ),
+
+
+
                   ],
                 ],
               ),
             ),
           ),
           bottomNavigationBar: BottomAppBar(
-            color: const Color(0xFF002B36),
+            color: isDarkModeValue ? Colors.black : const Color(0xFF002B36),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
