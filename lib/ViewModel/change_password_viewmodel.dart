@@ -11,7 +11,7 @@ class ChangePasswordViewModel extends ChangeNotifier {
       String currentPassword,
       String newPassword,
       ) async {
-    final url = Uri.parse('http://192.168.0.6:3000/api/change-password');
+    final url = Uri.parse('http://192.168.0.6:3000/auth/change-password');
     isLoading = true;
     notifyListeners();
 

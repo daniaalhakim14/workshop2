@@ -5,30 +5,35 @@ import 'package:http/http.dart' as http;
 
 class AccountViewModel extends ChangeNotifier {
   Uint8List? _avatarBytes;
+  bool _isLoading = false;
 
   Uint8List? get avatarBytes => _avatarBytes;
+  bool get isLoading => _isLoading;
 
   Future<void> loadAvatar(String userId) async {
-    _avatarBytes = null;
-    notifyListeners();
+    if (_isLoading) return; // Prevent multiple simultaneous requests
+    _setLoading(true);
 
     try {
       await fetchAvatar(userId);
     } catch (e) {
       debugPrint('Error loading avatar: $e');
+    } finally {
+      _setLoading(false);
     }
   }
 
   Future<void> fetchAvatar(String userId) async {
-    final uri = Uri.parse('http://192.168.0.6:3000/api/get-profile-image/$userId');
+    final uri = Uri.parse('http://192.168.0.18:3000/profile/get-profile-image/$userId');
     try {
+      debugPrint('Fetching avatar for userId: $userId');
       final response = await http.get(uri);
 
       if (response.statusCode == 200) {
         _avatarBytes = response.bodyBytes;
-        debugPrint('Fetched avatar from server');
+        debugPrint('Fetched avatar successfully');
       } else {
-        debugPrint('Failed to fetch avatar: ${response.body}');
+        debugPrint('Failed to fetch avatar: ${response.statusCode}, Body: ${response.body}');
         _avatarBytes = null;
       }
     } catch (e) {
@@ -39,24 +44,44 @@ class AccountViewModel extends ChangeNotifier {
   }
 
   Future<void> uploadAvatar(File avatar, String userId) async {
-    final uri = Uri.parse('http://192.168.0.6:3000/api/update-profile-image/$userId');
-    final request = http.MultipartRequest('POST', uri)
-      ..files.add(await http.MultipartFile.fromPath('personalImage', avatar.path));
+    if (!await avatar.exists()) {
+      debugPrint('Invalid file: ${avatar.path}');
+      return;
+    }
 
-    final response = await request.send();
+    debugPrint('Uploading avatar for userId: $userId');
+    debugPrint('File path: ${avatar.path}');
 
-    if (response.statusCode == 200) {
-      debugPrint('Avatar uploaded successfully');
+    final uri = Uri.parse('http://192.168.0.18:3000/profile/update-profile-image/$userId');
+    final request = http.MultipartRequest('POST', uri);
 
-      await fetchAvatar(userId);
-    } else {
-      final responseBody = await response.stream.bytesToString();
-      debugPrint('Failed to upload avatar: $responseBody');
+    try {
+      request.files.add(await http.MultipartFile.fromPath('personalImage', avatar.path));
+      final response = await request.send();
+
+      debugPrint('Upload response status: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        debugPrint('Avatar uploaded successfully');
+        await fetchAvatar(userId); // Refresh avatar after upload
+      } else {
+        final responseBody = await response.stream.bytesToString();
+        debugPrint('Failed to upload avatar: $responseBody');
+      }
+    } catch (e) {
+      debugPrint('Error uploading avatar: $e');
     }
   }
 
   void clearAvatar() {
     _avatarBytes = null;
     notifyListeners();
+  }
+
+  void _setLoading(bool value) {
+    if (_isLoading != value) {
+      _isLoading = value;
+      notifyListeners();
+    }
   }
 }

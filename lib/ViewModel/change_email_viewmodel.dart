@@ -24,7 +24,7 @@ class ChangeEmailViewModel extends ChangeNotifier {
 
     try {
       final response = await http.post(
-        Uri.parse('192.168.0.12:3000/api/change-email'),
+        Uri.parse('192.168.0.12:3000/changeEmail/change-email'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'userId': userId,

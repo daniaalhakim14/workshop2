@@ -27,28 +27,37 @@ class _HomePageState extends State<HomePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.white,
-                child: Icon(
-                  Icons.person,
-                  color: Colors.teal,
-                  size: 40,
-                ),
+              Consumer<AccountViewModel>(
+                builder: (context, accountViewModel, child) {
+                  return CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.white,
+                    backgroundImage: accountViewModel.avatarBytes != null
+                        ? MemoryImage(accountViewModel.avatarBytes!)
+                        : null,
+                    child: accountViewModel.avatarBytes == null
+                        ? const Icon(
+                      Icons.person,
+                      color: Colors.teal,
+                      size: 40,
+                    )
+                        : null,
+                  );
+                },
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 8.0,top: 4.0),
+                padding: const EdgeInsets.only(left: 8.0, top: 4.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                     Text(
+                    Text(
                       'Hello,\n${widget.userInfo.name}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.normal,
-                        height: 0.8
+                        height: 0.8,
                       ),
                     ),
                   ],
@@ -69,7 +78,8 @@ class _HomePageState extends State<HomePage> {
               children: [
                 const SizedBox(height: 10),
                 Padding(
-                  padding: const EdgeInsets.only(top:10.0,bottom: 10,left: 30,right: 30),
+                  padding: const EdgeInsets.only(
+                      top: 10.0, bottom: 10, left: 30, right: 30),
                   child: Container(
                     height: 180,
                     decoration: BoxDecoration(

@@ -99,61 +99,63 @@ class _AccountState extends State<Account> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  Center(
-                    child: Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        CircleAvatar(
-                          key: ValueKey(accountViewModel.avatarBytes != null
-                              ? DateTime.now().millisecondsSinceEpoch
-                              : 'default_avatar'), // Unique key to force rebuild
-                          radius: 83.5,
-                          backgroundColor:
-                          isDarkModeValue ? Colors.grey[800] : Colors.white,
-                          backgroundImage: accountViewModel.avatarBytes != null
-                              ? MemoryImage(accountViewModel.avatarBytes!)
-                              : null,
-                          child: accountViewModel.avatarBytes == null
-                              ? Container(
-                            width: 167,
-                            height: 167,
-                            decoration: BoxDecoration(
-                              color: isDarkModeValue
-                                  ? Colors.grey[800]
-                                  : Colors.white,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 4,
-                              ),
-                            ),
-                            child: const Center(
-                              child: Icon(
-                                Icons.person,
-                                size: 167,
-                                color: Colors.black,
-                              ),
-                            ),
-                          )
-                              : null,
-                        ),
-                        GestureDetector(
-                          onTap: _showAvatarOptions,
-                          child: CircleAvatar(
-                            radius: 20,
-                            backgroundColor: isDarkModeValue
-                                ? Colors.grey[800]
-                                : Colors.white,
-                            child: Icon(
-                              Icons.edit,
-                              size: 18,
-                              color: isDarkModeValue ? Colors.white : Colors.black,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+        Center(
+        child: Consumer<AccountViewModel>(
+        builder: (context, accountViewModel, child) {
+        return Stack(
+        alignment: Alignment.bottomRight,
+        children: [
+        CircleAvatar(
+        key: ValueKey(accountViewModel.avatarBytes != null
+        ? DateTime.now().millisecondsSinceEpoch
+            : 'default_avatar'), // Unique key to force rebuild
+        radius: 83.5,
+        backgroundColor: isDarkModeValue ? Colors.grey[800] : Colors.white,
+        backgroundImage: accountViewModel.avatarBytes != null
+        ? MemoryImage(accountViewModel.avatarBytes!)
+            : null,
+        child: accountViewModel.avatarBytes == null
+        ? Container(
+        width: 167,
+        height: 167,
+        decoration: BoxDecoration(
+        color: isDarkModeValue ? Colors.grey[800] : Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(
+        color: Colors.white,
+        width: 4,
+        ),
+        ),
+        child: const Center(
+        child: Icon(
+        Icons.person,
+        size: 167,
+        color: Colors.black,
+        ),
+        ),
+        )
+            : null,
+        ),
+        GestureDetector(
+        onTap: _showAvatarOptions,
+        child: CircleAvatar(
+        radius: 20,
+        backgroundColor:
+        isDarkModeValue ? Colors.grey[800] : Colors.white,
+        child: Icon(
+        Icons.edit,
+        size: 18,
+        color: isDarkModeValue ? Colors.white : Colors.black,
+        ),
+        ),
+        ),
+        ],
+        );
+        },
+        ),
+        ),
+
+
                   const SizedBox(height: 40),
                   if (!_showAdditionalOptions) ...[
                     buildOptionContainer(
