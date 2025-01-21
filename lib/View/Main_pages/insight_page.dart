@@ -874,6 +874,7 @@ class DynamicButton extends StatelessWidget {
   }
 }
 
+// not using
 void addIconExample() async {
   final viewModel = InsightViewModel();
 

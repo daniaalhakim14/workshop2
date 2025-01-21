@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tab_bar_widget/View/Main_pages/signupage.dart';
+import 'package:tab_bar_widget/loading.dart';
 import 'loginpage.dart';
 
 
@@ -54,10 +55,7 @@ class _FirstPageState extends State<FirstPage> {
               width: 300, // Fixed width for both buttons
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()), // Navigate to LoginPage
-                  );
+                  _navigateWithLoading(const LoginPage()); // Navigate with loading to SignupPage
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -82,11 +80,7 @@ class _FirstPageState extends State<FirstPage> {
               width: 300, // Same fixed width for the second button
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SignupPage()), // Navigate to LoginPage
-                  );
-                  // Add navigation for sign-up here, if needed
+                  _navigateWithLoading(const SignupPage()); // Navigate with loading to SignupPage
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -109,5 +103,22 @@ class _FirstPageState extends State<FirstPage> {
         ),
       ),
     );
+  }
+
+  void _navigateWithLoading(Widget page) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent closing the dialog by tapping outside
+      builder: (context) => const LoadingPage(),
+    );
+
+    // Wait for 3 seconds, then navigate to the desired page
+    Future.delayed(const Duration(seconds: 1), () {
+      Navigator.pop(context); // Close the loading dialog
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>  page),
+      );
+    });
   }
 }

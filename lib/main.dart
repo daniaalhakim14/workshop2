@@ -17,7 +17,9 @@ import 'ViewModel/app_appearance_viewmodel.dart'; // Import your InsightViewMode
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'ViewModel/edit_profile_viewmodel.dart';
-import 'configure_API.dart';
+import 'loading.dart';
+
+
 void main() async {
   runApp(MyApp());
 }

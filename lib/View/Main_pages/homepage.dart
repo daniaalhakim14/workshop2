@@ -56,10 +56,11 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF2F2F2),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         elevation: 0,
         toolbarHeight: 69,
         flexibleSpace: Padding(
-          padding: const EdgeInsets.only(top: 40, left: 55),
+          padding: const EdgeInsets.only(top: 40, left: 28),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
