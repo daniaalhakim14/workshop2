@@ -1,10 +1,14 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../ViewModel/SignupLoginPage_ViewModel/SignupLoginPage_View_Model.dart';
 import '../Main_pages/homepage.dart';
 import '../Main_pages/signupage.dart';
+import 'package:tab_bar_widget/configure_API.dart';
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -99,14 +103,12 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                Padding(
+                /*Padding(
                   padding: const EdgeInsets.only(right: 20),
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () {
-                        // Add recovery password action here
-                      },
+                      onPressed: () {},
                       child: const Text(
                         "Recovery Password",
                         style: TextStyle(
@@ -117,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                ),
+                ),*/
                 const SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
