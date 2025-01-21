@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import '../Model/Category.dart';
+import '../configure_API.dart';
 
 class CategoryViewModel extends ChangeNotifier {
   List<Category> _categories = [];
@@ -22,7 +23,7 @@ class CategoryViewModel extends ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      final response = await http.get(Uri.parse('http://10.131.75.179:3000/category'));
+      final response = await http.get(Uri.parse('${AppConfig.baseUrl}/category'));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = json.decode(response.body);

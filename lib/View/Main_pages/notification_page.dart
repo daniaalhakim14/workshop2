@@ -101,39 +101,39 @@ class _NotificationState extends State<Noti> {
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
                     child:Wrap(
-  spacing: MediaQuery.of(context).size.width > 600 ? 12.0 : 8.0, //tablet
-  runSpacing: MediaQuery.of(context).size.width > 600 ? 12.0 : 8.0, //phone
-  alignment: WrapAlignment.start,
-  children: viewModel.financialAidCategories.map((category) {
-    return SizedBox(
+                      spacing: MediaQuery.of(context).size.width > 600 ? 12.0 : 8.0, //tablet
+                      runSpacing: MediaQuery.of(context).size.width > 600 ? 12.0 : 8.0, //phone
+                      alignment: WrapAlignment.start,
+                      children: viewModel.financialAidCategories.map((category) {
+                        return SizedBox(
 
-      width: MediaQuery.of(context).size.width > 600
-          ? MediaQuery.of(context).size.width / 4 - 16 // tablet
-          : MediaQuery.of(context).size.width / 2 - 16, // phone
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(width: 8), 
-          getIconForCategory(category['name']),
-          const SizedBox(width: 8), 
-          Flexible(
-            child: Text(
-              category['name'],
-              style: const TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 12, 
-                fontWeight: FontWeight.w500,
-                color: Colors.black,
-              ),
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.visible, 
-            ),
-          ),
-        ],
-      ),
-    );
-  }).toList(),
-)
+                          width: MediaQuery.of(context).size.width > 600
+                              ? MediaQuery.of(context).size.width / 4 - 16 // tablet
+                              : MediaQuery.of(context).size.width / 2 - 16, // phone
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SizedBox(width: 8), 
+                              getIconForCategory(category['name']),
+                              const SizedBox(width: 8), 
+                              Flexible(
+                                child: Text(
+                                  category['name'],
+                                  style: const TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 12, 
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.visible, 
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    )
 
 
                   )
@@ -186,9 +186,11 @@ class _NotificationState extends State<Noti> {
                     nt.Notification notification =  viewModel.notifications[index];
                     Color borderColor;
 
-                    if (notification.type != 'transaction') {
+                    if (notification.type == 'Tips') {
+                      borderColor = const Color.fromARGB(255, 144, 179, 243);
+                    } else if (notification.type != 'Transaction') {
                       borderColor = Colors.green;
-                    } else if (notification.type == 'transaction') {
+                    } else if (notification.type == 'Transaction') {
                       borderColor = const Color.fromARGB(255, 216, 110, 110);
                     } else {
                       borderColor = Colors.grey;

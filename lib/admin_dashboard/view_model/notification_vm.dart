@@ -157,9 +157,6 @@ class NotificationViewModel extends GetxController {
     }
   }
 
-
-
-
   // get notification {date} 
   Future<void> fetchNotificationsByDate(String? date) async {
     try {
@@ -180,6 +177,26 @@ class NotificationViewModel extends GetxController {
     }
   }
 
+  // get notification {id} 
+  Future<nt.Notification?> fetchNotificationsById(String notificationid) async {
+    try {
+      List<nt.Notification>? result = await notificationRepository.fetchNotificationsById(notificationid);
+      if (result != null &&notifications.isNotEmpty) {
+        //return notifications.first; // Assuming each ID maps to one notification
+        for (var notification in result) {
+          if (notification.notificationID.toString() == notificationid) {
+            return notification;
+          }
+        }
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching notifications by date: $e');
+      return null;
+    }
+  }
+
   // get all financial aid categories 
   Future<void> fetchFinancialAidCategories() async {
     try {
@@ -194,22 +211,6 @@ class NotificationViewModel extends GetxController {
     }
   }
 
-/*
-Future<List<Map<String, dynamic>>> fetchCategoriesForNotification(int notificationID) async {
-  try {
-    final result = await notificationRepository.fetchCategoriesByNotificationID(notificationID);
-    if (result != null) {
-      _notificationCategories.assignAll(result); // Update the internal state
-      return result; // Return the fetched categories
-    } else {
-      _notificationCategories.clear();
-      return [];
-    }
-  } catch (e) {
-    print('Error fetching categories for notification: $e');
-    return [];
-  }
-}*/
 
 Future<List<Map<String, dynamic>>> fetchCategoriesForNotification(int notificationID) async {
   final box = GetStorage();
@@ -409,7 +410,7 @@ void clearCategoryCache(int notificationID) {
       bool success = await notificationRepository.updateNotificationCategories(notificationID, categoryIDs);
       if (success) {
         clearCategoryCache(notificationID);
-        
+        final newCategories = await fetchCategoriesForNotification(notificationID);
         await fetchNotifications();
         print('Notification categories updated successfully');
       } else {
@@ -485,5 +486,27 @@ void clearCategoryCache(int notificationID) {
       isLoading.value = false;
     }
   }
+
+  // auto send transaction alert notification after user add expense (When expense reach 50%/70%/90%/100% of budget)
+  // -> request userid & subcategoryid, response message 
+
+  Future<void> checkSubcategoryBudget(String userId, String subcategoryId) async {
+    try {
+
+      bool success =  await notificationRepository.checkSubcategoryBudget(userId, subcategoryId);
+      if (success) {
+        print('Transaction alert notification sent successfully');
+      } else {
+        print('Failed to send transaction alert notification');
+      }
+      await fetchNotificationsByUserID(userId);
+    } catch (e) {
+      print('Error sending transaction alert notification: $e');
+    } finally {
+      isLoading.value = false;
+    }
+   
+  }
+
 
 }

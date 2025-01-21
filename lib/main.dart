@@ -20,17 +20,21 @@ import 'admin_dashboard/models/services/local_notification_service.dart';
 
 import 'ViewModel/edit_profile_viewmodel.dart';
 import 'configure_API.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initNotifications();
   initPusher();
   listenToNotifications();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  
   const MyApp({super.key});
-
+  
   // root widget
   @override
   Widget build(BuildContext context) {
@@ -56,6 +60,7 @@ class MyApp extends StatelessWidget {
 
       ],
       child: MaterialApp(
+        navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
