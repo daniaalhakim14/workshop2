@@ -22,7 +22,7 @@ class UserInfoModule {
   });
 
   factory UserInfoModule.fromJson(Map<String, dynamic> json) {
-    print('[DEBUG] Parsing UserModel from JSON: $json');
+    // print('[DEBUG] Parsing UserModel from JSON: $json');
     return UserInfoModule(
       id: json['id'] ?? json['userid'] ?? 0,
       name: json['name'] ?? 'Unknown',

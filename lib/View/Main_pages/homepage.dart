@@ -122,34 +122,30 @@ class _HomePageState extends State<HomePage> {
                               fontSize: 20,
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 2),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Consumer<IncomeViewModel>(
                                 builder: (context, incomeViewModel, child) {
                                   if (incomeViewModel.fetchingData) {
                                     return const CircularProgressIndicator(); // Show a loader while data is being fetched
                                   }
-                                  if (incomeViewModel.income.isNotEmpty) {
-                                    // Get the first income amount
-                                    final incomeAmount = incomeViewModel.income[0].incomeAmount ?? 0.0;
-                                    return Text(
-                                      'RM ${incomeAmount.toStringAsFixed(2)}',
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    );
-                                  } else {
-                                    return const Text(
-                                      'RM 0.00', // Default value if income is empty
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    );
+                                  // Calculate total income
+                                  double totalIncome = 0.0;
+                                  for (var income in incomeViewModel.incomeAmount) {
+                                    if (income.incomeAmount != null) {
+                                      totalIncome += income.incomeAmount!;
+                                    }
                                   }
+                                  return Center(
+                                    child: Text(
+                                      'RM ${totalIncome.toStringAsFixed(2)}',
+                                      style: const TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  );
                                 },
                               ),
                               const SizedBox(width: 8),
@@ -215,7 +211,6 @@ class _HomePageState extends State<HomePage> {
             Consumer<InsightViewModel>(
               builder: (context, viewModel, child) {
                 List<TransactionList> transactionList = viewModel.transactionList;
-                print('transaction List: $transactionList');
 
                 if (viewModel.fetchingData) {
                   return Container(
@@ -233,7 +228,7 @@ class _HomePageState extends State<HomePage> {
                   return formattedDate == selectedMonth;
                 }).toList();
 
-                print('filteredTransactions: $filteredTransactions');
+
 
 
                 if (filteredTransactions.isEmpty) {
