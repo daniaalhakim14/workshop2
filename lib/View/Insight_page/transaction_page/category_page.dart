@@ -6,7 +6,8 @@ import '../../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
 
 
 class CategoryPage extends StatefulWidget {
-  const CategoryPage({super.key});
+  final int userid;
+  const CategoryPage({super.key,required this.userid});
 
   @override
   State<CategoryPage> createState() => _CategoryPageState();
@@ -92,9 +93,10 @@ class _CategoryPageState extends State<CategoryPage> {
                   context,
                     MaterialPageRoute(
                         builder: (context) => subcategory_page(
-                            parentCategoryId: category.categoryId!,
-                            category_name: category.categoryName!,
-                    ),
+                          userid: widget.userid,
+                          parentCategoryId: category.categoryId!,
+                          category_name: category.categoryName!,
+                        ),
                     )
                   );
                   // Return the selected subcategory data back to the add_transaction page

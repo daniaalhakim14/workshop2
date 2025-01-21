@@ -8,8 +8,8 @@ import 'InsightPage_Calling_API.dart';
 class InsightRepository{
   final CallingApi _service = CallingApi();
 
-  Future<List<TransactionsExpense>> getTransactionsExpense() async {
-    final response = await _service.fetchTransactionsExpense();
+  Future<List<TransactionsExpense>> getTransactionsExpense(int userid) async {
+    final response = await _service.fetchTransactionsExpense(userid);
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body); // This is a list of maps
@@ -22,19 +22,24 @@ class InsightRepository{
     }
   }
 
-  Future<List<TransactionList>> getTransactionList() async {
-    final response = await _service.fetchTransactionList();
+  Future<List<TransactionList>> getTransactionList(int userid) async {
+    try {
+      final response = await _service.fetchTransactionList(userid);
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body); // This is a list of maps
-      print('Decoded Transaction List: $data'); // Debugging log
-      return List<TransactionList>.from(
-          data.map((x) => TransactionList.fromJson(x)) // Map each item
-      );
-    } else {
-      throw Exception('Failed to load Transaction List');
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print('Transaction List Data: $data');
+        return List<TransactionList>.from(data.map((x) => TransactionList.fromJson(x)));
+      } else {
+        print('API Error: ${response.body}');
+        throw Exception('Failed to load Transaction List');
+      }
+    } catch (e) {
+      print('Error fetching transaction list: $e');
+      rethrow; // Allow ViewModel to handle it
     }
   }
+
 
   Future<List<BasicCategories>> getBasicCategories() async {
     final response = await _service.fetchBasicCategories();
@@ -66,8 +71,8 @@ class InsightRepository{
     }
   }
 
-  Future<List<Subcategories>> getSubcategories(int parentCategoryId) async {
-    final response = await _service.fetchSubcategories(parentCategoryId);
+  Future<List<Subcategories>> getSubcategories(int parentCategoryId,int userid) async {
+    final response = await _service.fetchSubcategories(parentCategoryId,userid);
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
@@ -93,8 +98,8 @@ class InsightRepository{
     }
   }
 
-  Future<void> addSubcategory(AddSubcategories subcategory) async {
-    final response = await _service.addSubcategories(subcategory.toMap());
+  Future<void> addSubcategory(AddSubcategories subcategory,int userid) async {
+    final response = await _service.addSubcategories(subcategory.toMap(),userid);
 
     // Log the response for debugging
     print("Response status: ${response.statusCode}");
@@ -157,8 +162,8 @@ class InsightRepository{
     }
   }
 
-  Future<void> deleteExpense(DeleteExpense deleteExpense) async {
-    final response = await _service.deleteExpense(deleteExpense.expenseId);
+  Future<void> deleteExpense(DeleteExpense deleteExpense, int userid) async {
+    final response = await _service.deleteExpense(deleteExpense.expenseId,userid);
 
     if (response.statusCode != 200) {
       throw Exception('Failed to delete expense: ${response.body}');
@@ -167,8 +172,8 @@ class InsightRepository{
     print('Expense deleted successfully');
   }
 
-  Future<void> deleteIncome(DeleteIncome deleteIncome) async {
-    final response = await _service.deleteIncome(deleteIncome.incomeId);
+  Future<void> deleteIncome(DeleteIncome deleteIncome, int userid) async {
+    final response = await _service.deleteIncome(deleteIncome.incomeId,userid);
 
     if (response.statusCode != 200) {
       throw Exception('Failed to delete income: ${response.body}');
@@ -176,5 +181,12 @@ class InsightRepository{
 
     print('Income deleted successfully');
   }
+
+  // Add a dispose method to clean up resources
+  void dispose() {
+    _service.dispose(); // Call dispose in the service
+    print("Repository resources cleaned up.");
+  }
+
 
 }

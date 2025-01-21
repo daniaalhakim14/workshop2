@@ -16,7 +16,8 @@ const List<String> paymentType = <String>['Cash','Debit Card','Credit Card','Onl
 String dropdownValue = '';
 
 class edit_transaction extends StatefulWidget {
-  const edit_transaction({super.key, required this.transactionDetail});
+  const edit_transaction({super.key, required this.userid,required this.transactionDetail});
+  final int userid;
   final TransactionList transactionDetail;
 
 
@@ -237,7 +238,7 @@ class _edit_transactionState extends State<edit_transaction> {
                               final selectedSubcategory = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const CategoryPage(),
+                                  builder: (context) =>  CategoryPage(userid: widget.userid,),
                                 ),
                               );
                               if (selectedSubcategory != null) {

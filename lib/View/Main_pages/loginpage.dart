@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../ViewModel/SignupLoginPage_ViewModel/SignupLoginPage_View_Model.dart';
+import '../../loading.dart';
 import '../Main_pages/homepage.dart';
 import '../Main_pages/signupage.dart';
 import 'package:tab_bar_widget/configure_API.dart';
@@ -200,12 +201,7 @@ class _LoginPageState extends State<LoginPage> {
       await viewModel.fetchUserDetailsByEmail(email);
 
       if (viewModel.userInfo != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HomePage(userInfo: viewModel.userInfo!),
-          ),
-        );
+        _navigateWithLoading(HomePage(userInfo: viewModel.userInfo!));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -220,5 +216,23 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     }
+  }
+
+  // loading animation
+  void _navigateWithLoading(Widget page) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent closing the dialog by tapping outside
+      builder: (context) => const LoadingPage(),
+    );
+
+    // Wait for 3 seconds, then navigate to the desired page
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.pop(context); // Close the loading dialog
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>  page),
+      );
+    });
   }
 }

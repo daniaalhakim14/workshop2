@@ -10,6 +10,7 @@ import 'ViewModel/BudgetTextFieldViewModel.dart';
 import 'ViewModel/BudgetViewModel.dart';
 import 'ViewModel/CategoryViewModel.dart';
 import 'ViewModel/DateViewModel.dart';
+import 'ViewModel/Income/Income_View_Model.dart';
 import 'ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
 import 'ViewModel/SignupLoginPage_ViewModel/SignupLoginPage_View_Model.dart';
 import 'ViewModel/account_viewmodel.dart';
@@ -17,8 +18,8 @@ import 'ViewModel/app_appearance_viewmodel.dart'; // Import your InsightViewMode
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'ViewModel/change_password_viewmodel.dart';
 import 'admin_dashboard/models/services/local_notification_service.dart';
-
 import 'ViewModel/edit_profile_viewmodel.dart';
+import 'loading.dart';
 import 'configure_API.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -32,9 +33,9 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  
+
   const MyApp({super.key});
-  
+
   // root widget
   @override
   Widget build(BuildContext context) {
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => AIBudgetViewModel()),
         ChangeNotifierProvider(create: (context) => AnalysisViewModel()),
         ChangeNotifierProvider(create: (_) => EditProfileViewModel()),
+        ChangeNotifierProvider(create: (_) => IncomeViewModel()),
         ChangeNotifierProvider(create: (_) => ChangePasswordViewModel()),
         ChangeNotifierProvider(create: (_) => ChangeEmailViewModel()),
 

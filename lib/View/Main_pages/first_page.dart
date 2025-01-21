@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tab_bar_widget/View/Main_pages/signupage.dart';
+import 'package:tab_bar_widget/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../ViewModel/SignupLoginPage_ViewModel/SignupLoginPage_View_Model.dart';
@@ -91,13 +93,10 @@ class _FirstPageState extends State<FirstPage> {
             const SizedBox(height: 40),
             // Login Button
             SizedBox(
-              width: 300,
+              width: 300, // Fixed width for both buttons
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
+                  _navigateWithLoading(const LoginPage()); // Navigate with loading to SignupPage
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -122,24 +121,21 @@ class _FirstPageState extends State<FirstPage> {
               width: 300,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SignupPage()),
-                  );
+                  _navigateWithLoading(const SignupPage()); // Navigate with loading to SignupPage
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Colors.teal,
-                  shape: RoundedRectangleBorder(
+                  backgroundColor: Colors.teal, // Button background color
+                  shape: RoundedRectangleBorder( // Shape
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 12), // Adjusted padding
                 ),
                 child: const Text(
                   "SIGN UP",
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 18, // Text size
+                    fontWeight: FontWeight.bold, // Text weight
                   ),
                 ),
               ),
@@ -149,4 +145,22 @@ class _FirstPageState extends State<FirstPage> {
       ),
     );
   }
-}
+
+  void _navigateWithLoading(Widget page) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent closing the dialog by tapping outside
+      builder: (context) => const LoadingPage(),
+    );
+
+    // Wait for 3 seconds, then navigate to the desired page
+    Future.delayed(const Duration(seconds: 1), () {
+      Navigator.pop(context); // Close the loading dialog
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => page),
+      );
+    });
+  }
+
+

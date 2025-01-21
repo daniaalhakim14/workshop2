@@ -5,6 +5,7 @@ import 'TransactionDetailScreen.dart';
 
 
 class SubCategoryDetailScreen extends StatefulWidget {
+  final int userid;
   final String subcategoryName;
   final List<TransactionList> transactions;
 
@@ -12,6 +13,7 @@ class SubCategoryDetailScreen extends StatefulWidget {
     super.key,
     required this.subcategoryName,
     required this.transactions,
+    required this.userid
   });
 
   @override
@@ -113,6 +115,7 @@ class _SubCategoryDetailScreenState extends State<SubCategoryDetailScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => TransactionDetailScreen(
+                              userid: widget.userid,
                               listDetail: transaction,
                             ),
                           ),

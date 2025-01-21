@@ -17,6 +17,7 @@ class TransactionsExpense {
   final IconData? icondata; // Combines `codepoint` and `fontfamily`
   final Color? iconcolor;
   final String? categoryname;
+  final int? userid;
 
   TransactionsExpense({
     this.expenseid,
@@ -28,7 +29,8 @@ class TransactionsExpense {
     this.iconname,
     this.icondata,
     this.iconcolor,
-    this.categoryname
+    this.categoryname,
+    this.userid
   });
   // Factory constructor to create an instance from JSON
   factory TransactionsExpense.fromJson(Map<String, dynamic> json) => TransactionsExpense(
@@ -58,6 +60,7 @@ class TransactionsExpense {
         : json['color']) // Use directly if it's already an int
         : null, // Convert color integer to Color
     categoryname: json['category_name'],
+    userid: json['userid'],
   );
 }
 
@@ -91,13 +94,15 @@ class TransactionList{
     this.iconData,
     this.iconColor
   });
-  factory TransactionList.fromJson(Map<String,dynamic> json) => TransactionList(
+  factory TransactionList.fromJson(Map<String, dynamic> json) => TransactionList(
     transactionId: json["transaction_id"],
-    amount: json["amount"] is String
+    amount: json["amount"] == null
+        ? null // Handle null amount gracefully
+        : (json["amount"] is String
         ? double.tryParse(json["amount"]) // Convert string to double
-        : json["amount"], // Use directly if it's already a double
+        : json["amount"]), // Use directly if it's already a double
     date: json["date"] != null
-        ? DateTime.parse(json["date"]) // Parse ISO 8601 date strings
+        ? DateTime.tryParse(json["date"]) // Parse ISO 8601 date strings safely
         : null,
     name: json["subcategory_name"],
     categoryname: json["category_name"],
@@ -116,17 +121,17 @@ class TransactionList{
     iconColor: json['color'] != null
         ? Color(int.tryParse(json['color']) ?? 0) // Safely parse the color string
         : null,
-    );
+  );
+
+
   @override
+
   String toString() {
     return 'TransactionList(transactionId: $transactionId, amount: $amount, date: $date,'
         ' description: $description, paymenttype: $paymenttype, userid: $userid,'
         'subcategoryid: $subcategoryid,incomecategoryid: $incomecategoryid, transactiontype: $transactiontype,'
         'iconData: $iconData, iconColor: $iconColor  )';
   }
-
-
-
 }
 
 class BasicCategories {
@@ -143,12 +148,13 @@ class BasicCategories {
     this.iconData,
     this.iconColor,
   });
-
+  /*
   // Override toString to provide a meaningful representation in insight view model
   @override
   String toString() {
     return 'BasicCategories(categoryId: $categoryId, categoryName: $categoryName, iconId: $iconId, iconData: $iconData, iconColor: $iconColor)';
   }
+   */
   factory BasicCategories.fromJson(Map<String, dynamic> json) => BasicCategories(
     categoryId: json["category_id"],
     categoryName: json["category_name"],
@@ -179,12 +185,14 @@ class IncomeCategories {
     this.iconData,
     this.iconColor,
   });
-
+  /*
   // Override toString to provide a meaningful representation in insight view model
   @override
   String toString() {
     return 'IncomeCategories(categoryId: $incomecategoryid, categoryName: $categoryName, iconId: $iconId, iconData: $iconData, iconColor: $iconColor)';
   }
+
+   */
   factory IncomeCategories.fromJson(Map<String, dynamic> json) => IncomeCategories(
     incomecategoryid: json["incomecategory_id"], // Adjusted key
     categoryName: json["incomecategory_name"],  // Adjusted key
@@ -210,6 +218,7 @@ class Subcategories{
   final int? iconId;
   final IconData? iconData;
   final Color? iconColor;
+  final int? userid;
 
   Subcategories({
     this.subcategoryId,
@@ -217,7 +226,8 @@ class Subcategories{
     this.parentCategoryId,
     this.iconId,
     this.iconData,
-    this.iconColor
+    this.iconColor,
+    this.userid,
   });
 
 
@@ -235,27 +245,34 @@ class Subcategories{
     iconColor: json['color'] != null
         ? Color(int.tryParse(json['color']) ?? 0) // Safely parse the color string
         : null,
+    userid: json['userid']
   );
+  /*
   // Override toString for better debugging
   @override
   String toString() {
     return 'Subcategory(subcategoryName: $subcategoryName, iconid: $iconId, parentCategoryId: $parentCategoryId, iconData: $iconData, iconColor: $iconColor)';
   }
 
+   */
+
 }
 
 class AddSubcategories {
+  final int? userid;
   final String? newSubcategoryName;
   final int? parentCategoryId;
   final int? iconId;
 
   AddSubcategories({
+    this.userid,
     this.newSubcategoryName,
     this.parentCategoryId,
     this.iconId,
   });
 
   factory AddSubcategories.fromJson(Map<String, dynamic> json) => AddSubcategories(
+    userid: json['userid'],
     newSubcategoryName: json["subcategory_name"],
     parentCategoryId: json["parentcategoryid"],
     iconId: json["iconid"],
@@ -263,6 +280,7 @@ class AddSubcategories {
 
   Map<String, dynamic> toMap() {
     return {
+      "userid": userid,
       "subcategory_name": newSubcategoryName,
       "parentcategoryid": parentCategoryId,
       "iconid": iconId,

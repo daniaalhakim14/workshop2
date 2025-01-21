@@ -16,7 +16,7 @@ import 'homepage.dart';
 import 'notification_page.dart';
 import '../Insight_page/budget_pages/budget_tab_page.dart';
 
-
+// configure daily spent and spent so far
 
 class Insight extends StatefulWidget {
   final UserInfoModule userInfo; // Accept UserModel as a parameter
@@ -46,9 +46,9 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final viewModel = Provider.of<InsightViewModel>(context, listen: false);
       if (!viewModel.fetchingData && viewModel.transactionsExpense.isEmpty) {
-        viewModel.fetchTransactionsExpense();
+        viewModel.fetchTransactionsExpense(widget.userInfo.id);
       }
-      viewModel.fetchTransactionList();
+
     });
 
     // Start a timer to check for month changes
@@ -214,7 +214,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                     DateTime dateTime = DateTime.parse(isoFormatDate);
                                     String formattedExpenseDate = _formatMonth(dateTime); // Format expense.date
 
-                                    if (expense.categoryname != null && formattedExpenseDate == selectedMonth) {
+                                    if (expense.categoryname != null && formattedExpenseDate == selectedMonth && expense.userid == widget.userInfo.id) {
                                       if (!aggregatedData.containsKey(expense.categoryname)) {
                                         aggregatedData[expense.categoryname!] = 0.0;
                                         categoryColors[expense.categoryname!] = expense.iconcolor!;
@@ -509,6 +509,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) => TransactionDetailScreen(
+                                                  userid: widget.userInfo.id,
                                                   listDetail: transaction, // Pass the single transaction object
                                                 ),
                                               ),
@@ -652,6 +653,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) => CategoryDetailScreen(
+                                                    userid: widget.userInfo.id,
                                                     categoryName: categoryName, // Pass the category name
                                                     categoryTransactions: groupedCategories[categoryName]!, // Pass the transactions for this category
                                                   ),
@@ -727,15 +729,15 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                               final result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const add_transaction(),
+                                  builder: (context) =>  add_transaction(userid: widget.userInfo.id),
                                 ),
                               );
                               // If a new transaction was added, refresh the list
                               if (result == true) {
                                 print("Refreshing transaction list...");
                                 final viewModel = Provider.of<InsightViewModel>(context, listen: false);
-                                viewModel.fetchTransactionsExpense(); // Fetch the latest transactions
-                                viewModel.fetchTransactionList();
+                                viewModel.fetchTransactionsExpense(widget.userInfo.id); // Fetch the latest transactions
+                                viewModel.fetchTransactionList(widget.userInfo.id);
                               }
                             },
                             icon: const Icon(Icons.add),
@@ -828,7 +830,6 @@ Row _bottomBarConfiguration(BuildContext context, UserInfoModule userInfo) {
   );
 }
 
-
 class DynamicButton extends StatelessWidget {
   final String label;
   final Color color;
@@ -853,8 +854,6 @@ class DynamicButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode; // Access dark mode state
-
     return Padding(
       padding: padding,
       child: GestureDetector(
@@ -879,10 +878,9 @@ class DynamicButton extends StatelessWidget {
       ),
     );
   }
-
 }
 
-
+// not using
 void addIconExample() async {
   final viewModel = InsightViewModel();
 
