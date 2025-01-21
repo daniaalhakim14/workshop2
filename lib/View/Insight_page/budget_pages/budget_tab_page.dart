@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../Model/Budget.dart';
+import '../../../Model/SignupLoginPage_model.dart';
 import '../../../ViewModel/BudgetViewModel.dart';
 import 'ai_budget.dart';
 import 'budget_detail_page.dart';
@@ -10,18 +11,20 @@ import 'create_budget_page.dart';
 
 
 class budget extends StatefulWidget{
-  const budget({super.key});
+  final UserInfoModule userInfo;
+  const budget({super.key,required this.userInfo});
 
   @override
   State<budget> createState() => _budgetState();
 }
 
 class _budgetState extends State<budget> {
-  int userid = 1;
+  late int userid;
 
   @override
   void initState() {
     super.initState();
+    userid = widget.userInfo.id;
     // Fetch budget data when the screen is opened
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<BudgetViewModel>(context, listen: false).fetchBudgets(userid);
@@ -79,7 +82,7 @@ class _budgetState extends State<budget> {
                         Text(viewModel.error!),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: () => viewModel.fetchBudgets(1),
+                          onPressed: () => viewModel.fetchBudgets(userid),
                           child: const Text('Retry'),
                         ),
                       ],

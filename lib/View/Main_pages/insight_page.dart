@@ -15,6 +15,11 @@ import 'dart:async';
 import 'homepage.dart';
 import 'notification_page.dart';
 import '../Insight_page/budget_pages/budget_tab_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tab_bar_widget/configure_API.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 
 // configure daily spent and spent so far
 
@@ -161,7 +166,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
             Expanded(
               child: TabBarView(
                 children: [
-                  budget(),
+                  budget(userInfo: widget.userInfo),
                   Stack(
                     children: [
                       SingleChildScrollView(
@@ -748,7 +753,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
 
                     ]
                   ),
-                  Analysis(),
+                  Analysis(userInfo: widget.userInfo),
                 ],
               ),
             ),
@@ -854,6 +859,7 @@ class DynamicButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;////
     return Padding(
       padding: padding,
       child: GestureDetector(

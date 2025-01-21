@@ -210,11 +210,15 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Login failed. Please check your credentials."),
-        ),
-      );
+      if (mounted) 
+      {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Login failed. Please check your credentials."),
+          ),
+        );
+      }
+
     }
   }
 

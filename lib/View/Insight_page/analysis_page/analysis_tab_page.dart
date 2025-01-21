@@ -8,12 +8,14 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../Model/Analysis.dart';
+import '../../../Model/SignupLoginPage_model.dart';
 import '../../../ViewModel/AnalysisViewModel.dart';
 import '../../../ViewModel/DateViewModel.dart';
 
 
 class Analysis extends StatefulWidget{
-  const Analysis({super.key});
+  final UserInfoModule userInfo;
+  const Analysis({super.key,required this.userInfo});
 
   @override
   State<Analysis> createState() => _AnalysisState();
@@ -23,11 +25,12 @@ class _AnalysisState extends State<Analysis> {
   int _currentIndex = 0;
   String activeTab = "Overall"; // Default active tab
   String selectedDate = DateFormat('MMMM yyyy').format(DateTime.now());
-  int userid = 1;
+  late int userid;
 
   @override
   void initState() {
     super.initState();
+    userid = widget.userInfo.id;
     // Fetch budget data when the screen is opened
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final dateViewModel = context.read<DateViewModel>();

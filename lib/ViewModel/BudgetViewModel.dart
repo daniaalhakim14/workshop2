@@ -30,7 +30,7 @@ class BudgetViewModel extends ChangeNotifier {
 
       final response = await http.get(
         Uri.parse(
-            '$apiUrl?userid=$userId'),
+            '$apiUrl/$userId'),
       );
 
       if (response.statusCode == 200) {
