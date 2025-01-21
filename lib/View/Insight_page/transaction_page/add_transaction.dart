@@ -31,7 +31,7 @@ class _add_transactionState extends State<add_transaction> {
 
 
 
-  DateTime selectedDate = DateTime.now(); // initial selected date
+  DateTime selectedDate = DateTime.now().toLocal(); // initial selected date
   late String todayDate = 'Today';
   late String yesterdayDate = 'Yesterday';
   late String textdate = todayDate;
@@ -96,10 +96,11 @@ class _add_transactionState extends State<add_transaction> {
                         Padding(
                           padding: const EdgeInsets.only(top: 20.0, bottom: 0.0, left: 10, right: 0),
                           child: SizedBox(
-                            width: 122,
+                            width: 130,
                             height: 35,
                             child: ElevatedButton(
                               onPressed: () async {
+                                print('date: $selectedDate');
                                 // set the calendar prefix
                                 final DateTime? dateTime = await showDatePicker(
                                   context: context,
@@ -107,13 +108,13 @@ class _add_transactionState extends State<add_transaction> {
                                   firstDate: DateTime.utc(2000, 01, 01),
                                   lastDate: DateTime.utc(2100, 12, 31),
                                 );
-                                if (dateTime != null && !dateTime.isAfter(DateTime.now())) {
+                                if (dateTime != null && !dateTime.isAfter(DateTime.now().toLocal())) {
                                   setState(() {
                                     // Update `selectedDate` to the picked date
                                     selectedDate = dateTime;
 
                                     // Check if the date is yesterday
-                                    DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
+                                    DateTime yesterday = DateTime.now().toLocal().subtract(Duration(days: 1));
                                     if (dateTime.year == yesterday.year &&
                                         dateTime.month == yesterday.month &&
                                         dateTime.day == yesterday.day) {
@@ -122,7 +123,7 @@ class _add_transactionState extends State<add_transaction> {
                                     } else if (dateTime.year == DateTime.now().year && dateTime.month == DateTime.now().month && dateTime.day == DateTime.now().day) {
                                       textdate = todayDate; // Set to 'Today'
                                     } else {
-                                      textdate = DateFormat('dd-MM-yyyy').format(dateTime); // Default date format
+                                      textdate = DateFormat('dd-MM-yyyy').format(dateTime.toLocal()); // Default date format
                                     }
                                   });
                                 } else {
