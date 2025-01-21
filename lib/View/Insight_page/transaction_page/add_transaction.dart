@@ -17,7 +17,8 @@ String dropdownValue = paymentType.first;
 
 
 class add_transaction extends StatefulWidget {
-  const add_transaction({super.key});
+  final int userid; // Accept UserModel as a parameter
+  const add_transaction({super.key, required this.userid});
 
   @override
   State<add_transaction> createState() => _add_transactionState();
@@ -214,7 +215,7 @@ class _add_transactionState extends State<add_transaction> {
                               final selectedSubcategory = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const CategoryPage(),
+                                  builder: (context) => CategoryPage(userid: widget.userid,),
                                 ),
                               );
                               if (selectedSubcategory != null) {
@@ -411,7 +412,7 @@ class _add_transactionState extends State<add_transaction> {
                     expenseDate: selectedDate,
                     expenseDescription: _textControllerAddNote.text,
                     paymenttype: dropdownValue,
-                    userid: 1,  // need to change later
+                    userid: widget.userid,
                     subcategoryid: _selectedSubcategory_Category!['subcategoryId']
                   );
                   try {
@@ -437,7 +438,7 @@ class _add_transactionState extends State<add_transaction> {
                         incomeDate: selectedDate,
                         incomeDescription: _textControllerAddNote.text,
                         paymenttype: dropdownValue,
-                        userid: 1,  // need to change later
+                        userid: widget.userid,
                         incomecategoryid: _selectedSubcategory_Category!['incomeCategoryId']
                     );
                     try {

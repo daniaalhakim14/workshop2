@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_){
       final viewModel = Provider.of<InsightViewModel>(context, listen: false);
-      viewModel.fetchTransactionList();
+      viewModel.fetchTransactionList(widget.userInfo.id);
       final incomeViewModel = Provider.of<IncomeViewModel>(context, listen: false);
       incomeViewModel.fetchIncomeAmount(widget.userInfo.id); // Pass the user ID
     });
@@ -123,40 +123,53 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           const SizedBox(height: 2),
-                          Row(
-                            children: [
-                              Consumer<IncomeViewModel>(
-                                builder: (context, incomeViewModel, child) {
-                                  if (incomeViewModel.fetchingData) {
-                                    return const CircularProgressIndicator(); // Show a loader while data is being fetched
+                        Row(
+                          children: [
+                            Consumer<IncomeViewModel>(
+                              builder: (context, incomeViewModel, child) {
+                                if (incomeViewModel.fetchingData) {
+                                  return const CircularProgressIndicator(); // Show a loader while data is being fetched
+                                }
+
+                                double totalIncome = 0.0;
+                                for (var income in incomeViewModel.incomeAmount) {
+                                  if (income.incomeAmount != null) {
+                                    totalIncome += income.incomeAmount!;
                                   }
-                                  // Calculate total income
-                                  double totalIncome = 0.0;
-                                  for (var income in incomeViewModel.incomeAmount) {
-                                    if (income.incomeAmount != null) {
-                                      totalIncome += income.incomeAmount!;
+                                }
+
+                                return Consumer<InsightViewModel>(
+                                  builder: (context, viewModel, child) {
+                                    double totalExpense = 0.0;
+
+                                    for (var expense in viewModel.transactionsExpense) {
+                                      if (expense.amount != null) {
+                                        totalExpense += expense.amount!;
+                                      }
                                     }
-                                  }
-                                  return Center(
-                                    child: Text(
-                                      'RM ${totalIncome.toStringAsFixed(2)}',
+
+                                    double balance = totalIncome - totalExpense;
+                                    print('total expense: $totalExpense');
+
+                                    return Text(
+                                      'RM ${balance.toStringAsFixed(2)}',
                                       style: const TextStyle(
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,
                                       ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: 8),
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.visibility_off),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 10),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.visibility_off),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
                         ],
                       ),
                     ),

@@ -9,16 +9,16 @@ class CallingApi{
 
 final http.Client _httpClient = http.Client();
 
-  Future<http.Response> fetchTransactionsExpense() async{
+  Future<http.Response> fetchTransactionsExpense(int userid) async{
     // change to Expense
-    String endpoint = '/expense';
+    String endpoint = '/expense/$userid';
     String url = '${AppConfig.baseUrl}$endpoint';
     return await http.get(Uri.parse(url));
   }
 
-  Future<http.Response> fetchTransactionList() async{
+  Future<http.Response> fetchTransactionList(int userid) async{
     // change to Expense
-    String endpoint = '/transactions';
+    String endpoint = '/transactions/$userid';
     String url = '${AppConfig.baseUrl}$endpoint';
     return await http.get(Uri.parse(url));
   }
@@ -35,8 +35,8 @@ final http.Client _httpClient = http.Client();
     return await http.get(Uri.parse(url));
   }
 
-  Future<http.Response> fetchSubcategories(int parentCategoryId) async{
-    String endpoint = '/subcategories/$parentCategoryId';
+  Future<http.Response> fetchSubcategories(int parentCategoryId, int userid) async{
+    String endpoint = '/subcategories/$parentCategoryId/$userid';
     String url = '${AppConfig.baseUrl}$endpoint';
     return await http.get(Uri.parse(url));
   }
@@ -59,8 +59,8 @@ final http.Client _httpClient = http.Client();
     return response;
   }
 
-  Future<http.Response> addSubcategories(Map<String, dynamic> subcategoryData) async {
-    String endpoint = '/subcategories';
+  Future<http.Response> addSubcategories(Map<String, dynamic> subcategoryData,int userid) async {
+    String endpoint = '/subcategories$userid';
     String url = '${AppConfig.baseUrl}$endpoint';
 
     print("Sending subcategory data: $subcategoryData"); // Log the data being sent
@@ -151,8 +151,8 @@ final http.Client _httpClient = http.Client();
     return response;
   }
 
-  Future<http.Response> deleteExpense(int expenseId) async {
-    String endpoint = '/expense/$expenseId';
+  Future<http.Response> deleteExpense(int expenseId, int userid) async {
+    String endpoint = '/expense/$expenseId/$userid';
     String url = '${AppConfig.baseUrl}$endpoint';
 
     print("Deleting expense with ID: $expenseId");
@@ -165,8 +165,8 @@ final http.Client _httpClient = http.Client();
     return response;
   }
 
-  Future<http.Response> deleteIncome(int incomeId) async {
-    String endpoint = '/income/$incomeId';
+  Future<http.Response> deleteIncome(int incomeId, int userid) async {
+    String endpoint = '/income/$incomeId/$userid';
     String url = '${AppConfig.baseUrl}$endpoint';
 
     print("Deleting income with ID: $incomeId");

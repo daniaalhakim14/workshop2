@@ -7,6 +7,7 @@ import '../../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
 
 
 class newSubcategory_page extends StatefulWidget {
+  final int userid;
   final int? categoryId;
   final int? categoryIconId;
   final Color? iconColor;
@@ -15,6 +16,7 @@ class newSubcategory_page extends StatefulWidget {
 
   newSubcategory_page({
     super.key,
+    required this.userid,
     required this.categoryId,
     required this.categoryIconId,
     required this.iconColor,
@@ -168,13 +170,14 @@ class _newSubcategory_pageState extends State<newSubcategory_page> {
                   if (_textControllerAddNote.text.isNotEmpty) {
                     final viewModel = Provider.of<InsightViewModel>(context, listen: false);
                     final newSubcategory = AddSubcategories(
+                      userid: widget.userid,
                       newSubcategoryName: _textControllerAddNote.text,
                       parentCategoryId: widget.categoryId,
                       iconId: widget.categoryIconId,
                     );
 
                     try {
-                      await viewModel.addSubcategory(newSubcategory);
+                      await viewModel.addSubcategory(newSubcategory,widget.userid);
                       print("Subcategory added successfully!");
                       Navigator.pop(context,true); // Navigate back on success
                     } catch (e) {

@@ -17,6 +17,7 @@ class TransactionsExpense {
   final IconData? icondata; // Combines `codepoint` and `fontfamily`
   final Color? iconcolor;
   final String? categoryname;
+  final int? userid;
 
   TransactionsExpense({
     this.expenseid,
@@ -28,7 +29,8 @@ class TransactionsExpense {
     this.iconname,
     this.icondata,
     this.iconcolor,
-    this.categoryname
+    this.categoryname,
+    this.userid
   });
   // Factory constructor to create an instance from JSON
   factory TransactionsExpense.fromJson(Map<String, dynamic> json) => TransactionsExpense(
@@ -58,6 +60,7 @@ class TransactionsExpense {
         : json['color']) // Use directly if it's already an int
         : null, // Convert color integer to Color
     categoryname: json['category_name'],
+    userid: json['userid'],
   );
 }
 
@@ -215,6 +218,7 @@ class Subcategories{
   final int? iconId;
   final IconData? iconData;
   final Color? iconColor;
+  final int? userid;
 
   Subcategories({
     this.subcategoryId,
@@ -222,7 +226,8 @@ class Subcategories{
     this.parentCategoryId,
     this.iconId,
     this.iconData,
-    this.iconColor
+    this.iconColor,
+    this.userid,
   });
 
 
@@ -240,6 +245,7 @@ class Subcategories{
     iconColor: json['color'] != null
         ? Color(int.tryParse(json['color']) ?? 0) // Safely parse the color string
         : null,
+    userid: json['userid']
   );
   /*
   // Override toString for better debugging
@@ -253,17 +259,20 @@ class Subcategories{
 }
 
 class AddSubcategories {
+  final int? userid;
   final String? newSubcategoryName;
   final int? parentCategoryId;
   final int? iconId;
 
   AddSubcategories({
+    this.userid,
     this.newSubcategoryName,
     this.parentCategoryId,
     this.iconId,
   });
 
   factory AddSubcategories.fromJson(Map<String, dynamic> json) => AddSubcategories(
+    userid: json['userid'],
     newSubcategoryName: json["subcategory_name"],
     parentCategoryId: json["parentcategoryid"],
     iconId: json["iconid"],
@@ -271,6 +280,7 @@ class AddSubcategories {
 
   Map<String, dynamic> toMap() {
     return {
+      "userid": userid,
       "subcategory_name": newSubcategoryName,
       "parentcategoryid": parentCategoryId,
       "iconid": iconId,

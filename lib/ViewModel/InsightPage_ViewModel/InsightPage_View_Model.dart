@@ -29,12 +29,12 @@ class InsightViewModel extends ChangeNotifier{
   List<Subcategories> _subcategory = [];
   List<Subcategories> get subcategory => _subcategory;
 
-  Future<void> fetchTransactionsExpense() async {
+  Future<void> fetchTransactionsExpense(int userid) async {
     fetchingData = true; // Indicate that data fetching is in progress
     notifyListeners();
 
     try {
-      _transactionsExpense = await repository.getTransactionsExpense();
+      _transactionsExpense = await repository.getTransactionsExpense(userid);
     } catch (e) {
       print('Failed to load transaction expenses: $e');
       _transactionsExpense = [];
@@ -44,21 +44,23 @@ class InsightViewModel extends ChangeNotifier{
     }
   }
 
-  Future<void> fetchTransactionList() async {
+  Future<void> fetchTransactionList(int userid) async {
     fetchingData = true; // Indicate that data fetching is in progress
     notifyListeners();
 
     try {
-      _transactionList = await repository.getTransactionList();
+      _transactionList = await repository.getTransactionList(userid);
       print('Loaded Transaction list: $_transactionList');
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('Failed to load transaction list: $e');
+      print('Stack trace: $stackTrace'); // Log the stack trace
       _transactionList = [];
     } finally {
       fetchingData = false; // Data fetching completed
       notifyListeners();
     }
   }
+
 
   Future<void> fetchBasicCategory() async {
     fetchingData = true;
@@ -92,12 +94,12 @@ class InsightViewModel extends ChangeNotifier{
     }
   }
 
-  Future<void> fetchSubcategories(int parentCategoryId) async {
+  Future<void> fetchSubcategories(int parentCategoryId, int userid) async {
     fetchingData = true;
     _subcategory = []; // Clear the subcategory list
     notifyListeners();
     try {
-      _subcategory = await repository.getSubcategories(parentCategoryId);
+      _subcategory = await repository.getSubcategories(parentCategoryId,userid);
       //print('Loaded Subcategories: $_subcategory');
     } catch (e) {
       print('Failed to load Basic Category: $e');
@@ -116,9 +118,9 @@ class InsightViewModel extends ChangeNotifier{
     }
   }
 
-  Future<bool> addSubcategory(AddSubcategories subcategory) async {
+  Future<bool> addSubcategory(AddSubcategories subcategory, int userid) async {
     try {
-      await repository.addSubcategory(subcategory);
+      await repository.addSubcategory(subcategory,userid);
       notifyListeners();
       return true; // Indicate success
     } catch (e) {
@@ -159,27 +161,27 @@ class InsightViewModel extends ChangeNotifier{
     }
   }
 
-  Future<void> deleteExpense(int expenseId) async {
+  Future<void> deleteExpense(int expenseId,int userid) async {
     try {
-      await repository.deleteExpense(DeleteExpense(expenseId: expenseId));
+      await repository.deleteExpense(DeleteExpense(expenseId: expenseId),userid);
       print('Transaction deleted successfully!');
 
       // Refresh the transaction list after deletion
-      await fetchTransactionList();
-      await fetchTransactionsExpense();
+      await fetchTransactionList(userid);
+      await fetchTransactionsExpense(userid);
     } catch (e) {
       print('Failed to delete transaction: $e');
     }
   }
 
-  Future<void> deleteIncome(int incomeId) async {
+  Future<void> deleteIncome(int incomeId,int userid) async {
     try {
-      await repository.deleteIncome(DeleteIncome(incomeId: incomeId));
+      await repository.deleteIncome(DeleteIncome(incomeId: incomeId),userid);
       print('Transaction deleted successfully!');
 
       // Refresh the transaction list after deletion
-      await fetchTransactionList();
-      await fetchTransactionsExpense();
+      await fetchTransactionList(userid);
+      await fetchTransactionsExpense(userid);
     } catch (e) {
       print('Failed to delete transaction: $e');
     }

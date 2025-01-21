@@ -7,10 +7,11 @@ import 'newSubcategory_page.dart';
 
 
 class subcategory_page extends StatefulWidget {
-
+  final int userid;
   // Constructor accept category data from category_page
   subcategory_page({
     super.key,
+    required this.userid,
     required this.parentCategoryId,
     required this.category_name,
   });
@@ -47,7 +48,7 @@ class _subcategory_pageState extends State<subcategory_page> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_){
       final viewModel = Provider.of<InsightViewModel>(context, listen: false);
-      viewModel.fetchSubcategories(widget.parentCategoryId); // Always fetch fresh data
+      viewModel.fetchSubcategories(widget.parentCategoryId,widget.userid); // Always fetch fresh data
     });
   }
   @override
@@ -74,7 +75,7 @@ class _subcategory_pageState extends State<subcategory_page> {
               }
               if (viewModel.subcategory.isEmpty) {
                 return const Center(
-                  child: Text('No Categories available'),
+                  child: Text('No subategories available'),
                 );
               }
 
@@ -193,6 +194,7 @@ class _subcategory_pageState extends State<subcategory_page> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => newSubcategory_page(
+                        userid: widget.userid,
                         categoryId: categoryId,
                         categoryIconId: categoryIconId,
                         iconColor: categoryIconColor,
@@ -204,7 +206,7 @@ class _subcategory_pageState extends State<subcategory_page> {
                   // If a new subcategory was added, refresh the list
                   if (result == true) {
                     print("Refreshing subcategory list...");
-                    await viewModel.fetchSubcategories(widget.parentCategoryId);
+                    await viewModel.fetchSubcategories(widget.parentCategoryId, widget.userid);
                   }
                 } else {
                   // Return selected subcategory data
