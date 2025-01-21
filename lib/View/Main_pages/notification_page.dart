@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:tab_bar_widget/View/Main_pages/homepage.dart';
+import '../../ViewModel/app_appearance_viewmodel.dart';
 import '../../admin_dashboard/models/model/notification.dart' as nt;
 import '../../admin_dashboard/utils/icon_utils.dart';
 import '../../Model/SignupLoginPage_model.dart';
@@ -41,6 +43,8 @@ class _NotificationState extends State<Noti> {
 
   @override
   Widget build(BuildContext notificationContext) {
+    final isDarkMode =
+        Provider.of<AppAppearanceViewModel>(notificationContext).isDarkMode;
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -54,7 +58,7 @@ class _NotificationState extends State<Noti> {
             ),
           ),
         ),
-        backgroundColor: const Color(0xFF65ADAD), //0xFF008080
+        backgroundColor: isDarkMode ? Colors.black : const Color(0xFF65ADAD),
         automaticallyImplyLeading: false,
       ),
 
@@ -305,7 +309,7 @@ class _NotificationState extends State<Noti> {
 
 
       bottomNavigationBar: BottomAppBar(
-        color: const Color(0xFF002B36),
+        color: isDarkMode ? Colors.black : const Color(0xFF002B36),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[

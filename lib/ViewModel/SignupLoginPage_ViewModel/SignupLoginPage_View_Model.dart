@@ -1,7 +1,9 @@
 // A bridge between view layer and repository (data layer)
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../Model/SignupLoginPage_model.dart';
+import '../app_appearance_viewmodel.dart';
 import 'SignupLoginPage_Repository.dart';
 
 
@@ -34,15 +36,40 @@ class SignupLoginPage_ViewModule extends ChangeNotifier{
     notifyListeners();
   }
 
-  Future<bool> login(String email, String password) async {
+  Future<bool> login(String email, String password, BuildContext context) async {
     try {
+      // Call your login API or logic here
       final success = await _repository.login(email, password);
-      return success;
-    } catch (e) {
-      print('Login failed: $e');
+
+      if (success) {
+        // Fetch user details
+        await fetchUserDetailsByEmail(email);
+
+        if (_userInfo != null && _userInfo!.id != null) {
+          final appAppearanceViewModel =
+          Provider.of<AppAppearanceViewModel>(context, listen: false);
+
+          // Reinitialize AppAppearanceViewModel with new user ID
+          debugPrint('Initializing AppAppearanceViewModel for user: ${_userInfo!.id}');
+          await appAppearanceViewModel.initialize(_userInfo!.id.toString());
+
+          debugPrint('AppAppearanceViewModel successfully initialized.');
+          return true;
+        } else {
+          debugPrint('Error: User info is null or invalid after login.');
+        }
+      }
+
+      return false;
+    } catch (e, stackTrace) {
+      debugPrint('Login failed: $e');
+      debugPrint(stackTrace.toString());
       return false;
     }
   }
+
+
+
 
   // Fetch user details using email
   Future<void> fetchUserDetailsByEmail(String email) async {

@@ -188,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
     final String email = _emailController.text;
     final String password = _passwordController.text;
 
-    final success = await viewModel.login(email, password);
+    final success = await viewModel.login(email, password,context);
     if (success) {
       // Save login info to shared preferences
       final prefs = await SharedPreferences.getInstance();
