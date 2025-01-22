@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../configure_API.dart';
 
@@ -39,6 +40,9 @@ class ChangeEmailViewModel extends ChangeNotifier {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Email updated successfully')),
         );
+
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('userEmail', newEmail);
 
         oldEmailController.clear();
         newEmailController.clear();

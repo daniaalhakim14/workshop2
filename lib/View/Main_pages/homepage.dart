@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tab_bar_widget/Model/Income_model.dart';
 import '../../Model/InsightPage_model.dart';
 import '../../Model/SignupLoginPage_model.dart';
 import '../../ViewModel/Income/Income_View_Model.dart';
 import '../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
+import '../../ViewModel/SignupLoginPage_ViewModel/SignupLoginPage_View_Model.dart';
 import '../../ViewModel/account_viewmodel.dart';
 import '../../ViewModel/app_appearance_viewmodel.dart';
 import 'account_page.dart';
@@ -55,6 +57,17 @@ class _HomePageState extends State<HomePage> {
 
     });
 
+  }
+
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Fetch budget data whenever dependencies change
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final prefs = await SharedPreferences.getInstance();
+      final email = prefs.getString('userEmail');
+      Provider.of<SignupLoginPage_ViewModule>(context, listen: false).fetchUserDetailsByEmail(email!);
+    });
   }
 
   @override
@@ -117,20 +130,24 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0,top: 4.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Hello, ${widget.userInfo.name}',
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.normal,
-                              height: 0.8
-                          ),
-                        ),
-                      ],
+                    child: Consumer<SignupLoginPage_ViewModule>(
+                      builder: (context, viewModel, child) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Hello, ${viewModel.userInfo!.name}',
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.normal,
+                                  height: 0.8
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -173,6 +190,7 @@ class _HomePageState extends State<HomePage> {
 
                               const SizedBox(height: 2),
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Consumer<IncomeViewModel>(
                                     builder: (context, incomeViewModel, child) {
@@ -199,7 +217,6 @@ class _HomePageState extends State<HomePage> {
                                           print('total expense: $totalExpense');
                                           return Row(
                                             children: [
-                                              // Conditional rendering of the balance text
                                               isVisible
                                                   ? Text(
                                                 'RM ${balance.toStringAsFixed(2)}',
@@ -217,6 +234,7 @@ class _HomePageState extends State<HomePage> {
                                                   color: isDarkMode ? Colors.white : Colors.black,
                                                 ),
                                               ),
+                                              // Conditional rendering of the balance text
 
                                               IconButton(
                                                 onPressed: () {
