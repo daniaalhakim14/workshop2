@@ -35,11 +35,18 @@ final http.Client _httpClient = http.Client();
     return await http.get(Uri.parse(url));
   }
 
-  Future<http.Response> fetchSubcategories(int parentCategoryId, int userid) async{
-    String endpoint = '/subcategories/$parentCategoryId/$userid';
+  Future<http.Response> fetchSubcategories(int parentCategoryId, int? userid) async{
+      String endpoint = '/subcategories/basic/$parentCategoryId';
     String url = '${AppConfig.baseUrl}$endpoint';
     return await http.get(Uri.parse(url));
   }
+
+    Future<http.Response> fetchSubcategoriesForUser(int parentCategoryId, int userid) async{
+      String endpoint = '/subcategories/$parentCategoryId/custom/$userid';
+      String url = '${AppConfig.baseUrl}$endpoint';
+      return await http.get(Uri.parse(url));
+    }
+
 
   Future<http.Response> addIcon(Map<String, dynamic> iconData) async {
     String endpoint = '/icons';

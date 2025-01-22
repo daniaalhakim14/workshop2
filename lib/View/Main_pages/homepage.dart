@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
         final textColor = isDarkMode ? Colors.white : Colors.black;
 
         return Scaffold(
-          backgroundColor: isDarkMode ? Colors.black : const Color(0xFF65ADAD),
+          backgroundColor: isDarkMode ? Colors.black : Colors.grey[100],
           appBar: AppBar(
             automaticallyImplyLeading: false,
             elevation: 0,

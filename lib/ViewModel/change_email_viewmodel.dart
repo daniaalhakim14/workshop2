@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../configure_API.dart';
+
 class ChangeEmailViewModel extends ChangeNotifier {
   final TextEditingController oldEmailController = TextEditingController();
   final TextEditingController newEmailController = TextEditingController();
@@ -24,7 +26,7 @@ class ChangeEmailViewModel extends ChangeNotifier {
 
     try {
       final response = await http.post(
-        Uri.parse('http://10.131.79.104:3000/changeEmail/change-email'),
+        Uri.parse('${AppConfig.baseUrl}/changeEmail/change-email'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'userId': userId,
