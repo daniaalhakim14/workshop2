@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:tab_bar_widget/Model/SignupLoginPage_model.dart';
 
 
 import '../../../Model/Budget.dart';
@@ -9,7 +10,8 @@ import '../../../ViewModel/AIBudgetViewModel.dart';
 import '../../../ViewModel/BudgetViewModel.dart';
 
 class AIBudget extends StatefulWidget{
-  const AIBudget({super.key});
+  final UserInfoModule userInfo;
+  const AIBudget({super.key,required this.userInfo});
 
   @override
   State<AIBudget> createState() => _AIBudgetState();
@@ -21,7 +23,7 @@ class _AIBudgetState extends State<AIBudget> {
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    int userid = 1;
+    int userid = widget.userInfo.id;
 
     return Scaffold(
       appBar: AppBar(

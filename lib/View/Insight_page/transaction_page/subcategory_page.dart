@@ -49,6 +49,7 @@ class _subcategory_pageState extends State<subcategory_page> {
     WidgetsBinding.instance.addPostFrameCallback((_){
       final viewModel = Provider.of<InsightViewModel>(context, listen: false);
       viewModel.fetchSubcategories(widget.parentCategoryId,widget.userid); // Always fetch fresh data
+      //viewModel.fetchSubcategoriesForUser(widget.parentCategoryId,widget.userid);
     });
   }
   @override

@@ -110,6 +110,22 @@ class InsightViewModel extends ChangeNotifier{
     }
   }
 
+    Future<void> fetchSubcategoriesForUser(int parentCategoryId, int userid) async {
+      fetchingData = true;
+      _subcategory = []; // Clear the subcategory list
+      notifyListeners();
+      try {
+        _subcategory = await repository.getSubcategories(parentCategoryId,userid);
+        //print('Loaded Subcategories: $_subcategory');
+      } catch (e) {
+        print('Failed to load Basic Category: $e');
+        _subcategory = [];
+      } finally {
+        fetchingData = false;
+        notifyListeners();
+      }
+    }
+
   Future<void> addIcon(AddIcon icon) async {
     try {
       await repository.addIcon(icon);

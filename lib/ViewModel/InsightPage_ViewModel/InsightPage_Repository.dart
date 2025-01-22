@@ -71,7 +71,7 @@ class InsightRepository{
     }
   }
 
-  Future<List<Subcategories>> getSubcategories(int parentCategoryId,int userid) async {
+  Future<List<Subcategories>> getSubcategories(int parentCategoryId,int? userid) async {
     final response = await _service.fetchSubcategories(parentCategoryId,userid);
 
     if (response.statusCode == 200) {
@@ -85,6 +85,21 @@ class InsightRepository{
       throw Exception('Failed to load subcategories');
     }
   }
+
+    Future<List<Subcategories>> getSubcategoriesForUser(int parentCategoryId,int userid) async {
+      final response = await _service.fetchSubcategoriesForUser(parentCategoryId,userid);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        //print('Decoded subcategories: $data');
+        return List<Subcategories>.from(
+          data.map((x) => Subcategories.fromJson(x))
+        );
+      } else {
+        print('API Error: ${response.body}');
+        throw Exception('Failed to load subcategories');
+      }
+    }
 
   Future<void> addIcon(AddIcon icon) async {
     final response = await _service.addIcon(icon.toMap());

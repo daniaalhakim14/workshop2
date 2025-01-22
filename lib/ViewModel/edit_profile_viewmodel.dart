@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../configure_API.dart';
+
 
 class EditProfileViewModel extends ChangeNotifier {
   final TextEditingController nameController = TextEditingController();
@@ -23,7 +25,7 @@ class EditProfileViewModel extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final uri = Uri.parse('http://192.168.0.18:3000/user/user/$userId');
+      final uri = Uri.parse('${AppConfig.baseUrl}/user/user/$userId');
       final response = await http.get(uri, headers: _headers);
 
       if (response.statusCode == 200) {
@@ -60,7 +62,7 @@ class EditProfileViewModel extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final uri = Uri.parse('http://192.168.0.18:3000/profile/update-profile/$userId');
+      final uri = Uri.parse('${AppConfig.baseUrl}/profile/update-profile/$userId');
       final response = await http.put(
         uri,
         headers: _headers,

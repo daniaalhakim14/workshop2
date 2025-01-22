@@ -133,7 +133,7 @@ class _budgetState extends State<budget> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => CreateBudget(), // Replace with your edit page
+                                  builder: (context) => CreateBudget(userInfo: widget.userInfo), // Replace with your edit page
                                 ),
                               ).then((value) {
                                 // Refresh data after navigating back
@@ -153,7 +153,7 @@ class _budgetState extends State<budget> {
                                 if (result == "success") {
                                   Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => AIBudget())
+                                      MaterialPageRoute(builder: (context) => AIBudget(userInfo: widget.userInfo))
                                   ).then((result) async {
                                     viewModel.fetchBudgets(userid);
                                     showAutoDismissAlert(context, "Alert", result);

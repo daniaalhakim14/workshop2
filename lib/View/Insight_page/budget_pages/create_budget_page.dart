@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tab_bar_widget/Model/SignupLoginPage_model.dart';
 
 import '../../../ViewModel/BudgetTextFieldViewModel.dart';
 import '../../../ViewModel/BudgetViewModel.dart';
@@ -9,7 +10,8 @@ import 'budget_category_page.dart';
 
 
 class CreateBudget extends StatefulWidget{
-  const CreateBudget({super.key});
+  final UserInfoModule userInfo;
+  const CreateBudget({super.key,required this.userInfo});
 
   @override
   State<CreateBudget> createState() => _CreateBudgetState();
@@ -17,9 +19,12 @@ class CreateBudget extends StatefulWidget{
 
 class _CreateBudgetState extends State<CreateBudget> {
 
+  late int userid;
+
   @override
   void initState() {
     super.initState();
+    userid = widget.userInfo.id;
     // Fetch budget data when the screen is opened
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<CategoryViewModel>(context, listen: false).fetchCategories();
@@ -148,7 +153,7 @@ class _CreateBudgetState extends State<CreateBudget> {
                                 final amount = textFieldViewModel.budgetAmountValue;
                                 final startdate = dateViewModel.yearMonthDay;
                                 final recurrence = "monthly";
-                                final userid = 1;
+
 
                                 await budgetViewModel.createBudget(
                                   name: name,

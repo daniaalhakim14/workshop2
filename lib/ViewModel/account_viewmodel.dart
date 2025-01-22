@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
-
+import '../configure_API.dart';
 class AccountViewModel extends ChangeNotifier {
   Uint8List? _avatarBytes;
   bool _isLoading = false;
@@ -24,7 +24,7 @@ class AccountViewModel extends ChangeNotifier {
   }
 
   Future<void> fetchAvatar(String userId) async {
-    final uri = Uri.parse('http://192.168.0.18:3000/profile/get-profile-image/$userId');
+    final uri = Uri.parse('${AppConfig.baseUrl}/profile/get-profile-image/$userId');
     try {
       debugPrint('Fetching avatar for userId: $userId');
       final response = await http.get(uri);
@@ -52,7 +52,7 @@ class AccountViewModel extends ChangeNotifier {
     debugPrint('Uploading avatar for userId: $userId');
     debugPrint('File path: ${avatar.path}');
 
-    final uri = Uri.parse('http://192.168.0.18:3000/profile/update-profile-image/$userId');
+    final uri = Uri.parse('${AppConfig.baseUrl}/profile/update-profile-image/$userId');
     final request = http.MultipartRequest('POST', uri);
 
     try {
