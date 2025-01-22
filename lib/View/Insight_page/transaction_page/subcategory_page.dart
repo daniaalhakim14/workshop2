@@ -74,9 +74,12 @@ class _subcategory_pageState extends State<subcategory_page> {
       ),
       body: Column(
         children: [
-          const Padding(padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
+          Padding(padding: const EdgeInsets.only(top: 10.0, bottom: 20.0),
             child: Text('Select a subcategory',
-              style: TextStyle(fontSize: 18.0),
+              style: TextStyle(
+                fontSize: 18.0,
+                color: isDarkMode ? Colors.white : Colors.black, // Adjust color based on theme
+              ),
             ),
           ),
           Consumer<InsightViewModel>(
@@ -154,9 +157,11 @@ class _subcategory_pageState extends State<subcategory_page> {
                                     children: [
                                       Text(
                                         subcategory.subcategoryName ?? '',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18.0,
+                                          color: isDarkMode ? Colors.white :  Colors.black,
+
                                         ),
                                       ),
                                       const Spacer(), // Automatically pushes the icon to the far right
@@ -165,7 +170,7 @@ class _subcategory_pageState extends State<subcategory_page> {
                                             ? Icons.circle
                                             : Icons.circle_outlined,
                                         size: 30,
-                                        color: Colors.black,
+                                        color: isDarkMode ? Colors.white : Colors.black, // Set color based on isDarkMode
                                       ),
                                     ]),
                               )

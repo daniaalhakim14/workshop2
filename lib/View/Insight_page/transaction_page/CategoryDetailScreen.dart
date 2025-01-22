@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../Model/InsightPage_model.dart';
+import '../../../ViewModel/app_appearance_viewmodel.dart';
 import 'SubCategoryDetailScreen.dart';
 
 
@@ -38,8 +40,19 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     return Scaffold(
+      backgroundColor: backgroundColor,
+
       appBar: AppBar(
+        backgroundColor: isDarkMode ? Colors.black : const Color(0xFF65ADAD),
+        iconTheme: IconThemeData(
+          color: isDarkMode ? Colors.white : Colors.black, // Back arrow color
+        ),
         title: Text(
           widget.categoryName,
           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
@@ -75,7 +88,8 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
                 ),
                 title: Text(
                   subcategoryName,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style:  TextStyle(fontWeight: FontWeight.bold,          color: isDarkMode ? Colors.white : Colors.black, // Back arrow color
+                  ),
                 ),
                 subtitle: Text(
                   '${subcategoryTransactions.length} Transaction${subcategoryTransactions.length > 1 ? 's' : ''}',

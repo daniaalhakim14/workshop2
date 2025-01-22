@@ -6,6 +6,7 @@ import '../../../ViewModel/BudgetTextFieldViewModel.dart';
 import '../../../ViewModel/BudgetViewModel.dart';
 import '../../../ViewModel/CategoryViewModel.dart';
 import '../../../ViewModel/DateViewModel.dart';
+import '../../../ViewModel/app_appearance_viewmodel.dart';
 import 'budget_category_page.dart';
 
 
@@ -33,13 +34,23 @@ class _CreateBudgetState extends State<CreateBudget> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     return Scaffold(
+      backgroundColor: backgroundColor,
+
       appBar: AppBar(
+        backgroundColor: backgroundColor,
+        iconTheme: IconThemeData(
+          color: isDarkMode ? Colors.white : Colors.black, // Back arrow color
+        ),
         title: const Text(
             "Budget",
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
         ),
-        backgroundColor: Color(0xFF65ADAD),
       ),
       body: Consumer<BudgetViewModel>(
         builder: (context, budgetViewModel, child) {
@@ -209,7 +220,11 @@ class BudgetInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Label text
@@ -220,7 +235,7 @@ class BudgetInputField extends StatelessWidget {
             style: TextStyle(
               fontSize: 14.0,
               fontWeight: FontWeight.w500,
-              color: Colors.black,
+              color: isDarkMode ? Colors.white : Colors.black, // White for dark mode, black for default
             ),
           ),
         ),

@@ -163,8 +163,10 @@ class _CategoryPageState extends State<CategoryPage> {
                           ),
                         ),
                       ),
-                      const Icon(Icons.arrow_forward_ios),
-                    ],
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: isDarkMode ? Colors.white : Colors.black, // Set color based on isDarkMode
+                      ),                    ],
                   ),
                 ),
               );

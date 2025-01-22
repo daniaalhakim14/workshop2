@@ -47,6 +47,8 @@ class _AnalysisState extends State<Analysis> {
     final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
     final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     return Scaffold(
+      backgroundColor: backgroundColor,
+
 
       body: SingleChildScrollView(
 
@@ -230,7 +232,11 @@ class BudgetVsRealChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Calculate the width based on the number of data points
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);    // Calculate the width based on the number of data points
     double analysisWidth = analysis.length * 150.0; // 80px per data point
 
     return SingleChildScrollView(
@@ -238,13 +244,13 @@ class BudgetVsRealChart extends StatelessWidget {
       child: SizedBox(
         width: analysisWidth, // Set the width of the chart container
         child: SfCartesianChart(
-          primaryXAxis: CategoryAxis(),
           legend: Legend(
             isVisible: true,
             // Border color and border width of legend
-            borderColor: Colors.black,
+            borderColor: Colors.green,
             borderWidth: 2,
             alignment: ChartAlignment.near,
+            textStyle: TextStyle(color: isDarkMode ? Colors.white :  Colors.black),
           ),
           series: <CartesianSeries>[
             ColumnSeries<AnalysisData, String>(
@@ -256,7 +262,8 @@ class BudgetVsRealChart extends StatelessWidget {
               dataLabelSettings: DataLabelSettings(
                 isVisible: true,
                 labelAlignment: ChartDataLabelAlignment.top,
-                textStyle: TextStyle(color: Colors.black),
+                textStyle: TextStyle(color:isDarkMode ? Colors.white :  Colors.black,
+                ),
               ),
             ),
             ColumnSeries<AnalysisData, String>(
@@ -268,10 +275,21 @@ class BudgetVsRealChart extends StatelessWidget {
               dataLabelSettings: DataLabelSettings(
                 isVisible: true,
                 labelAlignment: ChartDataLabelAlignment.top,
-                textStyle: TextStyle(color: Colors.black),
+                textStyle: TextStyle(color:isDarkMode ? Colors.white :  Colors.black),
               ),
             ),
           ],
+          primaryXAxis: CategoryAxis(
+            labelStyle: TextStyle(
+              color: isDarkMode ? Colors.white : Colors.black, // Category name text color
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          primaryYAxis: NumericAxis(
+            labelStyle: TextStyle(
+              color: isDarkMode ? Colors.white : Colors.black, // Y-axis label text color
+            ),
+          ),
         ),
       ),
     );
@@ -318,7 +336,11 @@ class MessageBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);    return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Title
@@ -327,6 +349,7 @@ class MessageBox extends StatelessWidget {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
+            color: isDarkMode ? Colors.white :  Colors.black,
           ),
         ),
         const SizedBox(height: 16), // Spacing between title and content
@@ -414,7 +437,11 @@ class BudgetVsRealPieChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CarouselSlider(
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);    return CarouselSlider(
       options: CarouselOptions(
         height: 500, // Set the height of the carousel
         enlargeCenterPage: true,
@@ -428,11 +455,13 @@ class BudgetVsRealPieChart extends StatelessWidget {
       ),
       items: [
         _buildPieChart(
+          isDarkMode: isDarkMode,
           title: 'Budget\nTotal: RM ${totalBudget.toStringAsFixed(2)}',
           dataSource: analysis,
           valueMapper: (AnalysisData data, _) => data.budget_amount,
         ),
         _buildPieChart(
+          isDarkMode: isDarkMode,
           title: 'Actual Expenses\nTotal: RM ${totalExpense.toStringAsFixed(2)}',
           dataSource: analysis,
           valueMapper: (AnalysisData data, _) => data.expense_amount,
@@ -442,6 +471,7 @@ class BudgetVsRealPieChart extends StatelessWidget {
   }
 
   Widget _buildPieChart({
+    required bool isDarkMode,
     required String title,
     required List<AnalysisData> dataSource,
     required ChartValueMapper<AnalysisData, num> valueMapper,
@@ -458,7 +488,8 @@ class BudgetVsRealPieChart extends StatelessWidget {
       ),
       legend: Legend(
         isVisible: true,
-        borderColor: Colors.black,
+        borderColor:  isDarkMode ? Colors.white :  Colors.black,
+
         borderWidth: 2,
         legendItemBuilder: (String name, ChartSeries<dynamic, dynamic>? series, ChartPoint<dynamic> point, int index) {
           final data = dataSource[index]; // Get the corresponding data
@@ -473,6 +504,7 @@ class BudgetVsRealPieChart extends StatelessWidget {
               Text(
                 name, // Display the category name
                 style: TextStyle(
+                  color: isDarkMode ? Colors.white :  Colors.black,
                   fontSize: 18, // Set the font size for the category labels
                   fontWeight: FontWeight.bold, // Optional: make the labels bold
                 ),
@@ -491,6 +523,8 @@ class BudgetVsRealPieChart extends StatelessWidget {
             isVisible: true,
             labelPosition: ChartDataLabelPosition.outside,
             textStyle: TextStyle(
+             color:  isDarkMode ? Colors.white :  Colors.black,
+
               fontSize: 18, // Set the font size for the category labels
             ),
           ),

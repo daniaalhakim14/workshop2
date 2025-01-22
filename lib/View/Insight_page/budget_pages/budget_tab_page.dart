@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../Model/Budget.dart';
 import '../../../Model/SignupLoginPage_model.dart';
 import '../../../ViewModel/BudgetViewModel.dart';
+import '../../../ViewModel/app_appearance_viewmodel.dart';
 import 'ai_budget.dart';
 import 'budget_detail_page.dart';
 import 'create_ai_budget_page.dart';
@@ -52,9 +53,16 @@ class _budgetState extends State<budget> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: backgroundColor,
+
       body: Stack(
         children: [
           // Main Content: Scrollable Budget Card List

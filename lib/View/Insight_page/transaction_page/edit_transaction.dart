@@ -2,9 +2,11 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:tab_bar_widget/Model/InsightPage_model.dart';
 
 import '../../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
+import '../../../ViewModel/app_appearance_viewmodel.dart';
 import 'category_page.dart';
 import 'incomeCategory_page.dart';
 
@@ -104,8 +106,19 @@ class _edit_transactionState extends State<edit_transaction> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     return Scaffold(
+      backgroundColor: backgroundColor,
+
       appBar: AppBar(
+        backgroundColor: isDarkMode ? Colors.black : const Color(0xFF65ADAD),
+        iconTheme: IconThemeData(
+          color: isDarkMode ? Colors.white : Colors.black, // Back arrow color
+        ),
         title: const Text('Edit Transaction',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
@@ -298,7 +311,10 @@ class _edit_transactionState extends State<edit_transaction> {
                                       _selectedSubcategory_Category != null
                                           ? _selectedSubcategory_Category!['name']
                                           : 'Set Category',
-                                      style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 22.0),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal, fontSize: 22.0,
+                                        color: isDarkMode ? Colors.white :  Colors.black,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -315,7 +331,7 @@ class _edit_transactionState extends State<edit_transaction> {
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.note_add_outlined, size: 50, color: Colors.black87),
+                              Icon(Icons.note_add_outlined, size: 50, color: isDarkMode ? Colors.white :  Colors.black87,),
                               Padding(
                                 padding: const EdgeInsets.only(top: 5.0, bottom: 0.0, left: 18, right: 0),
                                 child: Row(
@@ -334,6 +350,9 @@ class _edit_transactionState extends State<edit_transaction> {
                                             },
                                             icon: const Icon(Icons.clear),
                                           ),
+                                        ),
+                                        style: TextStyle(
+                                          color: isDarkMode ? Colors.white :  Colors.black,
                                         ),
                                       ),
                                     ),
@@ -360,12 +379,16 @@ class _edit_transactionState extends State<edit_transaction> {
                           padding: const EdgeInsets.only(top: 0.0, bottom: 0.0, left: 10.5, right: 0),
                           child: Row(
                             children: [
-                              const Icon(Icons.payment, size: 48, color: Colors.black87),
+                              Icon(Icons.payment, size: 48, color: isDarkMode ? Colors.white :  Colors.black87),
                               Padding(
                                 padding: const EdgeInsets.only(top: 0.0, bottom: 0.0, left: 17.5, right: 0),
                                 child: Row(
                                   children: [
-                                    const Text('Payment', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 22.0)),
+                                    Text('Payment', style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 22.0,
+                                      color: isDarkMode ? Colors.white :  Colors.black,
+                                    )),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 50),
                                       child: Row(

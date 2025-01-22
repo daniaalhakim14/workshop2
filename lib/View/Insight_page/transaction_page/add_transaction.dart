@@ -288,7 +288,8 @@ class _add_transactionState extends State<add_transaction> {
                                   children: [
                                     Text(
                                       _selectedSubcategory_Category != null ? _selectedSubcategory_Category!['name'] : 'Set Category',
-                                      style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 22.0),
+                                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 22.0,          color: isDarkMode ? Colors.white : Colors.black, // Adjust color dynamically
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -355,7 +356,8 @@ class _add_transactionState extends State<add_transaction> {
                                 padding: const EdgeInsets.only(top: 0.0, bottom: 0.0, left: 17.5, right: 0),
                                 child: Row(
                                   children: [
-                                    const Text('Payment', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 22.0)),
+                                    Text('Payment', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 22.0,          color: isDarkMode ? Colors.white : Colors.black, // Adjust color dynamically
+                                    )),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 50),
                                       child: Row(

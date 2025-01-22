@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tab_bar_widget/Model/InsightPage_model.dart';
 
 import '../../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
+import '../../../ViewModel/app_appearance_viewmodel.dart';
 
 
 
@@ -48,8 +49,20 @@ class _newSubcategory_pageState extends State<newSubcategory_page> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     return Scaffold(
+      backgroundColor: backgroundColor,
+
       appBar: AppBar(
+        backgroundColor: isDarkMode ? Colors.black : const Color(0xFF65ADAD),
+        iconTheme: IconThemeData(
+          color: isDarkMode ? Colors.white : Colors.black, // Back arrow color
+        ),
+
         title: const Text(
           'New Subcategory',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -58,12 +71,17 @@ class _newSubcategory_pageState extends State<newSubcategory_page> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const Align(
+            Align(
               alignment: Alignment.topLeft,
               child: Padding(
-                padding: EdgeInsets.only(top: 25.0, left: 14.0),
-                child: Text('Name'),
-              ),
+                padding: const EdgeInsets.only(top: 25.0, left: 14.0),
+                child: Text(
+                  'Name',
+                  style: TextStyle(
+                    fontSize: 18.0, // Adjust the font size as needed
+                    color: isDarkMode ? Colors.white : Colors.black, // Adjust color dynamically
+                  ),
+                ),              ),
             ),
             Row(
               children: [

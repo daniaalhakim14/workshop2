@@ -8,6 +8,7 @@ import 'package:tab_bar_widget/Model/SignupLoginPage_model.dart';
 import '../../../Model/Budget.dart';
 import '../../../ViewModel/AIBudgetViewModel.dart';
 import '../../../ViewModel/BudgetViewModel.dart';
+import '../../../ViewModel/app_appearance_viewmodel.dart';
 
 class AIBudget extends StatefulWidget{
   final UserInfoModule userInfo;
@@ -21,17 +22,27 @@ class _AIBudgetState extends State<AIBudget> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     final double screenHeight = MediaQuery.of(context).size.height;
 
     int userid = widget.userInfo.id;
 
     return Scaffold(
+      backgroundColor: backgroundColor,
+
       appBar: AppBar(
+        backgroundColor: backgroundColor,
+        iconTheme: IconThemeData(
+          color: isDarkMode ? Colors.white : Colors.black, // Back arrow color
+        ),
         title: const Text(
             'AI-Generated Budget Plan',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
         ),
-        backgroundColor: Color(0xFF65ADAD),
       ),
       body: Consumer<BudgetViewModel>(
         builder: (budgetContext, budgetViewModel, child) {

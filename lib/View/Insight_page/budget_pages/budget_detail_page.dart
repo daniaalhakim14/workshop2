@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../Model/Budget.dart';
 import '../../../Model/SignupLoginPage_model.dart';
 import '../../../ViewModel/BudgetViewModel.dart';
+import '../../../ViewModel/app_appearance_viewmodel.dart';
 import 'edit_budget_page.dart';
 
 
@@ -34,7 +35,11 @@ class _BudgetDetailState extends State<BudgetDetail> {
 
   @override
   Widget build(BuildContext context) {
-    Color color;
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);    Color color;
 
     if (_currentBudget.progressPercentage <= 25) {
       // Interpolate between blue and yellow
@@ -83,12 +88,17 @@ class _BudgetDetailState extends State<BudgetDetail> {
     }
 
     return Scaffold(
+      backgroundColor: backgroundColor,
+
       appBar: AppBar(
+        backgroundColor: backgroundColor,
+        iconTheme: IconThemeData(
+          color: isDarkMode ? Colors.white : Colors.black, // Back arrow color
+        ),
         title: Text(
             _currentBudget.budgetName,
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
         ),
-        backgroundColor: Color(0xFF65ADAD),
         actions: [
           GestureDetector(
             onTap: () async {
@@ -153,6 +163,8 @@ class _BudgetDetailState extends State<BudgetDetail> {
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
+                color: isDarkMode ? Colors.white : Colors.black, // White for dark mode, black by default
+
               ),
             ),
             SizedBox(height: 16.0),
@@ -160,6 +172,8 @@ class _BudgetDetailState extends State<BudgetDetail> {
               'Amount Spent: RM${(_currentBudget.totalAmount - _currentBudget.amountLeft).toStringAsFixed(2)}',
               style: TextStyle(
                 fontSize: 18.0,
+                color: isDarkMode ? Colors.white : Colors.black, // White for dark mode, black by default
+
               ),
             ),
             SizedBox(height: 8.0),
@@ -167,6 +181,8 @@ class _BudgetDetailState extends State<BudgetDetail> {
               'Amount Remained: RM${ _currentBudget.amountLeft.toStringAsFixed(2)}',
               style: TextStyle(
                 fontSize: 18.0,
+                color: isDarkMode ? Colors.white : Colors.black, // White for dark mode, black by default
+
               ),
             ),
             SizedBox(height: 16.0),
@@ -174,6 +190,8 @@ class _BudgetDetailState extends State<BudgetDetail> {
               'You have RM${_currentBudget.amountLeft.toStringAsFixed(2)} remaining for the rest of the period.',
               style: TextStyle(
                 fontSize: 16.0,
+                color: isDarkMode ? Colors.white : Colors.black, // White for dark mode, black by default
+
               ),
             ),
             SizedBox(height: 16.0),
@@ -211,19 +229,27 @@ class _BudgetDetailState extends State<BudgetDetail> {
             Text(
               '${_currentBudget.progressPercentage.toStringAsFixed(1)}%',
               style: TextStyle(
-                color: Colors.black,
+                color: isDarkMode ? Colors.white : Colors.black, // White for dark mode, black by default
                 fontSize: 18.0,
               ),
             ),
             SizedBox(height: 8.0),
             Text(
               'Budget for ${_currentBudget.categorynames}',
-              style: TextStyle(fontSize: 18.0),
+              style: TextStyle(
+                  fontSize: 18.0,
+                  color: isDarkMode ? Colors.white : Colors.black,
+              ),
+
+
             ),
             SizedBox(height: 8.0),
             Text(
               _currentBudget.date,
-              style: TextStyle(fontSize: 18.0),
+              style: TextStyle(
+                  fontSize: 18.0,
+                  color: isDarkMode ? Colors.white : Colors.black
+              ),
             ),
             SizedBox(height: 16.0),
             // Align(

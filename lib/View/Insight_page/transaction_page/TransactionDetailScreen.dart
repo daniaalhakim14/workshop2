@@ -54,6 +54,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
     final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
     final backgroundColor = isDarkMode ? Colors.black : Colors.white;
     final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     return Scaffold(
       backgroundColor: backgroundColor,
 
@@ -108,9 +110,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
             const SizedBox(height: 5.0),
             Text(
               formatDateTime(transactionDetail.date),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
+                color: isDarkMode ? Colors.white :  Colors.black,
               ),
             ),
             Row(

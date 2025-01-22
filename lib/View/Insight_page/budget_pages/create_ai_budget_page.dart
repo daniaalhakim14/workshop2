@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../ViewModel/AIBudgetTextFieldViewModel.dart';
 import '../../../ViewModel/AIBudgetViewModel.dart';
+import '../../../ViewModel/app_appearance_viewmodel.dart';
 
 class CreateAIBudget extends StatefulWidget{
   const CreateAIBudget({super.key});
@@ -14,14 +15,25 @@ class CreateAIBudget extends StatefulWidget{
 class _CreateAIBudgetState extends State<CreateAIBudget> {
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     return Scaffold(
+      backgroundColor: backgroundColor,
+
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        backgroundColor: backgroundColor,
+        iconTheme: IconThemeData(
+          color: isDarkMode ? Colors.white : Colors.black, // Back arrow color
+        ),
+
         title: const Text(
             'Create AI-Generated Budget',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
         ),
-        backgroundColor: Color(0xFF65ADAD),
       ),
       body: Consumer<AIBudgetViewModel>(
         builder: (context, viewModel, child) {
@@ -144,7 +156,11 @@ class BudgetInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Label text
@@ -157,7 +173,7 @@ class BudgetInputField extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14.0,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black,
+                  color: isDarkMode ? Colors.white : Colors.black, // White for dark mode, black for default
                 ),
               ),
               SizedBox(width: 8.0),

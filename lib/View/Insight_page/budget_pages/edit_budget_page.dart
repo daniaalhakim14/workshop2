@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../../Model/Budget.dart';
 import '../../../ViewModel/BudgetViewModel.dart';
 import '../../../ViewModel/DateViewModel.dart';
+import '../../../ViewModel/app_appearance_viewmodel.dart';
 
 class EditBudget extends StatefulWidget{
   final BudgetDisplay budget;
@@ -34,9 +35,25 @@ class _EditBudgetState extends State<EditBudget> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     return Scaffold(
+      backgroundColor: backgroundColor,
+
+
+
       appBar: AppBar(
-        title: const Text("Budget"),
+        backgroundColor: backgroundColor,
+        iconTheme: IconThemeData(
+          color: isDarkMode ? Colors.white : Colors.black, // Back arrow color
+        ),
+        title: const Text(
+            "Budget",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
+        ),
       ),
       body: Stack(
         children: [
@@ -72,8 +89,13 @@ class _EditBudgetState extends State<EditBudget> {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: Text('Budget for ${widget.budget.categorynames}'),
-                        ),
+                          child: Text(
+                            'Budget for ${widget.budget.categorynames}',
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              color: isDarkMode ? Colors.white : Colors.black, // Adjust color dynamically
+                            ),
+                          ),                        ),
                         // Padding(
                         //   padding: const EdgeInsets.all(16.0),
                         //   child: RecurrenceContainer(
@@ -171,7 +193,11 @@ class BudgetInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Label text
@@ -182,7 +208,7 @@ class BudgetInputField extends StatelessWidget {
             style: TextStyle(
               fontSize: 14.0,
               fontWeight: FontWeight.w500,
-              color: Colors.black,
+              color: isDarkMode ? Colors.white : Colors.black, // White for dark mode, black for default
             ),
           ),
         ),
