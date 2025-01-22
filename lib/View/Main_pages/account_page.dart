@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tab_bar_widget/View/Main_pages/first_page.dart';
 import 'package:tab_bar_widget/View/Main_pages/homepage.dart';
 import '../../Model/SignupLoginPage_model.dart';
+import '../../ViewModel/SignupLoginPage_ViewModel/SignupLoginPage_View_Model.dart';
 import '../../ViewModel/account_viewmodel.dart';
 import '../../ViewModel/app_appearance_viewmodel.dart';
 import '../../admin_dashboard/view/screens/login_page.dart';
@@ -237,7 +238,10 @@ class _AccountState extends State<Account> {
                       accountViewModel.clearAvatar();
 
                       // Clear all stored data or just user-specific data
-                      storage.erase(); // This clears all data; use specific keys to clear selectively if needed
+                      //storage.erase(); // This clears all data; use specific keys to clear selectively if needed
+
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('isLoggedIn', false);
 
                       // Navigate to the FirstPage
                       Navigator.pushReplacement(
