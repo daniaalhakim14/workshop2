@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tab_bar_widget/View/Insight_page/transaction_page/subcategory_page.dart';
 import '../../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
+import '../../../ViewModel/app_appearance_viewmodel.dart';
 
 
 
@@ -36,8 +37,19 @@ class _CategoryPageState extends State<CategoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     return Scaffold(
+      backgroundColor: backgroundColor,
+
       appBar: AppBar(
+        backgroundColor: isDarkMode ? Colors.black : const Color(0xFF65ADAD),
+        iconTheme: IconThemeData(
+          color: isDarkMode ? Colors.white : Colors.black, // Back arrow color
+        ),
         title: const Text(
           'Category Name',
           style: TextStyle(
@@ -96,6 +108,7 @@ class _CategoryPageState extends State<CategoryPage> {
                           userid: widget.userid,
                           parentCategoryId: category.categoryId!,
                           category_name: category.categoryName!,
+
                         ),
                     )
                   );
@@ -141,10 +154,11 @@ class _CategoryPageState extends State<CategoryPage> {
                           padding: const EdgeInsets.all(5.0),
                           child: Text(
                             category.categoryName.toString(),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18.0,
                               overflow: TextOverflow.ellipsis,
+                              color: isDarkMode ? Colors.white :  Colors.black,
                             ),
                           ),
                         ),

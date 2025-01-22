@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
+import '../../../ViewModel/app_appearance_viewmodel.dart';
 import 'newSubcategory_page.dart';
 
 
@@ -54,8 +55,19 @@ class _subcategory_pageState extends State<subcategory_page> {
   }
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     return Scaffold(
+      backgroundColor: backgroundColor,
+
       appBar: AppBar(
+        backgroundColor: isDarkMode ? Colors.black : const Color(0xFF65ADAD),
+        iconTheme: IconThemeData(
+          color: isDarkMode ? Colors.white : Colors.black, // Back arrow color
+        ),
         title: Text(widget.category_name,
         style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),

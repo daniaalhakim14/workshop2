@@ -143,13 +143,20 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
     final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
     final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     return DefaultTabController(
+
       length: 3,
       child: Scaffold(
+        backgroundColor: backgroundColor,
+
         appBar: AppBar(
+          backgroundColor: isDarkMode ? Colors.black : const Color(0xFF65ADAD),
+          iconTheme: IconThemeData(
+            color: isDarkMode ? Colors.white : Colors.black, // Back arrow color
+          ),
           title: Text(
             'Insight',
             style: TextStyle(
-              color: textColor,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -326,15 +333,18 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                               showDailySpending
                                                   ? "Daily Average Spending"
                                                   : "Spent So Far",
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 12,
+                                                  color: isDarkMode ? Colors.white :  Colors.black
                                               ),
                                             ),
                                             Text(
                                               showDailySpending ? "RM ${dailyAverageSpending.toStringAsFixed(2)}" : "RM ${totalAmount.toStringAsFixed(2)}",
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 16,
+                                                  color: isDarkMode ? Colors.white :  Colors.black
+
                                               ),
                                             ),
                                             IconButton(
@@ -558,7 +568,10 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                                   ),
                                                   title: Text(
                                                     transaction.name.toString(),
-                                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      color: isDarkMode ? Colors.white : Colors.black, // Dynamic color based on dark mode
+                                                    ),
                                                   ),
                                                   subtitle: Column(
                                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -573,6 +586,9 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                                     padding: const EdgeInsets.only(left: 8.0),
                                                     child: Text(
                                                       'RM ${transaction.amount}', // Format the amount
+                                                      style: TextStyle(
+                                                        color: isDarkMode ? Colors.white : Colors.grey[800], // Dynamic color
+                                                      ),
                                                     ),
                                                   ),
                                                 ),

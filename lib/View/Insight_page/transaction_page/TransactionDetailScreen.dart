@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../Model/InsightPage_model.dart';
 import '../../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
+import '../../../ViewModel/app_appearance_viewmodel.dart';
 import 'edit_transaction.dart';
 
 class TransactionDetailScreen extends StatefulWidget {
@@ -50,11 +51,21 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
     return Scaffold(
+      backgroundColor: backgroundColor,
+
       appBar: AppBar(
+        backgroundColor: isDarkMode ? Colors.black : const Color(0xFF65ADAD),
+        iconTheme: IconThemeData(
+          color: isDarkMode ? Colors.white : Colors.black, // Back arrow color
+        ),
         title: Text(
           transactionDetail.name.toString(),
-          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(fontWeight: FontWeight.bold,                 color: isDarkMode ? Colors.white :  Colors.black,
+          ),
         ),
       ),
       body: Padding(
@@ -87,9 +98,11 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
             ),
             Text(
               '${transactionDetail.name}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 30.0,
                 fontWeight: FontWeight.bold,
+                color: isDarkMode ? Colors.white :  Colors.black,
+
               ),
             ),
             const SizedBox(height: 5.0),
@@ -127,16 +140,20 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
             const SizedBox(height: 30.0),
             Text(
               'Description: ${transactionDetail.description}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.normal,
+                color: isDarkMode ? Colors.white :  Colors.black,
+
               ),
             ),
             Text(
               'Payment Type: ${transactionDetail.paymenttype}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.normal,
+                color: isDarkMode ? Colors.white :  Colors.black,
+
               ),
             ),
             const SizedBox(height: 100.0),

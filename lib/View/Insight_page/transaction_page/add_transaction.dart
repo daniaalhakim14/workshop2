@@ -2,9 +2,11 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../../../Model/InsightPage_model.dart';
 import '../../../Model/SignupLoginPage_model.dart';
 import '../../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
+import '../../../ViewModel/app_appearance_viewmodel.dart';
 import '../../../admin_dashboard/view_model/notification_vm.dart';
 import '../../main_pages/insight_page.dart';
 import 'category_page.dart';
@@ -45,11 +47,22 @@ class _add_transactionState extends State<add_transaction> {
 
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     return Scaffold(
+      backgroundColor: backgroundColor,
+
       appBar: AppBar(
-        title: const Text('Add Transaction',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        backgroundColor: isDarkMode ? Colors.black : const Color(0xFF65ADAD),
+        iconTheme: IconThemeData(
+          color: isDarkMode ? Colors.white : Colors.black, // Back arrow color
+        ),
+        title: Text('Add Transaction',
+          style: TextStyle(color: isDarkMode ? Colors.white :  Colors.black, fontWeight: FontWeight.bold),
         ),
       ),
       body: SingleChildScrollView(
@@ -206,7 +219,7 @@ class _add_transactionState extends State<add_transaction> {
                       padding: const EdgeInsets.symmetric(horizontal: 13.0),
                       child: Divider(
                         thickness: 2,
-                        color: Colors.grey[300],
+                        color: Colors.black,
                       ),
                     ),
                     // set Category column
@@ -327,7 +340,7 @@ class _add_transactionState extends State<add_transaction> {
                       padding: const EdgeInsets.symmetric(horizontal: 13.0),
                       child: Divider(
                         thickness: 2,
-                        color: Colors.grey[300],
+                        color: isDarkMode ? Colors.white : Colors.black,
                       ),
                     ),
                     // Payment type

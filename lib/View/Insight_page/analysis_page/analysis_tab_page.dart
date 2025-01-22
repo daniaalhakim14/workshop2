@@ -11,6 +11,7 @@ import '../../../Model/Analysis.dart';
 import '../../../Model/SignupLoginPage_model.dart';
 import '../../../ViewModel/AnalysisViewModel.dart';
 import '../../../ViewModel/DateViewModel.dart';
+import '../../../ViewModel/app_appearance_viewmodel.dart';
 
 
 class Analysis extends StatefulWidget{
@@ -40,8 +41,15 @@ class _AnalysisState extends State<Analysis> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<AppAppearanceViewModel>(context).isDarkMode;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
+    final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     return Scaffold(
+
       body: SingleChildScrollView(
+
         child: Column(
           children: [
             Consumer<DateViewModel>(
@@ -438,12 +446,14 @@ class BudgetVsRealPieChart extends StatelessWidget {
     required List<AnalysisData> dataSource,
     required ChartValueMapper<AnalysisData, num> valueMapper,
   }) {
+
     return SfCircularChart(
       title: ChartTitle(
         text: title,
         textStyle: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold, // Make the title bold
+
         ),
       ),
       legend: Legend(
