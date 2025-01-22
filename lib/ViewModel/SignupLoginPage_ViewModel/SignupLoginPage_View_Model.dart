@@ -71,6 +71,7 @@ class SignupLoginPage_ViewModule extends ChangeNotifier{
 
 
 
+
   // Fetch user details using email
   Future<void> fetchUserDetailsByEmail(String email) async {
     try {

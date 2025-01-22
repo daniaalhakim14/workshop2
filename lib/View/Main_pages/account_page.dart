@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -36,6 +37,7 @@ class _AccountState extends State<Account> {
   @override
   void initState() {
     super.initState();
+
 
     _pages = [
       HomePage(userInfo: widget.userInfo),
@@ -286,12 +288,21 @@ class _AccountState extends State<Account> {
                       textColor: Colors.red,
                       isDarkModeValue: isDarkModeValue,
                       onTap: () async {
-                        final prefs = await SharedPreferences.getInstance();
+                        final storage = GetStorage();
 
-                        // Log preferences before clearing session-specific data
-                        debugPrint('Preferences before logout: isDarkMode = ${prefs.getBool("13-isDarkMode")}');
+                        // Save the current user's preferences before logout
+                        if (widget.userInfo.id != null) {
+                          debugPrint('Saving preferences for user: ${widget.userInfo.id}');
+                          storage.write("${widget.userInfo.id}-isDarkMode", isDarkModeValue);
+                          storage.write("${widget.userInfo.id}-matchSystemTheme", false); // Example
+                        }
 
-                        // Clear session-specific data
+                        // Clear avatar and other session data
+                        final accountViewModel = Provider.of<AccountViewModel>(context, listen: false);
+                        accountViewModel.clearAvatar();
+
+                        // Clear all stored data or just user-specific data
+                        storage.erase(); // This clears all data; use specific keys to clear selectively if needed
 
                         // Navigate to the FirstPage
                         Navigator.pushReplacement(
@@ -299,8 +310,7 @@ class _AccountState extends State<Account> {
                           MaterialPageRoute(
                             builder: (context) => const FirstPage(),
                           ),
-                        );
-                      },
+                        );                      },
                       alwaysRed: true,
                     ),
 

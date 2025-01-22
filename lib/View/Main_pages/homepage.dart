@@ -48,6 +48,11 @@ class _HomePageState extends State<HomePage> {
       viewModel.fetchTransactionsExpense(widget.userInfo.id);
       final incomeViewModel = Provider.of<IncomeViewModel>(context, listen: false);
       incomeViewModel.fetchIncomeAmount(widget.userInfo.id); // Pass the user ID
+      final accountViewModel = Provider.of<AccountViewModel>(context, listen: false);
+
+      accountViewModel.loadAvatar(widget.userInfo.id.toString());
+
+
     });
 
   }
@@ -77,34 +82,36 @@ class _HomePageState extends State<HomePage> {
                       final isLoading = accountViewModel.isLoading;
 
                       return Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          CircleAvatar(
-                            key: ValueKey(avatarBytes != null
-                                ? DateTime.now().millisecondsSinceEpoch
-                                : 'default_avatar'),
-                            radius: 20,
-                            backgroundColor:
-                            isDarkMode ? Colors.grey[800] : Colors.white,
-                            backgroundImage: avatarBytes != null
-                                ? MemoryImage(avatarBytes)
-                                : null,
-                            child: avatarBytes == null && !isLoading
-                                ? const Icon(
-                              Icons.person,
-                              color: Colors.black,
-                              size: 40,
-                            )
-                                : null,
-                          ),
-                          if (isLoading)
-                            CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                isDarkMode ? Colors.white : Colors.black,
-                              ),
-                              strokeWidth: 2,
-                            ),
-                        ],
+                          alignment: Alignment.center,
+                          children: [
+                      CircleAvatar(
+                      key: ValueKey(avatarBytes != null
+                          ? DateTime.now().millisecondsSinceEpoch
+                          : 'default_avatar'),
+                      radius: 20,
+                      backgroundColor: isDarkMode ? Colors.grey[800] : Colors.white,
+                      backgroundImage: avatarBytes != null
+                      ? MemoryImage(avatarBytes)
+                          : null,
+                      child: avatarBytes == null && !isLoading
+                      ? const Icon(
+                      Icons.person,
+                      color: Colors.black,
+                      size: 40,
+                      )
+                          : null,
+                      ),
+                      if (isLoading)
+                      Positioned(
+                      bottom: 0,
+                      child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                      isDarkMode ? Colors.white : Colors.black,
+                      ),
+                      strokeWidth: 2,
+                      ),
+                      ),
+                          ],
                       );
                     },
                   ),
@@ -128,14 +135,17 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
+
             ),
+            backgroundColor: isDarkMode ? Colors.black : const Color(0xFF65ADAD), // <-- This controls the teal background
+
           ),
           body: SingleChildScrollView(
             child: Column(
               children: [
                 Container(
-                  decoration: const BoxDecoration(
-                      color: Color(0xFF65ADAD)
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? Colors.black : const Color(0xFF65ADAD), // Change color based on dark mode
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -146,20 +156,21 @@ class _HomePageState extends State<HomePage> {
                         child: Container(
                           height: 180,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFD7C1E6),
+                            color: isDarkMode ? Colors.grey[800] : const Color(0xFFD7C1E6),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text(
+                              Text(
                                 'Balance',
                                 style: TextStyle(
-                                  color: Colors.black87,
+                                  color: isDarkMode ? Colors.white : Colors.black,
                                   fontSize: 20,
                                 ),
                               ),
+
                               const SizedBox(height: 2),
                               Row(
                                 children: [
@@ -192,16 +203,18 @@ class _HomePageState extends State<HomePage> {
                                               isVisible
                                                   ? Text(
                                                 'RM ${balance.toStringAsFixed(2)}',
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 22,
                                                   fontWeight: FontWeight.bold,
+                                                  color: isDarkMode ? Colors.white : Colors.black,
                                                 ),
                                               )
-                                                  : const Text(
+                                                  : Text(
                                                 'RM ****', // Placeholder when hidden
                                                 style: TextStyle(
                                                   fontSize: 22,
                                                   fontWeight: FontWeight.bold,
+                                                  color: isDarkMode ? Colors.white : Colors.black,
                                                 ),
                                               ),
 
@@ -209,11 +222,14 @@ class _HomePageState extends State<HomePage> {
                                                 onPressed: () {
                                                   setState(() {
                                                     isVisible = !isVisible; // Toggle visibility
-                                                  });},
+                                                  });
+                                                },
                                                 icon: Icon(
                                                   isVisible ? Icons.visibility : Icons.visibility_off,
+                                                  color: isDarkMode ? Colors.white : Colors.black, // Define the color here
                                                 ),
                                               ),
+
                                             ],
                                           );
                                         },
@@ -242,13 +258,15 @@ class _HomePageState extends State<HomePage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             'Spending Summary',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
+                              color: isDarkMode ? Colors.white : Colors.black,
                             ),
                           ),
+
                           GestureDetector(
                             onTap: ()
                             {
@@ -321,7 +339,7 @@ class _HomePageState extends State<HomePage> {
                       child: Container(
                         height: 384, // Adjust the height as needed
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: isDarkMode ? Colors.black : Colors.white,
                           borderRadius: BorderRadius.circular(16.0),
                         ),
                         child: Column(
@@ -333,12 +351,12 @@ class _HomePageState extends State<HomePage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
+                                  Text(
                                     "Latest Transaction: ",
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black,
+                                      color: isDarkMode ? Colors.white : Colors.black,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
@@ -356,7 +374,7 @@ class _HomePageState extends State<HomePage> {
                                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 7.0),
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: Colors.grey[200],
+                                      color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
                                       borderRadius: BorderRadius.circular(16.0),
                                     ),
                                     child: Padding(
@@ -383,29 +401,30 @@ class _HomePageState extends State<HomePage> {
                                                 children: [
                                                   Text(
                                                     transaction.name.toString(),
-                                                    style: const TextStyle(
+                                                    style: TextStyle(
                                                       fontWeight: FontWeight.bold,
                                                       fontSize: 16,
-                                                      color: Colors.black,
+                                                      color: isDarkMode ? Colors.white : Colors.black,
                                                     ),
                                                   ),
                                                   const SizedBox(height: 4),
                                                   Text(
                                                     transaction.description.toString(),
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
+                                                    style: TextStyle(
+                                                      color: isDarkMode ? Colors.white : Colors.black,
                                                       fontSize: 12,
                                                     ),
                                                   ),
                                                   const SizedBox(height: 4),
                                                   Text(
                                                     formattedDate,
-                                                    style: const TextStyle(
-                                                      color: Colors.grey,
+                                                    style: TextStyle(
+                                                      color: isDarkMode ? Colors.grey[400] : Colors.grey,
                                                       fontSize: 12,
                                                       fontWeight: FontWeight.normal,
                                                     ),
                                                   ),
+
                                                 ],
                                               ),
                                             ],

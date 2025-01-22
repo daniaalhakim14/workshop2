@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_storage/get_storage.dart';
 
 class AppAppearanceViewModel extends ChangeNotifier {
   bool _isDarkMode = false;
   bool _matchSystemTheme = false;
   String? _userId;
   bool _isLoading = false;
+
+  final GetStorage _storage = GetStorage();
 
   bool get isDarkMode => _isDarkMode;
   bool get matchSystemTheme => _matchSystemTheme;
@@ -14,12 +16,13 @@ class AppAppearanceViewModel extends ChangeNotifier {
   Future<void> initialize(String userId) async {
     if (_userId == userId && !_isLoading) {
       debugPrint('AppAppearanceViewModel already initialized for user: $userId');
-      return; // Prevent redundant initialization
+      return;
     }
 
     if (_userId != null && _userId != userId) {
       debugPrint('Switching users. Saving preferences for previous user: $_userId');
-      await _savePreferencesForUser(); // Ensure previous user preferences are saved
+      await _savePreferencesForUser();
+      resetState();
     }
 
     _isLoading = true;
@@ -27,33 +30,16 @@ class AppAppearanceViewModel extends ChangeNotifier {
 
     try {
       debugPrint('Initializing AppAppearanceViewModel for user: $userId');
-      await _loadPreferencesForUser(); // Load preferences for the new user
-      _applyPreferences(); // Apply preferences to the current state
+      _loadPreferencesForUser();
+      _applyPreferences();
     } catch (e) {
       debugPrint('Error during initialization: $e');
     } finally {
       _isLoading = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        notifyListeners(); // Notify listeners after loading is complete
+        notifyListeners();
       });
     }
-  }
-
-  Future<void> _loadPreferencesForUser() async {
-    if (_userId == null) {
-      debugPrint('User ID is null. Cannot load preferences.');
-      return;
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    final darkModeKey = '$_userId-isDarkMode';
-    final matchThemeKey = '$_userId-matchSystemTheme';
-
-    _isDarkMode = prefs.getBool(darkModeKey) ?? false;
-    _matchSystemTheme = prefs.getBool(matchThemeKey) ?? false;
-
-    debugPrint('Loaded isDarkMode: $_isDarkMode for user: $_userId');
-    debugPrint('Loaded matchSystemTheme: $_matchSystemTheme for user: $_userId');
   }
 
   Future<void> _savePreferencesForUser() async {
@@ -62,14 +48,31 @@ class AppAppearanceViewModel extends ChangeNotifier {
       return;
     }
 
-    final prefs = await SharedPreferences.getInstance();
     final darkModeKey = '$_userId-isDarkMode';
     final matchThemeKey = '$_userId-matchSystemTheme';
 
-    await prefs.setBool(darkModeKey, _isDarkMode);
-    await prefs.setBool(matchThemeKey, _matchSystemTheme);
+    debugPrint(
+        'Saving preferences for user $_userId: darkMode = $_isDarkMode, matchSystemTheme = $_matchSystemTheme');
+    _storage.write(darkModeKey, _isDarkMode);
+    _storage.write(matchThemeKey, _matchSystemTheme);
 
     debugPrint('Preferences saved for user: $_userId');
+  }
+
+  void _loadPreferencesForUser() {
+    if (_userId == null) {
+      debugPrint('User ID is null. Cannot load preferences.');
+      return;
+    }
+
+    final darkModeKey = '$_userId-isDarkMode';
+    final matchThemeKey = '$_userId-matchSystemTheme';
+
+    _isDarkMode = _storage.read<bool>(darkModeKey) ?? false;
+    _matchSystemTheme = _storage.read<bool>(matchThemeKey) ?? false;
+
+    debugPrint(
+        'Loaded preferences for user $_userId: darkMode = $_isDarkMode, matchSystemTheme = $_matchSystemTheme');
   }
 
   void _applyPreferences() {
@@ -82,13 +85,21 @@ class AppAppearanceViewModel extends ChangeNotifier {
     debugPrint('Preferences applied for user: $_userId');
   }
 
+  void resetState() {
+    _isDarkMode = false;
+    _matchSystemTheme = false;
+    _userId = null;
+    debugPrint('State reset for AppAppearanceViewModel');
+    notifyListeners();
+  }
+
   Future<void> setDarkMode(bool value) async {
     if (_userId == null) return;
 
     _isDarkMode = value;
-    _matchSystemTheme = false; // Disable system theme matching when toggling dark mode
+    _matchSystemTheme = false;
 
-    await _savePreferencesForUser(); // Save changes immediately
+    await _savePreferencesForUser();
     notifyListeners();
   }
 
@@ -103,7 +114,7 @@ class AppAppearanceViewModel extends ChangeNotifier {
       _isDarkMode = systemBrightness == Brightness.dark;
     }
 
-    await _savePreferencesForUser(); // Save changes immediately
+    await _savePreferencesForUser();
     notifyListeners();
   }
 
@@ -113,17 +124,12 @@ class AppAppearanceViewModel extends ChangeNotifier {
       return;
     }
 
-    final prefs = await SharedPreferences.getInstance();
     final darkModeKey = '$_userId-isDarkMode';
     final matchThemeKey = '$_userId-matchSystemTheme';
 
-    await prefs.remove(darkModeKey);
-    await prefs.remove(matchThemeKey);
+    _storage.remove(darkModeKey);
+    _storage.remove(matchThemeKey);
 
-    _isDarkMode = false;
-    _matchSystemTheme = false;
-
-    debugPrint('Preferences reset for user: $_userId');
-    notifyListeners();
+    resetState();
   }
 }

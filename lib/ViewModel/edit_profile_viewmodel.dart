@@ -23,7 +23,7 @@ class EditProfileViewModel extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final uri = Uri.parse('http://192.168.0.18:3000/user/user/$userId');
+      final uri = Uri.parse('http://10.131.79.104:3000/user/user/$userId');
       final response = await http.get(uri, headers: _headers);
 
       if (response.statusCode == 200) {
@@ -60,7 +60,7 @@ class EditProfileViewModel extends ChangeNotifier {
     _setLoading(true);
 
     try {
-      final uri = Uri.parse('http://192.168.0.18:3000/profile/update-profile/$userId');
+      final uri = Uri.parse('http://10.131.79.104:3000/profile/update-profile/$userId');
       final response = await http.put(
         uri,
         headers: _headers,
