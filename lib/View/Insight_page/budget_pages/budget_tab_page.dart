@@ -20,11 +20,13 @@ class budget extends StatefulWidget{
 
 class _budgetState extends State<budget> {
   late int userid;
+  late UserInfoModule userInfo;
 
   @override
   void initState() {
     super.initState();
     userid = widget.userInfo.id;
+    userInfo = widget.userInfo;
     // Fetch budget data when the screen is opened
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<BudgetViewModel>(context, listen: false).fetchBudgets(userid);
@@ -103,6 +105,7 @@ class _budgetState extends State<budget> {
                             budgetData: viewModel.budgetdisplay,
                             userid: userid,
                             parentContext: context,
+                            userInfo: userInfo,
                           ),
                         ),
                       ),
@@ -363,12 +366,14 @@ class BudgetCardList extends StatelessWidget {
   final List<BudgetDisplay> budgetData;
   final int userid;
   final BuildContext parentContext;
+  final UserInfoModule userInfo;
 
   const BudgetCardList({
     super.key,
     required this.budgetData,
     required this.userid,
     required this.parentContext,
+    required this.userInfo
   });
 
   @override
@@ -390,6 +395,7 @@ class BudgetCardList extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => BudgetDetail(
                 budget: budget,
+                userInfo: userInfo,
               )),
             ).then((result) async {
               if (result == "Delete budget successfully") {
