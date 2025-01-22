@@ -36,17 +36,18 @@ final http.Client _httpClient = http.Client();
   }
 
   Future<http.Response> fetchSubcategories(int parentCategoryId, int? userid) async{
-      String endpoint = '/subcategories/basic/$parentCategoryId';
+      String endpoint = '/subcategories/basic/$parentCategoryId/$userid';
     String url = '${AppConfig.baseUrl}$endpoint';
     return await http.get(Uri.parse(url));
   }
-
-    Future<http.Response> fetchSubcategoriesForUser(int parentCategoryId, int userid) async{
+  /*
+  Future<http.Response> fetchSubcategoriesForUser(int parentCategoryId, int userid) async{
       String endpoint = '/subcategories/$parentCategoryId/custom/$userid';
       String url = '${AppConfig.baseUrl}$endpoint';
       return await http.get(Uri.parse(url));
     }
 
+   */
 
   Future<http.Response> addIcon(Map<String, dynamic> iconData) async {
     String endpoint = '/icons';
@@ -66,23 +67,25 @@ final http.Client _httpClient = http.Client();
     return response;
   }
 
-  Future<http.Response> addSubcategories(Map<String, dynamic> subcategoryData,int userid) async {
-    String endpoint = '/subcategories$userid';
-    String url = '${AppConfig.baseUrl}$endpoint';
+  Future<http.Response> addSubcategories(Map<String, dynamic> subcategoryData, int userId) async {
+  // Adjust endpoint to include both id and userId
+  String endpoint = '/subcategories/${subcategoryData["parentcategoryid"]}/$userId';
+  String url = '${AppConfig.baseUrl}$endpoint';
 
-    print("Sending subcategory data: $subcategoryData"); // Log the data being sent
+  print("Sending subcategory data: $subcategoryData"); // Log the data being sent
 
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(subcategoryData),
-    );
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode(subcategoryData),
+  );
 
-    print("Response status: ${response.statusCode}");
-    print("Response body: ${response.body}"); // Log the response body
+  print("Response status: ${response.statusCode}");
+  print("Response body: ${response.body}"); // Log the response body
 
-    return response;
-  }
+  return response;
+}
+
 
   Future<http.Response> addExpense(Map<String, dynamic> expenseData) async {
     // change to Expense

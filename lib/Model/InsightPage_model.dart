@@ -208,7 +208,6 @@ class IncomeCategories {
         : Colors.grey,
   );
 
-
 }
 
 class Subcategories{
@@ -324,6 +323,11 @@ class AddExpense {
       "userid": userid,
       "subcategoryid":subcategoryid
     };
+  }
+  @override
+  String toString() {
+    return 'AddExpense(amount: $expenseAmount, date: $expenseDate, description: $expenseDescription, '
+        'paymenttype: $paymenttype, userid: $userid, subcategoryid: $subcategoryid)';
   }
 }
 

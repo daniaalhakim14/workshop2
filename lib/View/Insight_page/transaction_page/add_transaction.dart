@@ -36,7 +36,7 @@ class _add_transactionState extends State<add_transaction> {
 
 
 
-  DateTime selectedDate = DateTime.now().toLocal(); // initial selected date
+  DateTime selectedDate = DateTime.now().toUtc().add(Duration(hours: 8));
   late String todayDate = 'Today';
   late String yesterdayDate = 'Yesterday';
   late String textdate = todayDate;

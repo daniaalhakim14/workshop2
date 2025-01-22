@@ -153,5 +153,4 @@ class SignupLoginPage_ViewModule extends ChangeNotifier{
       rethrow;
     }
   }
-
 }

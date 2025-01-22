@@ -103,7 +103,8 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
   }
 
   String _formatMonth(DateTime date) {
-    return "${_monthNamePieChart(date.month)} ${date.year}";
+  DateTime malaysiaTime = date.toUtc().add(Duration(hours: 8));
+  return "${_monthNamePieChart(malaysiaTime.month)} ${malaysiaTime.year}";
   }
 
 
@@ -125,7 +126,9 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
 
 
   String _formatFullDate(DateTime date) {
-    return "${date.day.toString().padLeft(2, '0')} ${_monthNameTransactionList(date.month)} ${date.year}";
+      // Convert to Malaysia time by adding 8 hours
+    DateTime malaysiaTime = date.toUtc().add(Duration(hours: 8));
+    return "${malaysiaTime.day.toString().padLeft(2, '0')} ${_monthNameTransactionList(malaysiaTime.month)} ${malaysiaTime.year}";
   }
 
 
@@ -143,21 +146,20 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
     final appBarColor = isDarkMode ? Colors.black : const Color(0xFF65ADAD);
     final highlightColor = isDarkMode ? Colors.teal : const Color(0xFF65ADAD);
     return DefaultTabController(
-
       length: 3,
       child: Scaffold(
-        backgroundColor: backgroundColor,
-
         appBar: AppBar(
           backgroundColor: isDarkMode ? Colors.black : const Color(0xFF65ADAD),
           iconTheme: IconThemeData(
             color: isDarkMode ? Colors.white : Colors.black, // Back arrow color
           ),
-          title: Text(
-            'Insight',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+          title: Center(
+            child: Text(
+              'Insight',
+              style: TextStyle(
+                color: textColor,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
@@ -333,18 +335,15 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                               showDailySpending
                                                   ? "Daily Average Spending"
                                                   : "Spent So Far",
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontSize: 12,
-                                                  color: isDarkMode ? Colors.white :  Colors.black
                                               ),
                                             ),
                                             Text(
                                               showDailySpending ? "RM ${dailyAverageSpending.toStringAsFixed(2)}" : "RM ${totalAmount.toStringAsFixed(2)}",
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 16,
-                                                  color: isDarkMode ? Colors.white :  Colors.black
-
                                               ),
                                             ),
                                             IconButton(
@@ -618,7 +617,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                   // Filter transactions by the selected month
                                   final filteredCategories = categoryList.where((categories) {
                                     String isoFormatDate = categories.date.toString();
-                                    DateTime dateTime = DateTime.parse(isoFormatDate);
+                                     DateTime dateTime = DateTime.parse(isoFormatDate).toUtc().add(Duration(hours: 8));
                                     String formattedDate = _formatMonth(dateTime); // Format transaction.date
                                     return formattedDate == selectedMonth;
                                   }).toList();

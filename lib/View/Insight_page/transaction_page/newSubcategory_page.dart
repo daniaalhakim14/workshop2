@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tab_bar_widget/Model/InsightPage_model.dart';
-
 import '../../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
 import '../../../ViewModel/app_appearance_viewmodel.dart';
 
@@ -193,7 +192,6 @@ class _newSubcategory_pageState extends State<newSubcategory_page> {
                       parentCategoryId: widget.categoryId,
                       iconId: widget.categoryIconId,
                     );
-
                     try {
                       await viewModel.addSubcategory(newSubcategory,widget.userid);
                       print("Subcategory added successfully!");

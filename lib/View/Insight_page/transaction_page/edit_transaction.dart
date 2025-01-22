@@ -42,7 +42,8 @@ class _edit_transactionState extends State<edit_transaction> {
     super.initState();
 
     // 1) Set up the selectedDate from the transaction
-    selectedDate = widget.transactionDetail.date;
+selectedDate = widget.transactionDetail.date?.toUtc().add(const Duration(hours: 8));
+
 
     // 2) Decide what text to show initially for the date
     if (selectedDate != null) {

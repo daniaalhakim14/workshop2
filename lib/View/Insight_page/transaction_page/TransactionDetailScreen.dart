@@ -44,9 +44,11 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
       return 'No date available'; // Fallback message for null date
     }
 
-                                    //DateTime localDateTime = dateTime.toLocal(); // Convert to local time
-                                        
-    return DateFormat('h:mma, dd MMM yyyy').format(dateTime).toLowerCase();
+    // Convert to Malaysia time by adding 8 hours
+    DateTime malaysiaTime = dateTime.toUtc().add(Duration(hours: 8));
+
+    // Format the Malaysia time
+    return DateFormat('dd MMM yyyy').format(malaysiaTime).toLowerCase();
   }
 
   @override
