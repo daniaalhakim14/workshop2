@@ -159,154 +159,231 @@ class _AccountState extends State<Account> {
 
 
                   const SizedBox(height: 40),
-                  if (!_showAdditionalOptions) ...[
-                    buildOptionContainer(
-                      title: 'Edit Profile',
-                      icon: Icons.edit,
-                      isDarkModeValue: isDarkModeValue,
-                      onTap: () {
-                        setState(() {
-                          _showAdditionalOptions = true;
-                        });
-                      },
-                    ),
-                    buildOptionContainer(
-                      title: 'Change Password',
-                      icon: Icons.lock,
-                      isDarkModeValue: isDarkModeValue,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ChangePassword(userId: widget.userInfo.id),
-                          ),
-                        );
-                      },
-                    ),
-                    buildOptionContainer(
-                      title: 'App Appearance',
-                      icon: Icons.color_lens,
-                      isDarkModeValue: isDarkModeValue,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                AppAppearance(userId: widget.userInfo.id),
-                          ),
-                        );
-                      },
-                    ),
-                    buildOptionContainer(
-                      title: 'Logout',
-                      icon: Icons.logout,
-                      iconColor: Colors.red,
-                      textColor: Colors.red,
-                      isDarkModeValue: isDarkModeValue,
-                      onTap: () async {
-                        final prefs = await SharedPreferences.getInstance();
+                  buildOptionContainer(
+                    title: 'Edit Profile Information',
+                    icon: Icons.edit,
+                    isDarkModeValue: isDarkModeValue,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              EditProfilePage(userId: widget.userInfo.id),
+                        ),
+                      );
+                    },
+                  ),
+                  buildOptionContainer(
+                    title: 'Change Password',
+                    icon: Icons.lock,
+                    isDarkModeValue: isDarkModeValue,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ChangePassword(userId: widget.userInfo.id),
+                        ),
+                      );
+                    },
+                  ),
+                  buildOptionContainer(
+                    title: 'Change Email Address',
+                    icon: Icons.email,
+                    isDarkModeValue: isDarkModeValue,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ChangeEmailPage(userId: widget.userInfo.id),
+                        ),
+                      );
+                    },
+                  ),
+                  buildOptionContainer(
+                    title: 'Notifications',
+                    icon: Icons.notifications,
+                    isDarkModeValue: isDarkModeValue,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              Noti(userInfo: widget.userInfo,),
+                        ),
+                      );
+                    },
+                  ),
+                  buildOptionContainer(
+                    title: 'Logout',
+                    icon: Icons.logout,
+                    iconColor: Colors.red,
+                    textColor: Colors.red,
+                    isDarkModeValue: isDarkModeValue,
+                    onTap: () async {
+                      final prefs = await SharedPreferences.getInstance();
 
-                        final accountViewModel = Provider.of<AccountViewModel>(context, listen: false);
-                        accountViewModel.clearAvatar();
+                      final accountViewModel = Provider.of<AccountViewModel>(context, listen: false);
+                      accountViewModel.clearAvatar();
 
-                        await prefs.clear();
+                      await prefs.clear();
 
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const FirstPage(),
-                          ),
-                        );
-                      },
-                      alwaysRed: true,
-                    ),
-
-                  ] else ...[
-                    buildOptionContainer(
-                      title: 'Edit Profile Information',
-                      icon: Icons.edit,
-                      isDarkModeValue: isDarkModeValue,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                EditProfilePage(userId: widget.userInfo.id),
-                          ),
-                        );
-                      },
-                    ),
-                    buildOptionContainer(
-                      title: 'Change Password',
-                      icon: Icons.lock,
-                      isDarkModeValue: isDarkModeValue,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ChangePassword(userId: widget.userInfo.id),
-                          ),
-                        );
-                      },
-                    ),
-                    buildOptionContainer(
-                      title: 'Change Email Address',
-                      icon: Icons.email,
-                      isDarkModeValue: isDarkModeValue,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ChangeEmailPage(userId: widget.userInfo.id),
-                          ),
-                        );
-                      },
-                    ),
-                    buildOptionContainer(
-                      title: 'Notifications',
-                      icon: Icons.notifications,
-                      isDarkModeValue: isDarkModeValue,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                Noti(userInfo: widget.userInfo,),
-                          ),
-                        );
-                      },
-                    ),
-                    buildOptionContainer(
-                      title: 'Logout',
-                      icon: Icons.logout,
-                      iconColor: Colors.red,
-                      textColor: Colors.red,
-                      isDarkModeValue: isDarkModeValue,
-                      onTap: () async {
-                        final prefs = await SharedPreferences.getInstance();
-
-                        // Log preferences before clearing session-specific data
-                        debugPrint('Preferences before logout: isDarkMode = ${prefs.getBool("13-isDarkMode")}');
-
-                        // Clear session-specific data
-
-                        // Navigate to the FirstPage
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const FirstPage(),
-                          ),
-                        );
-                      },
-                      alwaysRed: true,
-                    ),
-
-
-
-                  ],
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const FirstPage(),
+                        ),
+                      );
+                    },
+                    alwaysRed: true,
+                  ),
+                  // if (!_showAdditionalOptions) ...[
+                  //   buildOptionContainer(
+                  //     title: 'Edit Profile',
+                  //     icon: Icons.edit,
+                  //     isDarkModeValue: isDarkModeValue,
+                  //     onTap: () {
+                  //       setState(() {
+                  //         _showAdditionalOptions = true;
+                  //       });
+                  //     },
+                  //   ),
+                  //   buildOptionContainer(
+                  //     title: 'Change Password',
+                  //     icon: Icons.lock,
+                  //     isDarkModeValue: isDarkModeValue,
+                  //     onTap: () {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) =>
+                  //               ChangePassword(userId: widget.userInfo.id),
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
+                  //   buildOptionContainer(
+                  //     title: 'App Appearance',
+                  //     icon: Icons.color_lens,
+                  //     isDarkModeValue: isDarkModeValue,
+                  //     onTap: () {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) =>
+                  //               AppAppearance(userId: widget.userInfo.id),
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
+                  //   buildOptionContainer(
+                  //     title: 'Logout',
+                  //     icon: Icons.logout,
+                  //     iconColor: Colors.red,
+                  //     textColor: Colors.red,
+                  //     isDarkModeValue: isDarkModeValue,
+                  //     onTap: () async {
+                  //       final prefs = await SharedPreferences.getInstance();
+                  //
+                  //       final accountViewModel = Provider.of<AccountViewModel>(context, listen: false);
+                  //       accountViewModel.clearAvatar();
+                  //
+                  //       await prefs.clear();
+                  //
+                  //       Navigator.pushReplacement(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) => const FirstPage(),
+                  //         ),
+                  //       );
+                  //     },
+                  //     alwaysRed: true,
+                  //   ),
+                  //
+                  // ] else ...[
+                  //   buildOptionContainer(
+                  //     title: 'Edit Profile Information',
+                  //     icon: Icons.edit,
+                  //     isDarkModeValue: isDarkModeValue,
+                  //     onTap: () {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) =>
+                  //               EditProfilePage(userId: widget.userInfo.id),
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
+                  //   buildOptionContainer(
+                  //     title: 'Change Password',
+                  //     icon: Icons.lock,
+                  //     isDarkModeValue: isDarkModeValue,
+                  //     onTap: () {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) =>
+                  //               ChangePassword(userId: widget.userInfo.id),
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
+                  //   buildOptionContainer(
+                  //     title: 'Change Email Address',
+                  //     icon: Icons.email,
+                  //     isDarkModeValue: isDarkModeValue,
+                  //     onTap: () {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) =>
+                  //               ChangeEmailPage(userId: widget.userInfo.id),
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
+                  //   buildOptionContainer(
+                  //     title: 'Notifications',
+                  //     icon: Icons.notifications,
+                  //     isDarkModeValue: isDarkModeValue,
+                  //     onTap: () {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) =>
+                  //               Noti(userInfo: widget.userInfo,),
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
+                  //   buildOptionContainer(
+                  //     title: 'Logout',
+                  //     icon: Icons.logout,
+                  //     iconColor: Colors.red,
+                  //     textColor: Colors.red,
+                  //     isDarkModeValue: isDarkModeValue,
+                  //     onTap: () async {
+                  //       final prefs = await SharedPreferences.getInstance();
+                  //
+                  //       // Log preferences before clearing session-specific data
+                  //       debugPrint('Preferences before logout: isDarkMode = ${prefs.getBool("13-isDarkMode")}');
+                  //
+                  //       // Clear session-specific data
+                  //
+                  //       // Navigate to the FirstPage
+                  //       Navigator.pushReplacement(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) => const FirstPage(),
+                  //         ),
+                  //       );
+                  //     },
+                  //     alwaysRed: true,
+                  //   ),
+                  //
+                  // ],
                 ],
               ),
             ),

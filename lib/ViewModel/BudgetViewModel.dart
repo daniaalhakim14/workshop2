@@ -23,6 +23,7 @@ class BudgetViewModel extends ChangeNotifier {
   List<BudgetDisplay> get budgetdisplay => _budgetdisplay;
 
   Future<void> fetchBudgets(int userId) async {
+
     try {
       _isLoading = true;
       _error = null;

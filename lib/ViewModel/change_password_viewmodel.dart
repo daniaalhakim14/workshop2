@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../configure_API.dart';
+
 class ChangePasswordViewModel extends ChangeNotifier {
   bool isLoading = false;
 
@@ -11,7 +13,7 @@ class ChangePasswordViewModel extends ChangeNotifier {
       String currentPassword,
       String newPassword,
       ) async {
-    final url = Uri.parse('http://192.168.0.18:3000/auth/change-password');
+    final url = Uri.parse('${AppConfig.baseUrl}/auth/change-password');
     isLoading = true;
     notifyListeners();
 

@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
+<<<<<<< HEAD
 import '../configure_API.dart';
+=======
+
+import '../configure_API.dart';
+
+>>>>>>> 47229b6 (update account page)
 class AccountViewModel extends ChangeNotifier {
   Uint8List? _avatarBytes;
   bool _isLoading = false;
