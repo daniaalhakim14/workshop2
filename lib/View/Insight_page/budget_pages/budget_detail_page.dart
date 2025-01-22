@@ -2,16 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../Model/Budget.dart';
+import '../../../Model/SignupLoginPage_model.dart';
 import '../../../ViewModel/BudgetViewModel.dart';
 import 'edit_budget_page.dart';
 
 
 class BudgetDetail extends StatefulWidget{
+  final UserInfoModule userInfo;
   final BudgetDisplay budget;
 
   const BudgetDetail({
     super.key,
     required this.budget,
+    required this.userInfo
   });
 
   @override
@@ -19,12 +22,13 @@ class BudgetDetail extends StatefulWidget{
 }
 
 class _BudgetDetailState extends State<BudgetDetail> {
-
+  late int userid;
   late BudgetDisplay _currentBudget;
 
   @override
   void initState() {
     super.initState();
+    userid = widget.userInfo.id;
     _currentBudget = widget.budget; // Initialize the mutable budget
   }
 
@@ -57,9 +61,12 @@ class _BudgetDetailState extends State<BudgetDetail> {
                 await budgetViewModel.deleteBudget(widget.budget.budgetId);
                 // Perform delete operation
                 if (budgetViewModel.error == null) {
-                  await budgetViewModel.fetchBudgets(1);
+                  await budgetViewModel.fetchBudgets(userid);
+                  //await budgetViewModel.fetchBudgets();
                   Navigator.of(context).pop();
                   Navigator.pop(context, "Delete budget successfully");
+
+  
                 }
               },
               child: Text('Yes'),

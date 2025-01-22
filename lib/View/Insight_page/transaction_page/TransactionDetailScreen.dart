@@ -44,9 +44,9 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
       return 'No date available'; // Fallback message for null date
     }
 
-                                    DateTime localDateTime = dateTime.toLocal(); // Convert to local time
+                                    //DateTime localDateTime = dateTime.toLocal(); // Convert to local time
                                         
-    return DateFormat('h:mma, dd MMM yyyy').format(localDateTime).toLowerCase();
+    return DateFormat('h:mma, dd MMM yyyy').format(dateTime).toLowerCase();
   }
 
   @override

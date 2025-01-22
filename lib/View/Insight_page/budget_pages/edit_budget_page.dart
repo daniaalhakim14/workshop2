@@ -123,7 +123,7 @@ class _EditBudgetState extends State<EditBudget> {
                                       showAutoDismissAlert(context, "Alert", "Budget Updated Successfully");
 
                                       // Fetch budgets after update
-                                      await budgetViewModel.fetchBudgets(1);
+                                      // await budgetViewModel.fetchBudgets(1);
 
                                       await Future.delayed(Duration(seconds: 3));
 
