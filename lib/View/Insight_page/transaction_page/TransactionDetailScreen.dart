@@ -45,7 +45,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
 
                                     DateTime localDateTime = dateTime.toLocal(); // Convert to local time
                                         
-    return DateFormat('h:mma, dd MMM yyyy').format(localDateTime).toLowerCase();
+    return DateFormat('dd MMM yyyy').format(localDateTime).toLowerCase();
   }
 
   @override
