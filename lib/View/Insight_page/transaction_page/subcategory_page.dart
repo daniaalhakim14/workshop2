@@ -4,8 +4,6 @@ import 'package:provider/provider.dart';
 import '../../../ViewModel/InsightPage_ViewModel/InsightPage_View_Model.dart';
 import 'newSubcategory_page.dart';
 
-
-
 class subcategory_page extends StatefulWidget {
   final int userid;
   // Constructor accept category data from category_page

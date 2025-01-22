@@ -61,7 +61,6 @@ class InsightViewModel extends ChangeNotifier{
     }
   }
 
-
   Future<void> fetchBasicCategory() async {
     fetchingData = true;
     notifyListeners();
@@ -109,8 +108,8 @@ class InsightViewModel extends ChangeNotifier{
       notifyListeners();
     }
   }
-
-    Future<void> fetchSubcategoriesForUser(int parentCategoryId, int userid) async {
+/*
+  Future<void> fetchSubcategoriesForUser(int parentCategoryId, int userid) async {
       fetchingData = true;
       _subcategory = []; // Clear the subcategory list
       notifyListeners();
@@ -125,7 +124,7 @@ class InsightViewModel extends ChangeNotifier{
         notifyListeners();
       }
     }
-
+*/
   Future<void> addIcon(AddIcon icon) async {
     try {
       await repository.addIcon(icon);
