@@ -103,7 +103,8 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
   }
 
   String _formatMonth(DateTime date) {
-    return "${_monthNamePieChart(date.month)} ${date.year}";
+  DateTime malaysiaTime = date.toUtc().add(Duration(hours: 8));
+  return "${_monthNamePieChart(malaysiaTime.month)} ${malaysiaTime.year}";
   }
 
 
@@ -125,7 +126,9 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
 
 
   String _formatFullDate(DateTime date) {
-    return "${date.day.toString().padLeft(2, '0')} ${_monthNameTransactionList(date.month)} ${date.year}";
+      // Convert to Malaysia time by adding 8 hours
+    DateTime malaysiaTime = date.toUtc().add(Duration(hours: 8));
+    return "${malaysiaTime.day.toString().padLeft(2, '0')} ${_monthNameTransactionList(malaysiaTime.month)} ${malaysiaTime.year}";
   }
 
 
@@ -146,13 +149,15 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: Center(
+          child: Text(
             'Insight',
             style: TextStyle(
               color: textColor,
               fontWeight: FontWeight.bold,
             ),
-          ),
+          ),),
+          automaticallyImplyLeading: false,
         ),
         body: Column(
           children: [
@@ -468,7 +473,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                   // Filter transactions by the selected month
                                   final filteredTransactions = transactionList.where((transaction) {
                                     String isoFormatDate = transaction.date.toString();
-                                    DateTime dateTime = DateTime.parse(isoFormatDate);
+                                     DateTime dateTime = DateTime.parse(isoFormatDate).toUtc().add(Duration(hours: 8));
                                     String formattedDate = _formatMonth(dateTime); // Format transaction.date
                                     return formattedDate == selectedMonth;
                                   }).toList();
@@ -602,7 +607,7 @@ class _InsightState extends State<Insight> with SingleTickerProviderStateMixin {
                                   // Filter transactions by the selected month
                                   final filteredCategories = categoryList.where((categories) {
                                     String isoFormatDate = categories.date.toString();
-                                    DateTime dateTime = DateTime.parse(isoFormatDate);
+                                     DateTime dateTime = DateTime.parse(isoFormatDate).toUtc().add(Duration(hours: 8));
                                     String formattedDate = _formatMonth(dateTime); // Format transaction.date
                                     return formattedDate == selectedMonth;
                                   }).toList();

@@ -162,7 +162,7 @@ final http.Client _httpClient = http.Client();
   }
 
   Future<http.Response> deleteExpense(int expenseId, int userid) async {
-    String endpoint = '/expense/$expenseId/$userid';
+    String endpoint = '/expense/$expenseId';
     String url = '${AppConfig.baseUrl}$endpoint';
 
     print("Deleting expense with ID: $expenseId");
@@ -176,7 +176,7 @@ final http.Client _httpClient = http.Client();
   }
 
   Future<http.Response> deleteIncome(int incomeId, int userid) async {
-    String endpoint = '/income/$incomeId/$userid';
+    String endpoint = '/income/$incomeId';
     String url = '${AppConfig.baseUrl}$endpoint';
 
     print("Deleting income with ID: $incomeId");
