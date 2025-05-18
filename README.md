@@ -16,3 +16,7 @@ By integrating intelligent insights, educational content, and automated recommen
 # Database Design
 ![erd for workshop 2](https://github.com/user-attachments/assets/3e16e3b8-8825-4182-8c1e-7756f712d661)
 
+
+#Project Report
+[04_MyDuit_Final_Report.pdf](https://github.com/user-attachments/files/20271992/04_MyDuit_Final_Report.pdf)
+
