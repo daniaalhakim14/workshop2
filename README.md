@@ -1,16 +1,18 @@
-# workshop_2
+# MyDuit a AI-Powered Financial Advisor Application
+MyDuit is an AI-Powered Personal Financial Management Application developed as part of the BITU3932 Workshop 2 course project. The goal of this project is to design a market-ready product with real-world value, addressing key financial challenges faced by many individuals.
+MyDuit leverages artificial intelligence to assist users in managing their personal finances more effectively. Key features include:
 
-A new Flutter project.
+- AI-Powered Budgeting
+- Personalized Budget Planning
+- Savings Maximization Suggestions
+- Notifications on Government Welfare Programs and Financial Aid
+- Financial Knowledge Content to Improve Financial Literacy
 
-## Getting Started
+By integrating intelligent insights, educational content, and automated recommendations, MyDuit empowers users to track spending, optimize saving habits, understand financial concepts, and access support opportunities they may be eligible for—helping them work towards greater economic stability and smarter financial decisions.
 
-This project is a starting point for a Flutter application.
+# MyDuit Structure Diagram
+![workshop 2 Structure Diagram](https://github.com/user-attachments/assets/26936665-d854-42f3-884b-554ccbb52ed9)
 
-A few resources to get you started if this is your first Flutter project:
+# Database Design
+![erd for workshop 2](https://github.com/user-attachments/assets/3e16e3b8-8825-4182-8c1e-7756f712d661)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
