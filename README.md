@@ -10,7 +10,8 @@ MyDuit leverages artificial intelligence to assist users in managing their perso
 
 By integrating intelligent insights, educational content, and automated recommendations, MyDuit empowers users to track spending, optimize saving habits, understand financial concepts, and access support opportunities they may be eligible for—helping them work towards greater economic stability and smarter financial decisions.
 
-# Note: This repository contains the frontend source code for MyDuit. For the backend implementation, please refer to the following repository: duit-express-server
+# Note: 
+This repository contains the frontend source code for MyDuit. For the backend implementation, please refer to the following repository: duit-express-server
 https://github.com/EmanuelLing/duit-express-server
 
 # MyDuit Structure Diagram
