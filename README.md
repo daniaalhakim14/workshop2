@@ -44,7 +44,7 @@ By integrating intelligent insights, educational content, and automated recommen
 
 | AI Savings Suggestions | Budget vs Actual Spending |
 |------------------------|---------------------------|
-| <img src="https://github.com/user-attachments/assets/56fa6a75-fc64-419b-8fe3-c0e3452ab30e" width="250"/> | <img src="https://github.com/user-attachments/assets/c9bd2365-7554-4a5d-8602-58c3549bf105" width="250"/> |
+| <img alt="image" src="https://github.com/user-attachments/assets/dcfa1ce6-d191-4b9a-842a-8efb5f9e4010" width="250"/> | <img src="https://github.com/user-attachments/assets/56fa6a75-fc64-419b-8fe3-c0e3452ab30e" width="250"/> |
 
 - Gemini-powered savings tips based on behaviour  
 - Compare planned vs actual expenses  
@@ -58,7 +58,8 @@ By integrating intelligent insights, educational content, and automated recommen
 
 | Notification List | Detailed View |
 |-------------------|--------------|
-| <img src="https://github.com/user-attachments/assets/eed897a7-0ecc-4eb3-8638-00c694961089" width="250"/> | <img src="https://github.com/user-attachments/assets/a7fac111-ecc5-42e5-8344-715ed2b09d75" width="250"/>
+| <img src="https://github.com/user-attachments/assets/eed897a7-0ecc-4eb3-8638-00c694961089" width="250"/> <img src="https://github.com/user-attachments/assets/f11c6ba5-a1e2-410c-bf53-e5d13edad66f" width="250"/>
+ | <img src="https://github.com/user-attachments/assets/a7fac111-ecc5-42e5-8344-715ed2b09d75" width="250"/> <img src="https://github.com/user-attachments/assets/0b59c119-d37e-4416-aa93-571c7df8b4dc" width="250"/>
  |
 
 - **Green:** Govt programs & welfare alerts  
@@ -71,7 +72,8 @@ By integrating intelligent insights, educational content, and automated recommen
 
 <details>
 <summary><b>👤 Account Dashboard</b></summary>
-
+| Account Dashboard |
+|-------------------|
 <img src="https://github.com/user-attachments/assets/16fde668-5bf4-4955-bc6f-0f61d25dc53f" width="250"/>
 
 - Edit personal details  
