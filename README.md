@@ -34,7 +34,9 @@ By integrating intelligent insights, educational content, and automated recommen
 
 | Budgets & Transactions | Spending Visualization |
 |------------------------|------------------------|
-| <img src="https://github.com/user-attachments/assets/63063e24-91d4-438f-94c7-d66c55c0552a" width="250"/> | <img src="https://github.com/user-attachments/assets/5b0d052d-5d3c-449e-856b-4206cc53a7fe" width="250"/> |
+| <img width="412" height="870" alt="image" src="https://github.com/user-attachments/assets/aaf4441c-37a0-4c46-b6db-73cb66971900" width="250"/>
+| <img width="411" height="867" alt="image" src="https://github.com/user-attachments/assets/d1ef0e1e-4297-4923-81ad-f168a01b72a8" width="250"/>
+ |
 
 - Manual & AI-generated budgets  
 - View by latest transaction or spending category  
@@ -44,7 +46,8 @@ By integrating intelligent insights, educational content, and automated recommen
 
 | AI Savings Suggestions | Budget vs Actual Spending |
 |------------------------|---------------------------|
-| <img src="https://github.com/user-attachments/assets/d5cec866-9824-43e0-bb09-c1a29d6d42ec" width="250"/> | <img src="https://github.com/user-attachments/assets/c9bd2365-7554-4a5d-8602-58c3549bf105" width="250"/> |
+| <img width="405" height="857" alt="image" src="https://github.com/user-attachments/assets/56fa6a75-fc64-419b-8fe3-c0e3452ab30e" width="250"/>
+ | <img src="https://github.com/user-attachments/assets/c9bd2365-7554-4a5d-8602-58c3549bf105" width="250"/> |
 
 - Gemini-powered savings tips based on behaviour  
 - Compare planned vs actual expenses  
@@ -58,7 +61,8 @@ By integrating intelligent insights, educational content, and automated recommen
 
 | Notification List | Detailed View |
 |-------------------|--------------|
-| <img src="https://github.com/user-attachments/assets/6f933368-4a53-4fae-8aa4-94580b1ac0c7" width="250"/> | <img src="https://github.com/user-attachments/assets/eb3d4530-e937-47fc-83c5-bb5a9d3e4566" width="250"/> |
+| <img src="https://github.com/user-attachments/assets/6f933368-4a53-4fae-8aa4-94580b1ac0c7" width="250"/> | <img width="402" height="850" alt="image" src="https://github.com/user-attachments/assets/a7fac111-ecc5-42e5-8344-715ed2b09d75" width="250"/>
+ |
 
 - **Green:** Govt programs & welfare alerts  
 - **Blue:** Financial literacy & scam warnings  
