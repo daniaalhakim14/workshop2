@@ -34,9 +34,7 @@ By integrating intelligent insights, educational content, and automated recommen
 
 | Budgets & Transactions | Spending Visualization |
 |------------------------|------------------------|
-| <img width="412" height="870" alt="image" src="https://github.com/user-attachments/assets/aaf4441c-37a0-4c46-b6db-73cb66971900" width="250"/>
-| <img width="411" height="867" alt="image" src="https://github.com/user-attachments/assets/d1ef0e1e-4297-4923-81ad-f168a01b72a8" width="250"/>
- |
+| <img width="412" height="870" alt="image" src="https://github.com/user-attachments/assets/aaf4441c-37a0-4c46-b6db-73cb66971900" width="250"/> | <img width="411" height="867" alt="image" src="https://github.com/user-attachments/assets/d1ef0e1e-4297-4923-81ad-f168a01b72a8" width="250"/> |
 
 - Manual & AI-generated budgets  
 - View by latest transaction or spending category  
