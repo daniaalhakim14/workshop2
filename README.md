@@ -58,7 +58,9 @@ By integrating intelligent insights, educational content, and automated recommen
 
 | Notification List | Detailed View |
 |-------------------|--------------|
-| <img src="https://github.com/user-attachments/assets/eed897a7-0ecc-4eb3-8638-00c694961089" width="250"/> <img src="https://github.com/user-attachments/assets/f11c6ba5-a1e2-410c-bf53-e5d13edad66f" width="250"/> | <img src="https://github.com/user-attachments/assets/a7fac111-ecc5-42e5-8344-715ed2b09d75" width="250"/> <img src="https://github.com/user-attachments/assets/0b59c119-d37e-4416-aa93-571c7df8b4dc" width="250"/>
+|<p align="center"> 
+<img src="https://github.com/user-attachments/assets/eed897a7-0ecc-4eb3-8638-00c694961089" width="250"/> <img src="https://github.com/user-attachments/assets/f11c6ba5-a1e2-410c-bf53-e5d13edad66f" width="250"/> 
+</p> | <img src="https://github.com/user-attachments/assets/a7fac111-ecc5-42e5-8344-715ed2b09d75" width="250"/> <img src="https://github.com/user-attachments/assets/0b59c119-d37e-4416-aa93-571c7df8b4dc" width="250"/>
 |
 
 - **Green:** Govt programs & welfare alerts  
